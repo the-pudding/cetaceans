@@ -242,6 +242,19 @@ function updateChart(_ref) {
 	    down = _ref.down;
 
 	console.log(step);
+	var barsSel = d3.selectAll('.bars');
+
+	if (step === '1') {
+		barsSel.attr('fill', 'black');
+	}
+
+	if (step === '2') {
+		barsSel.attr('fill', 'red');
+	}
+
+	if (step === '3') {
+		barsSel.attr('fill', 'blue');
+	}
 }
 
 function nest(data) {
@@ -314,9 +327,9 @@ function updateDom(_ref5) {
 
 	var plot = g.select('.timelinePlot');
 
-	var bar = plot.selectAll('.bar').data(nestedData);
+	var bar = plot.selectAll('.bars').data(nestedData);
 
-	bar.enter().append('rect').attr('class', 'bar').merge(bar).attr('x', function (d) {
+	bar.enter().append('rect').attr('class', 'bars').merge(bar).attr('x', function (d) {
 		return scaleX(d.key);
 	}).attr('y', function (d) {
 		return scaleY(d.value);
@@ -405,7 +418,7 @@ function resizeGraphic() {
 
 	graphicSel.style('width', graphicW + 'px').style('height', height + 'px');
 
-	chart.width(graphicW).height(height);
+	chart.width(graphicW).height(graphicH);
 
 	graphicSel.call(chart);
 }

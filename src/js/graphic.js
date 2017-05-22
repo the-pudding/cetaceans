@@ -28,6 +28,7 @@ const proseSel = containerSel.select('.scroll__prose')
 const stepSel = containerSel.selectAll('.prose__step')
 const scrollSel = containerSel.select('.scroll')
 
+
 function setupStep() {
 	const el = this
 	const selection = d3.select(this)
@@ -88,6 +89,22 @@ function setupScroll(){
 
 function updateChart({ step, down }) {
 	console.log(step)
+	const barsSel = d3.selectAll('.bars')
+
+	if (step === '1') {
+		barsSel
+			.attr('fill', 'black')
+	}
+
+	if (step === '2') {
+		barsSel
+			.attr('fill', 'red')
+	}
+
+	if (step === '3') {
+		barsSel
+			.attr('fill', 'blue')
+	}
 }
 
 
@@ -155,10 +172,10 @@ function updateDom({ container, data }) {
 
 	const plot = g.select('.timelinePlot')
 
-	const bar = plot.selectAll('.bar').data(nestedData)
+	const bar = plot.selectAll('.bars').data(nestedData)
 
 	bar.enter().append('rect')
-			.attr('class', 'bar')
+			.attr('class', 'bars')
 		.merge(bar)
 			.attr('x', d => scaleX(d.key))
 			.attr('y', d => scaleY(d.value))
@@ -248,7 +265,7 @@ function resizeGraphic() {
 		.style('width', `${graphicW}px`)
 		.style('height', `${height}px`)
 
-	chart.width(graphicW).height(height)
+	chart.width(graphicW).height(graphicH)
 
 	graphicSel.call(chart)
 }
