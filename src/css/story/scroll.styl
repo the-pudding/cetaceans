@@ -1,0 +1,33 @@
+.section--scroll
+	position relative
+	min-height 480px
+	width 100%
+
+.scroll__graphic
+	background rgba(255,0,0,0.1)
+	position absolute
+	top 0
+	right 0
+	transform translate3d(0, 0, 0)
+	display flex
+	align-items center
+	&.is-bottom
+		top auto
+		bottom 0
+	&.is-fixed
+		position fixed
+	svg 
+		background rgba(0,0,255,0.2)
+
+.scroll__prose
+	max-width 20rem
+	margin 0 auto
+	+mq('bp-desktop')
+		margin 0
+		
+
+		
+.prose__step
+	padding 1rem
+	p 
+		margin 0
