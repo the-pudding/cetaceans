@@ -164,15 +164,15 @@ var controller = new _scrollmagic2.default.Controller({ refreshInterval: 0 });
 var viewportHeight = 0;
 var width = 0;
 var height = 0;
-var chartWidth = 0;
-var chartHeight = 0;
+var graphicW = 0;
+var graphicH = 0;
 
 var desktop = false;
 var enterExitScene = null;
 var timelineData = null;
 var nestedData = null;
 
-var margin = 50;
+var margin = 30;
 var scaleX = d3.scaleBand();
 var scaleY = d3.scaleLinear();
 
@@ -241,7 +241,11 @@ function updateChart(_ref) {
 	var step = _ref.step,
 	    down = _ref.down;
 
-	console.log(step);
+
+	updateDom(nestedData);
+	updateScales(nestedData);
+	updateAxis(nestedData);
+
 	var barsSel = d3.selectAll('.bars');
 
 	if (step === '1') {
@@ -272,13 +276,11 @@ function translate(x, y) {
 	return 'translate(' + x + ', ' + y + ')';
 }
 
-function enter(_ref2) {
-	var container = _ref2.container,
-	    data = _ref2.data;
+function enter() {
+	var svg = graphicSel.selectAll('svg').data([nestedData]);
 
-	var svg = container.selectAll('svg').data([data]);
 	var svgEnter = svg.enter().append('svg');
-	var gEnter = svgEnter.append('g');
+	var gEnter = svgEnter.append('g').attr('class', 'plotG');
 
 	gEnter.append('g').attr('class', 'timelinePlot');
 
@@ -289,37 +291,22 @@ function enter(_ref2) {
 	var y = axis.append('g').attr('class', 'axis axis--y');
 }
 
-function exit(_ref3) {
-	var container = _ref3.container,
-	    data = _ref3.data;
-}
-
-function updateScales(_ref4) {
-	var data = _ref4.data;
-
-	scaleX.rangeRound([0, width]).padding(0.1).domain(nestedData.map(function (d) {
+function updateScales(data) {
+	scaleX.rangeRound([0, graphicW]).padding(0.1).domain(nestedData.map(function (d) {
 		return +d.key;
 	}));
 
-	console.log([nestedData.map(function (d) {
-		return +d.key;
-	})]);
-
-	console.log(width);
-	console.log(height);
-
-	scaleY.range([height, 0]).domain([0, d3.max(data, function (d) {
+	scaleY.range([graphicH, 0]).domain([0, d3.max(data, function (d) {
 		return d.value;
 	})]);
 }
 
-function updateDom(_ref5) {
-	var container = _ref5.container,
-	    data = _ref5.data;
+function updateDom(_ref2) {
+	var container = _ref2.container,
+	    data = _ref2.data;
 
-	var svg = container.select('svg');
 
-	svg.attr('width', width).attr('height', height);
+	var svg = graphicSel.select('svg').attr('width', graphicW).attr('height', graphicH);
 
 	var g = svg.select('g');
 
@@ -334,15 +321,15 @@ function updateDom(_ref5) {
 	}).attr('y', function (d) {
 		return scaleY(d.value);
 	}).attr('width', scaleX.bandwidth()).attr('height', function (d) {
-		return height - scaleY(d.value);
+		return graphicH - scaleY(d.value);
 	});
 }
 
-function updateAxis(_ref6) {
-	var container = _ref6.container,
-	    data = _ref6.data;
+function updateAxis(_ref3) {
+	var container = _ref3.container,
+	    data = _ref3.data;
 
-	var axis = container.select('.g-axis');
+	var axis = graphicSel.select('.g-axis');
 
 	var axisLeft = d3.axisLeft(scaleY);
 	var axisBottom = d3.axisBottom(scaleX).ticks(10);
@@ -350,47 +337,28 @@ function updateAxis(_ref6) {
 	var x = axis.select('.axis--x');
 	var y = axis.select('.axis--y');
 
-	var maxY = scaleY.range()[0];
-	var offset = maxY;
+	//const maxY = scaleY.range()[0]
+	//const offset = maxY
 
-	x.attr('transform', translate(0, height)).call(axisBottom.ticks(5));
+	x.attr('transform', 'translate(0, ' + graphicH + ')').call(axisBottom.ticks(5));
 
 	y.call(axisLeft);
 }
-
-function chart(container) {
-	var data = nestedData;
-	enter({ container: container, data: data });
-	exit({ container: container, data: data });
-	updateScales({ container: container, data: data });
-	updateDom({ container: container, data: data });
-	updateAxis({ container: container, data: data });
-}
-
-chart.width = function () {
-	if (!arguments.length) return width;
-	width = arguments.length <= 0 ? undefined : arguments[0];
-	chartWidth = width - margin * 2;
-	return chart;
-};
-
-chart.height = function () {
-	if (!arguments.length) return height;
-	height = arguments.length <= 0 ? undefined : arguments[0];
-	chartHeight = height - margin * 2;
-	return chart;
-};
 
 function updateDimensions() {
 	width = scrollSel.node().offsetWidth;
 	height = window.innerHeight;
 	desktop = window.matchMedia('(min-width: 800px)').matches;
+
+	console.log(window.innerHeight);
 }
 
 function resizeScrollElements() {
 	var factor = desktop ? 0.67 : 1;
 	var h = Math.floor(height * factor);
 	stepSel.style('height', h + 'px');
+
+	console.log(height);
 
 	if (enterExitScene) {
 		var proseEl = proseSel.node();
@@ -404,33 +372,25 @@ function resizeScrollElements() {
 	}
 }
 
-function setupChart() {
-	updateDimensions();
-	graphicSel.datum([]);
-	graphicSel.call(chart);
-}
-
 function resizeGraphic() {
 	var ratio = 1.5;
 	var proseW = proseSel.node().offsetWidth;
-	var graphicW = desktop ? width - proseW : width;
-	var graphicH = graphicW / ratio;
+	graphicW = desktop ? width - proseW : width;
+	graphicH = graphicW / ratio;
 
 	graphicSel.style('width', graphicW + 'px').style('height', height + 'px');
 
-	chart.width(graphicW).height(graphicH);
-
-	graphicSel.call(chart);
+	graphicSel.select('svg').attr('width', graphicH).attr('height', graphicW);
 }
 
 function resize() {
 	updateDimensions();
-	resizeGraphic();
 	resizeScrollElements();
+	resizeGraphic();
 }
 
 function setup(data) {
-	setupChart();
+	enter();
 	resize();
 	setupScroll();
 	updateChart({ step: '1', down: true });

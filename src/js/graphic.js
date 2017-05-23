@@ -7,17 +7,18 @@ const controller = new ScrollMagic.Controller({ refreshInterval: 0 })
 let viewportHeight = 0
 let width = 0
 let height = 0
-let chartWidth = 0
-let chartHeight = 0
+let graphicW = 0
+let graphicH = 0
 
 let desktop = false
 let enterExitScene = null
 let timelineData = null
 let nestedData = null
 
-const margin = 50
+const margin = 30
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
+
 
 const stepScenes = []
 
@@ -27,6 +28,7 @@ const graphicSel = containerSel.select('.scroll__graphic')
 const proseSel = containerSel.select('.scroll__prose')
 const stepSel = containerSel.selectAll('.prose__step')
 const scrollSel = containerSel.select('.scroll')
+
 
 
 function setupStep() {
@@ -88,7 +90,11 @@ function setupScroll(){
 }
 
 function updateChart({ step, down }) {
-	console.log(step)
+	
+	updateDom(nestedData)
+	updateScales(nestedData)
+	updateAxis(nestedData)
+
 	const barsSel = d3.selectAll('.bars')
 
 	if (step === '1') {
@@ -125,10 +131,12 @@ function translate(x, y) {
 }
 
 
-function enter({ container, data }){
-	const svg = container.selectAll('svg').data([data])
+function enter(){
+	const svg = graphicSel.selectAll('svg').data([nestedData])
+
+
 	const svgEnter = svg.enter().append('svg')
-	const gEnter = svgEnter.append('g')
+	const gEnter = svgEnter.append('g').attr('class', 'plotG')
 
 	gEnter.append('g').attr('class', 'timelinePlot')
 
@@ -139,32 +147,22 @@ function enter({ container, data }){
 	const y = axis.append('g').attr('class', 'axis axis--y')
 }
 
-function exit({ container, data }){
-
-}
-
-function updateScales({ data }) {
+function updateScales( data ) {
 	scaleX
-		.rangeRound([0, width])
+		.rangeRound([0, graphicW])
 		.padding(0.1)
 		.domain(nestedData.map(d => +d.key))
 
-		console.log([nestedData.map(d => +d.key)])
-
-console.log(width)
-console.log(height)
-
 	scaleY
-		.range([height, 0])
+		.range([graphicH, 0])
 		.domain([0, d3.max(data, d => d.value)])
 }
 
 function updateDom({ container, data }) {
-	const svg = container.select('svg')
 
-	svg
-		.attr('width', width)
-		.attr('height', height)
+	const svg = graphicSel.select('svg')
+		.attr('width', graphicW)
+		.attr('height', graphicH)
 
 	const g = svg.select('g')
 
@@ -180,11 +178,11 @@ function updateDom({ container, data }) {
 			.attr('x', d => scaleX(d.key))
 			.attr('y', d => scaleY(d.value))
 			.attr('width', scaleX.bandwidth())
-			.attr('height', d => height - scaleY(d.value))
+			.attr('height', d => graphicH - scaleY(d.value) )
 }
 
 function updateAxis({ container, data }) {
-	const axis = container.select('.g-axis')
+	const axis = graphicSel.select('.g-axis')
 
 	const axisLeft = d3.axisLeft(scaleY)
 	const axisBottom = d3.axisBottom(scaleX).ticks(10)
@@ -192,52 +190,31 @@ function updateAxis({ container, data }) {
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')
 
-	const maxY = scaleY.range()[0]
-	const offset = maxY
+	//const maxY = scaleY.range()[0]
+	//const offset = maxY
 
 	x
-		.attr('transform', translate(0, height))
+		.attr('transform', `translate(0, ${graphicH})`)
 		.call(axisBottom
 			.ticks(5))
 
 	y.call(axisLeft)
 }
 
-function chart(container) {
-	const data = nestedData
-	enter({ container, data })
-	exit({ container, data })
-	updateScales({ container, data })
-	updateDom({ container, data })
-	updateAxis({ container, data })
-}
-
-	chart.width = function(...args) {
-		if (!args.length) return width
-		width = args[0]
-		chartWidth = width - margin * 2
-		return chart
-	}
-
-
-	chart.height = function(...args) {
-		if (!args.length) return height
-		height = args[0]
-		chartHeight = height - margin * 2
-		return chart
-	}
-
-
 function updateDimensions() {
 	width = scrollSel.node().offsetWidth
 	height = window.innerHeight
 	desktop = window.matchMedia('(min-width: 800px)').matches
+
+	console.log(window.innerHeight)
 }
 
 function resizeScrollElements() {
 	const factor = desktop ? 0.67 : 1
 	const h = Math.floor(height * factor)
 	stepSel.style('height', `${h}px`)
+
+	console.log(height)
 
 	if (enterExitScene) {
 		const proseEl = proseSel.node()
@@ -249,25 +226,21 @@ function resizeScrollElements() {
 	}
 }
 
-function setupChart(){
-	updateDimensions()
-	graphicSel.datum([])
-	graphicSel.call(chart)
-}
 
 function resizeGraphic() {
 	const ratio = 1.5
 	const proseW = proseSel.node().offsetWidth
-	const graphicW = desktop ? width - proseW : width
-	const graphicH = graphicW / ratio
+	graphicW = desktop ? width - proseW : width
+	graphicH = graphicW / ratio
 
 	graphicSel
 		.style('width', `${graphicW}px`)
 		.style('height', `${height}px`)
 
-	chart.width(graphicW).height(graphicH)
+	graphicSel.select('svg')
+		.attr('width', graphicH)
+		.attr('height', graphicW)
 
-	graphicSel.call(chart)
 }
 
 
@@ -276,15 +249,16 @@ function resizeGraphic() {
 
 function resize() {
 	updateDimensions()
-	resizeGraphic()
 	resizeScrollElements()
+	resizeGraphic()
 }
 
 function setup(data) {
-	setupChart()
+	enter()
 	resize()
 	setupScroll()
-	updateChart({ step: '1', down: true})
+	updateChart({ step: '1', down: true })
+
 }
 
 function init() {
