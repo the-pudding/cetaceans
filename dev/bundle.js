@@ -175,6 +175,7 @@ var nestedData = null;
 var margin = 30;
 var scaleX = d3.scaleBand();
 var scaleY = d3.scaleLinear();
+var svg = null;
 
 var stepScenes = [];
 
@@ -237,30 +238,6 @@ function setupScroll() {
 	setupEnterExit();
 }
 
-function updateChart(_ref) {
-	var step = _ref.step,
-	    down = _ref.down;
-
-
-	updateDom(nestedData);
-	updateScales(nestedData);
-	updateAxis(nestedData);
-
-	var barsSel = d3.selectAll('.bars');
-
-	if (step === '1') {
-		barsSel.attr('fill', 'black');
-	}
-
-	if (step === '2') {
-		barsSel.attr('fill', 'red');
-	}
-
-	if (step === '3') {
-		barsSel.attr('fill', 'blue');
-	}
-}
-
 function nest(data) {
 
 	timelineData = data[0];
@@ -273,76 +250,8 @@ function nest(data) {
 }
 
 function translate(x, y) {
+
 	return 'translate(' + x + ', ' + y + ')';
-}
-
-function enter() {
-	var svg = graphicSel.selectAll('svg').data([nestedData]);
-
-	var svgEnter = svg.enter().append('svg');
-	var gEnter = svgEnter.append('g').attr('class', 'plotG');
-
-	gEnter.append('g').attr('class', 'timelinePlot');
-
-	var axis = gEnter.append('g').attr('class', 'g-axis');
-
-	var x = axis.append('g').attr('class', 'axis axis--x');
-
-	var y = axis.append('g').attr('class', 'axis axis--y');
-}
-
-function updateScales(data) {
-	scaleX.rangeRound([0, graphicW]).padding(0.1).domain(nestedData.map(function (d) {
-		return +d.key;
-	}));
-
-	scaleY.range([graphicH, 0]).domain([0, d3.max(data, function (d) {
-		return d.value;
-	})]);
-}
-
-function updateDom(_ref2) {
-	var container = _ref2.container,
-	    data = _ref2.data;
-
-
-	var svg = graphicSel.select('svg').attr('width', graphicW).attr('height', graphicH);
-
-	var g = svg.select('g');
-
-	g.attr('transform', translate(margin, margin));
-
-	var plot = g.select('.timelinePlot');
-
-	var bar = plot.selectAll('.bars').data(nestedData);
-
-	bar.enter().append('rect').attr('class', 'bars').merge(bar).attr('x', function (d) {
-		return scaleX(d.key);
-	}).attr('y', function (d) {
-		return scaleY(d.value);
-	}).attr('width', scaleX.bandwidth()).attr('height', function (d) {
-		return graphicH - scaleY(d.value);
-	});
-}
-
-function updateAxis(_ref3) {
-	var container = _ref3.container,
-	    data = _ref3.data;
-
-	var axis = graphicSel.select('.g-axis');
-
-	var axisLeft = d3.axisLeft(scaleY);
-	var axisBottom = d3.axisBottom(scaleX).ticks(10);
-
-	var x = axis.select('.axis--x');
-	var y = axis.select('.axis--y');
-
-	//const maxY = scaleY.range()[0]
-	//const offset = maxY
-
-	x.attr('transform', 'translate(0, ' + graphicH + ')').call(axisBottom.ticks(5));
-
-	y.call(axisLeft);
 }
 
 function updateDimensions() {
@@ -357,8 +266,6 @@ function resizeScrollElements() {
 	var factor = desktop ? 0.67 : 1;
 	var h = Math.floor(height * factor);
 	stepSel.style('height', h + 'px');
-
-	console.log(height);
 
 	if (enterExitScene) {
 		var proseEl = proseSel.node();
@@ -380,13 +287,126 @@ function resizeGraphic() {
 
 	graphicSel.style('width', graphicW + 'px').style('height', height + 'px');
 
-	graphicSel.select('svg').attr('width', graphicH).attr('height', graphicW);
+	var trim = graphicH - margin;
+
+	graphicSel.select('svg').attr('width', graphicW).attr('height', trim);
+
+	console.log(graphicH);
+	console.log(graphicH - margin);
+}
+
+function enter() {
+	svg = graphicSel.selectAll('svg').data([nestedData]);
+
+	var svgEnter = svg.enter().append('svg');
+
+	var gEnter = svgEnter.append('g').attr('class', 'plotG');
+
+	gEnter.append('g').attr('class', 'timelinePlot');
+
+	var axis = gEnter.append('g').attr('class', 'g-axis');
+
+	var x = axis.append('g').attr('class', 'axis axis--x');
+
+	var y = axis.append('g').attr('class', 'axis axis--y');
+}
+
+function updateScales(data) {
+	scaleX.rangeRound([0, graphicW]).padding(0.1).domain(nestedData.map(function (d) {
+		return +d.key;
+	}));
+
+	var trim = graphicH - margin * 2;
+
+	scaleY.range([trim, 0]).domain([0, d3.max(data, function (d) {
+		return d.value;
+	})]);
+
+	console.log(graphicW);
+	console.log(graphicH);
+}
+
+function updateDom(_ref) {
+	var container = _ref.container,
+	    data = _ref.data;
+
+
+	console.log(graphicW);
+
+	var svg = graphicSel.select('svg');
+
+	svg.attr('width', graphicW).attr('height', graphicH);
+
+	var g = svg.select('g');
+
+	g.attr('transform', translate(margin, margin));
+
+	var plot = g.select('.timelinePlot');
+
+	var bar = plot.selectAll('.bars').data(nestedData);
+
+	var trim = graphicH - margin * 2;
+
+	bar.enter().append('rect').attr('class', 'bars').merge(bar).attr('x', function (d) {
+		return scaleX(d.key);
+	}).attr('y', function (d) {
+		return scaleY(d.value);
+	}).attr('width', scaleX.bandwidth()).attr('height', function (d) {
+		return trim - scaleY(d.value);
+	});
+}
+
+function updateAxis(_ref2) {
+	var container = _ref2.container,
+	    data = _ref2.data;
+
+	var axis = graphicSel.select('.g-axis');
+
+	var axisLeft = d3.axisLeft(scaleY);
+	var axisBottom = d3.axisBottom(scaleX);
+
+	axisBottom.ticks(10);
+
+	var x = axis.select('.axis--x');
+	var y = axis.select('.axis--y');
+
+	//const maxY = scaleY.range()[0]
+	//const offset = maxY
+
+	var trim = graphicH - margin * 2;
+
+	x.attr('transform', 'translate(0, ' + trim + ')').call(axisBottom);
+
+	y.call(axisLeft);
+}
+
+function updateChart(_ref3) {
+	var step = _ref3.step,
+	    down = _ref3.down;
+
+
+	var barsSel = d3.selectAll('.bars');
+
+	if (step === '1') {
+		barsSel.attr('fill', 'black');
+	}
+
+	if (step === '2') {
+		barsSel.attr('fill', 'red');
+	}
+
+	if (step === '3') {
+		barsSel.attr('fill', 'blue');
+	}
 }
 
 function resize() {
 	updateDimensions();
 	resizeScrollElements();
 	resizeGraphic();
+	updateScales(nestedData);
+	updateDom(nestedData);
+	updateAxis(nestedData);
 }
 
 function setup(data) {

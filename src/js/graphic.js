@@ -18,6 +18,7 @@ let nestedData = null
 const margin = 30
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
+let svg = null
 
 
 const stepScenes = []
@@ -89,31 +90,6 @@ function setupScroll(){
 	setupEnterExit()
 }
 
-function updateChart({ step, down }) {
-	
-	updateDom(nestedData)
-	updateScales(nestedData)
-	updateAxis(nestedData)
-
-	const barsSel = d3.selectAll('.bars')
-
-	if (step === '1') {
-		barsSel
-			.attr('fill', 'black')
-	}
-
-	if (step === '2') {
-		barsSel
-			.attr('fill', 'red')
-	}
-
-	if (step === '3') {
-		barsSel
-			.attr('fill', 'blue')
-	}
-}
-
-
 function nest(data){
 
 	timelineData = data[0]
@@ -126,80 +102,11 @@ function nest(data){
 }
 
 
-function translate(x, y) {
+function translate(x, y) {	
+
 	return `translate(${x}, ${y})`
 }
 
-
-function enter(){
-	const svg = graphicSel.selectAll('svg').data([nestedData])
-
-
-	const svgEnter = svg.enter().append('svg')
-	const gEnter = svgEnter.append('g').attr('class', 'plotG')
-
-	gEnter.append('g').attr('class', 'timelinePlot')
-
-	const axis = gEnter.append('g').attr('class', 'g-axis')
-
-	const x = axis.append('g').attr('class', 'axis axis--x')
-
-	const y = axis.append('g').attr('class', 'axis axis--y')
-}
-
-function updateScales( data ) {
-	scaleX
-		.rangeRound([0, graphicW])
-		.padding(0.1)
-		.domain(nestedData.map(d => +d.key))
-
-	scaleY
-		.range([graphicH, 0])
-		.domain([0, d3.max(data, d => d.value)])
-}
-
-function updateDom({ container, data }) {
-
-	const svg = graphicSel.select('svg')
-		.attr('width', graphicW)
-		.attr('height', graphicH)
-
-	const g = svg.select('g')
-
-	g.attr('transform', translate(margin, margin))
-
-	const plot = g.select('.timelinePlot')
-
-	const bar = plot.selectAll('.bars').data(nestedData)
-
-	bar.enter().append('rect')
-			.attr('class', 'bars')
-		.merge(bar)
-			.attr('x', d => scaleX(d.key))
-			.attr('y', d => scaleY(d.value))
-			.attr('width', scaleX.bandwidth())
-			.attr('height', d => graphicH - scaleY(d.value) )
-}
-
-function updateAxis({ container, data }) {
-	const axis = graphicSel.select('.g-axis')
-
-	const axisLeft = d3.axisLeft(scaleY)
-	const axisBottom = d3.axisBottom(scaleX).ticks(10)
-
-	const x = axis.select('.axis--x')
-	const y = axis.select('.axis--y')
-
-	//const maxY = scaleY.range()[0]
-	//const offset = maxY
-
-	x
-		.attr('transform', `translate(0, ${graphicH})`)
-		.call(axisBottom
-			.ticks(5))
-
-	y.call(axisLeft)
-}
 
 function updateDimensions() {
 	width = scrollSel.node().offsetWidth
@@ -213,8 +120,6 @@ function resizeScrollElements() {
 	const factor = desktop ? 0.67 : 1
 	const h = Math.floor(height * factor)
 	stepSel.style('height', `${h}px`)
-
-	console.log(height)
 
 	if (enterExitScene) {
 		const proseEl = proseSel.node()
@@ -237,20 +142,154 @@ function resizeGraphic() {
 		.style('width', `${graphicW}px`)
 		.style('height', `${height}px`)
 
-	graphicSel.select('svg')
-		.attr('width', graphicH)
-		.attr('height', graphicW)
+	const trim = graphicH - margin
 
+	graphicSel.select('svg')
+		.attr('width', graphicW)
+		.attr('height', trim)
+
+		console.log(graphicH)
+		console.log(graphicH-margin)
 }
 
 
 
+function enter(){
+	svg = graphicSel
+		.selectAll('svg')
+		.data([nestedData])
+
+
+	const svgEnter = svg
+		.enter()
+		.append('svg')
+
+	const gEnter = svgEnter
+		.append('g')
+		.attr('class', 'plotG')
+
+	gEnter
+		.append('g')
+		.attr('class', 'timelinePlot')
+
+	const axis = gEnter
+		.append('g')
+		.attr('class', 'g-axis')
+
+	const x = axis
+		.append('g')
+		.attr('class', 'axis axis--x')
+
+	const y = axis
+		.append('g')
+		.attr('class', 'axis axis--y')
+}
+
+
+function updateScales( data ) {
+	scaleX
+		.rangeRound([0, graphicW])
+		.padding(0.1)
+		.domain(nestedData.map(d => +d.key))
+
+		const trim = graphicH - (margin * 2)
+
+	scaleY
+		.range([trim, 0])
+		.domain([0, d3.max(data, d => d.value)])
+
+		console.log(graphicW)
+		console.log(graphicH)
+}
+
+
+
+function updateDom({ container, data }) {
+
+	console.log(graphicW)
+
+	const svg = graphicSel.select('svg')
+
+	svg
+		.attr('width', graphicW)
+		.attr('height', graphicH)
+
+	const g = svg.select('g')
+
+
+	g.attr('transform', translate(margin, margin))
+
+	const plot = g.select('.timelinePlot')
+
+	const bar = plot.selectAll('.bars').data(nestedData)
+
+	const trim = graphicH - (margin * 2)
+
+	bar.enter().append('rect')
+			.attr('class', 'bars')
+		.merge(bar)
+			.attr('x', d => scaleX(d.key))
+			.attr('y', d => scaleY(d.value))
+			.attr('width', scaleX.bandwidth())
+			.attr('height', d => trim - scaleY(d.value) )
+}
+
+
+
+function updateAxis({ container, data }) {
+	const axis = graphicSel.select('.g-axis')
+
+	const axisLeft = d3.axisLeft(scaleY)
+	const axisBottom = d3.axisBottom(scaleX)
+
+	axisBottom.ticks(10)
+
+	const x = axis.select('.axis--x')
+	const y = axis.select('.axis--y')
+
+	//const maxY = scaleY.range()[0]
+	//const offset = maxY
+
+	const trim = graphicH - (margin * 2)
+
+	x
+		.attr('transform', `translate(0, ${trim})`)
+		.call(axisBottom)
+
+	y
+		.call(axisLeft)
+}
+
+
+function updateChart({ step, down }) {
+
+
+	const barsSel = d3.selectAll('.bars')
+
+	if (step === '1') {
+		barsSel
+			.attr('fill', 'black')
+	}
+
+	if (step === '2') {
+		barsSel
+			.attr('fill', 'red')
+	}
+
+	if (step === '3') {
+		barsSel
+			.attr('fill', 'blue')
+	}
+}
 
 
 function resize() {
 	updateDimensions()
 	resizeScrollElements()
 	resizeGraphic()
+	updateScales(nestedData)
+	updateDom(nestedData)
+	updateAxis(nestedData)
 }
 
 function setup(data) {
