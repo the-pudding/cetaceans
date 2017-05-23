@@ -94,11 +94,16 @@ function nest(data){
 
 	timelineData = data[0]
 
+	const filteredData = timelineData.filter(d => isNaN(d.AcqYear) == false)
+
+
 	nestedData = d3.nest()
 		.key( d => d.AcqYear )
 		.sortKeys(d3.ascending)
 		.rollup( values => values.length )
-		.entries(data[0])
+		.entries(filteredData)
+
+
 }
 
 
@@ -241,8 +246,6 @@ function updateAxis({ container, data }) {
 
 	const axisLeft = d3.axisLeft(scaleY)
 	const axisBottom = d3.axisBottom(scaleX)
-
-	axisBottom.ticks(10)
 
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')

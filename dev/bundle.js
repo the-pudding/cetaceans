@@ -242,11 +242,15 @@ function nest(data) {
 
 	timelineData = data[0];
 
+	var filteredData = timelineData.filter(function (d) {
+		return isNaN(d.AcqYear) == false;
+	});
+
 	nestedData = d3.nest().key(function (d) {
 		return d.AcqYear;
 	}).sortKeys(d3.ascending).rollup(function (values) {
 		return values.length;
-	}).entries(data[0]);
+	}).entries(filteredData);
 }
 
 function translate(x, y) {
@@ -364,8 +368,6 @@ function updateAxis(_ref2) {
 
 	var axisLeft = d3.axisLeft(scaleY);
 	var axisBottom = d3.axisBottom(scaleX);
-
-	axisBottom.ticks(10);
 
 	var x = axis.select('.axis--x');
 	var y = axis.select('.axis--y');
