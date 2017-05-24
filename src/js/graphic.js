@@ -113,32 +113,6 @@ function gettingData(data){
 
 	stackedData = stacked(timelineData)
 
-	console.log(stackedData)
-
-	let layers = d3.stack()
-		.keys((Acq.map(function(count){
-		return timelineData.map(function(d){
-			return {x: d.year, y: +d[count]}
-		})
-	})))
-
-	let layerTest = d3.stack()
-		.keys(Acq.map(function(count){
-			return timelineData.map(function(d){
-				return {x: d.year, y: +d[count]}
-			})
-		}))
-
-	console.log(layerTest(timelineData))
-
-	/*const filteredData = timelineData.filter(d => isNaN(d.year) == false)
-
-	nestedData = d3.nest()
-		.key( d => +d.year )
-		.sortKeys(d3.ascending)
-		.rollup( values => values.length )
-		.entries(filteredData)*/
-
 }
 
 function translate(x, y) {	
@@ -227,21 +201,20 @@ function enter(){
 
 function updateScales( data ) {
 	const trimW = graphicW - margin
+	const trimH = graphicH - (margin * 2)
+
 	scaleX
 		.rangeRound([0, trimW])
 		.padding(0.1)
-		//.domain([parseYear("1938"), parseYear("2017")])
 		.domain(stackedData[0].map(d => d.data.year))
 
-
-		const trim = graphicH - (margin * 2)
-
 	scaleY
-		.range([trim, 0])
+		.range([trimH, 0])
 		//.domain([0, d3.max(stackedData, d => d[0] + d[1])])
 		//.domain([0, d3.max(stackedData[stackedData.length - 1], d => d[0] + d[1])])
+		//.domain([0, d3.max(stackedData[stackedData.length - 1], function(d) { return d[0] + d[1]; }) ])
 		.domain([0, 178])
-		console.log(stackedData[0] + stackedData[1])
+		//console.log(stackedData[stackedData.length-2])
 }
 
 
@@ -256,7 +229,6 @@ function updateDom({ container, data }) {
 
 	const g = svg.select('g')
 
-
 	g.attr('transform', translate(margin, margin))
 
 	const plot = g.select('.timelinePlot')
@@ -270,15 +242,14 @@ function updateDom({ container, data }) {
 
 	const bar = plotGroup.selectAll('.bars').data(d => d)
 
-	const trim = graphicH - (margin * 2)
-
 	bar.enter().append('rect')
 			.attr('class', 'bars')
 		.merge(bar)
 			.attr('x', d => scaleX(d.data.year))
 			.attr('y', d => scaleY(d[1]))
 			.attr('width', scaleX.bandwidth())
-			.attr('height', d => scaleY(d[0]) - scaleY(d[1]))
+			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
+
 }
 
 
@@ -287,7 +258,7 @@ function updateAxis({ container, data }) {
 	const axis = graphicSel.select('.g-axis')
 
 	const axisLeft = d3.axisLeft(scaleY)
-	const axisBottom = d3.axisBottom(scaleX).tickValues(["1938", "1950", "1960", "1970", "1980", "1990", "2000", "2010"])
+	const axisBottom = d3.axisBottom(scaleX).tickValues(["1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010"])
 
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')
@@ -315,12 +286,12 @@ function updateChart({ step, down }) {
 
 	if (step === '2') {
 		barsSel
-			//.attr('fill', 'red')
+			.attr('fill', 'red')
 	}
 
 	if (step === '3') {
 		barsSel
-			//.attr('fill', 'blue')
+			.attr('fill', 'blue')
 	}
 }
 
@@ -330,8 +301,8 @@ function resize() {
 	resizeScrollElements()
 	resizeGraphic()
 	updateScales(stackedData)
-	updateDom(stackedData)
 	updateAxis(stackedData)
+	updateDom(stackedData)
 }
 
 function setup(data) {

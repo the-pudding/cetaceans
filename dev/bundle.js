@@ -255,29 +255,6 @@ function gettingData(data) {
 	console.log(stacked);
 
 	stackedData = stacked(timelineData);
-
-	console.log(stackedData);
-
-	var layers = d3.stack().keys(Acq.map(function (count) {
-		return timelineData.map(function (d) {
-			return { x: d.year, y: +d[count] };
-		});
-	}));
-
-	var layerTest = d3.stack().keys(Acq.map(function (count) {
-		return timelineData.map(function (d) {
-			return { x: d.year, y: +d[count] };
-		});
-	}));
-
-	console.log(layerTest(timelineData));
-
-	/*const filteredData = timelineData.filter(d => isNaN(d.year) == false)
- 	nestedData = d3.nest()
- 	.key( d => +d.year )
- 	.sortKeys(d3.ascending)
- 	.rollup( values => values.length )
- 	.entries(filteredData)*/
 }
 
 function translate(x, y) {
@@ -344,19 +321,18 @@ function enter() {
 
 function updateScales(data) {
 	var trimW = graphicW - margin;
-	scaleX.rangeRound([0, trimW]).padding(0.1)
-	//.domain([parseYear("1938"), parseYear("2017")])
-	.domain(stackedData[0].map(function (d) {
+	var trimH = graphicH - margin * 2;
+
+	scaleX.rangeRound([0, trimW]).padding(0.1).domain(stackedData[0].map(function (d) {
 		return d.data.year;
 	}));
 
-	var trim = graphicH - margin * 2;
-
-	scaleY.range([trim, 0])
+	scaleY.range([trimH, 0])
 	//.domain([0, d3.max(stackedData, d => d[0] + d[1])])
 	//.domain([0, d3.max(stackedData[stackedData.length - 1], d => d[0] + d[1])])
+	//.domain([0, d3.max(stackedData[stackedData.length - 1], function(d) { return d[0] + d[1]; }) ])
 	.domain([0, 178]);
-	console.log(stackedData[0] + stackedData[1]);
+	//console.log(stackedData[stackedData.length-2])
 }
 
 function updateDom(_ref) {
@@ -382,8 +358,6 @@ function updateDom(_ref) {
 		return d;
 	});
 
-	var trim = graphicH - margin * 2;
-
 	bar.enter().append('rect').attr('class', 'bars').merge(bar).attr('x', function (d) {
 		return scaleX(d.data.year);
 	}).attr('y', function (d) {
@@ -400,7 +374,7 @@ function updateAxis(_ref2) {
 	var axis = graphicSel.select('.g-axis');
 
 	var axisLeft = d3.axisLeft(scaleY);
-	var axisBottom = d3.axisBottom(scaleX).tickValues(["1938", "1950", "1960", "1970", "1980", "1990", "2000", "2010"]);
+	var axisBottom = d3.axisBottom(scaleX).tickValues(["1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010"]);
 
 	var x = axis.select('.axis--x');
 	var y = axis.select('.axis--y');
@@ -425,13 +399,11 @@ function updateChart(_ref3) {
 	}
 
 	if (step === '2') {
-		barsSel;
-		//.attr('fill', 'red')
+		barsSel.attr('fill', 'red');
 	}
 
 	if (step === '3') {
-		barsSel;
-		//.attr('fill', 'blue')
+		barsSel.attr('fill', 'blue');
 	}
 }
 
@@ -440,8 +412,8 @@ function resize() {
 	resizeScrollElements();
 	resizeGraphic();
 	updateScales(stackedData);
-	updateDom(stackedData);
 	updateAxis(stackedData);
+	updateDom(stackedData);
 }
 
 function setup(data) {
