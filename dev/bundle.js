@@ -170,12 +170,18 @@ var graphicH = 0;
 var desktop = false;
 var enterExitScene = null;
 var timelineData = null;
-var nestedData = null;
+var stackedData = null;
+
+var Acq = ['capture', 'born', 'rescue'];
 
 var margin = 30;
 var scaleX = d3.scaleBand();
+//const scaleX = d3.scaleTime()
 var scaleY = d3.scaleLinear();
 var svg = null;
+
+var formatYear = d3.timeFormat("%Y");
+var parseYear = d3.timeParse("%Y");
 
 var stepScenes = [];
 
@@ -185,6 +191,8 @@ var graphicSel = containerSel.select('.scroll__graphic');
 var proseSel = containerSel.select('.scroll__prose');
 var stepSel = containerSel.selectAll('.prose__step');
 var scrollSel = containerSel.select('.scroll');
+
+var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 function setupStep() {
 	var el = this;
@@ -238,19 +246,38 @@ function setupScroll() {
 	setupEnterExit();
 }
 
-function nest(data) {
+function gettingData(data) {
 
 	timelineData = data[0];
 
-	var filteredData = timelineData.filter(function (d) {
-		return isNaN(d.AcqYear) == false;
-	});
+	var stacked = d3.stack().keys(['capture', 'born', 'rescue']).order(d3.stackOrderNone).offset(d3.stackOffsetNone);
 
-	nestedData = d3.nest().key(function (d) {
-		return d.AcqYear;
-	}).sortKeys(d3.ascending).rollup(function (values) {
-		return values.length;
-	}).entries(filteredData);
+	console.log(stacked);
+
+	stackedData = stacked(timelineData);
+
+	console.log(stackedData);
+
+	var layers = d3.stack().keys(Acq.map(function (count) {
+		return timelineData.map(function (d) {
+			return { x: d.year, y: +d[count] };
+		});
+	}));
+
+	var layerTest = d3.stack().keys(Acq.map(function (count) {
+		return timelineData.map(function (d) {
+			return { x: d.year, y: +d[count] };
+		});
+	}));
+
+	console.log(layerTest(timelineData));
+
+	/*const filteredData = timelineData.filter(d => isNaN(d.year) == false)
+ 	nestedData = d3.nest()
+ 	.key( d => +d.year )
+ 	.sortKeys(d3.ascending)
+ 	.rollup( values => values.length )
+ 	.entries(filteredData)*/
 }
 
 function translate(x, y) {
@@ -300,7 +327,7 @@ function resizeGraphic() {
 }
 
 function enter() {
-	svg = graphicSel.selectAll('svg').data([nestedData]);
+	svg = graphicSel.selectAll('svg').data([stackedData]);
 
 	var svgEnter = svg.enter().append('svg');
 
@@ -316,26 +343,26 @@ function enter() {
 }
 
 function updateScales(data) {
-	scaleX.rangeRound([0, graphicW]).padding(0.1).domain(nestedData.map(function (d) {
-		return +d.key;
+	var trimW = graphicW - margin;
+	scaleX.rangeRound([0, trimW]).padding(0.1)
+	//.domain([parseYear("1938"), parseYear("2017")])
+	.domain(stackedData[0].map(function (d) {
+		return d.data.year;
 	}));
 
 	var trim = graphicH - margin * 2;
 
-	scaleY.range([trim, 0]).domain([0, d3.max(data, function (d) {
-		return d.value;
-	})]);
-
-	console.log(graphicW);
-	console.log(graphicH);
+	scaleY.range([trim, 0])
+	//.domain([0, d3.max(stackedData, d => d[0] + d[1])])
+	//.domain([0, d3.max(stackedData[stackedData.length - 1], d => d[0] + d[1])])
+	.domain([0, 178]);
+	console.log(stackedData[0] + stackedData[1]);
 }
 
 function updateDom(_ref) {
 	var container = _ref.container,
 	    data = _ref.data;
 
-
-	console.log(graphicW);
 
 	var svg = graphicSel.select('svg');
 
@@ -347,16 +374,22 @@ function updateDom(_ref) {
 
 	var plot = g.select('.timelinePlot');
 
-	var bar = plot.selectAll('.bars').data(nestedData);
+	var plotGroup = plot.selectAll('.layers').data(stackedData).enter().append("g").attr("class", "layers").style("fill", function (d, i) {
+		return color(i);
+	});
+
+	var bar = plotGroup.selectAll('.bars').data(function (d) {
+		return d;
+	});
 
 	var trim = graphicH - margin * 2;
 
 	bar.enter().append('rect').attr('class', 'bars').merge(bar).attr('x', function (d) {
-		return scaleX(d.key);
+		return scaleX(d.data.year);
 	}).attr('y', function (d) {
-		return scaleY(d.value);
+		return scaleY(d[1]);
 	}).attr('width', scaleX.bandwidth()).attr('height', function (d) {
-		return trim - scaleY(d.value);
+		return scaleY(d[0]) - scaleY(d[1]);
 	});
 }
 
@@ -367,13 +400,10 @@ function updateAxis(_ref2) {
 	var axis = graphicSel.select('.g-axis');
 
 	var axisLeft = d3.axisLeft(scaleY);
-	var axisBottom = d3.axisBottom(scaleX);
+	var axisBottom = d3.axisBottom(scaleX).tickValues(["1938", "1950", "1960", "1970", "1980", "1990", "2000", "2010"]);
 
 	var x = axis.select('.axis--x');
 	var y = axis.select('.axis--y');
-
-	//const maxY = scaleY.range()[0]
-	//const offset = maxY
 
 	var trim = graphicH - margin * 2;
 
@@ -390,15 +420,18 @@ function updateChart(_ref3) {
 	var barsSel = d3.selectAll('.bars');
 
 	if (step === '1') {
-		barsSel.attr('fill', 'black');
+		barsSel;
+		//.attr('fill', 'black')
 	}
 
 	if (step === '2') {
-		barsSel.attr('fill', 'red');
+		barsSel;
+		//.attr('fill', 'red')
 	}
 
 	if (step === '3') {
-		barsSel.attr('fill', 'blue');
+		barsSel;
+		//.attr('fill', 'blue')
 	}
 }
 
@@ -406,9 +439,9 @@ function resize() {
 	updateDimensions();
 	resizeScrollElements();
 	resizeGraphic();
-	updateScales(nestedData);
-	updateDom(nestedData);
-	updateAxis(nestedData);
+	updateScales(stackedData);
+	updateDom(stackedData);
+	updateAxis(stackedData);
 }
 
 function setup(data) {
@@ -419,7 +452,7 @@ function setup(data) {
 }
 
 function init() {
-	(0, _loadData2.default)().then(nest).then(setup).catch(function (err) {
+	(0, _loadData2.default)().then(gettingData).then(setup).catch(function (err) {
 		return console.log(err);
 	});
 }
@@ -444,23 +477,25 @@ require('promis');
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-function cleanCetaceans(d) {
+function cleanAcquisitions(d) {
 	return _extends({}, d, {
-		species: d.Species,
-		acquisition: d.Acquisition,
-		year: +d.AcqYear
+		year: +d.AcqYear,
+		born: +d.Born,
+		capture: +d.Capture,
+		rescue: +d.Rescue,
+		total: +d.Total
 	});
 }
 
-function loadCetaceans(cb) {
-	d3.csv('assets/allCetaceans.csv', cleanCetaceans, function (err, data) {
+function loadAcquisitions(cb) {
+	d3.csv('assets/acquisitionsOnly.csv', cleanAcquisitions, function (err, data) {
 		cb(err, data);
 	});
 }
 
 function init() {
 	return new Promise(function (resolve, reject) {
-		d3.queue().defer(loadCetaceans).awaitAll(function (err, result) {
+		d3.queue().defer(loadAcquisitions).awaitAll(function (err, result) {
 			if (err) reject(err);else resolve(result);
 		});
 	});

@@ -1,18 +1,21 @@
 import * as d3 from 'd3'
 import 'promis'
 
-function cleanCetaceans(d) {
+
+function cleanAcquisitions(d) {
 	return {
 		...d,
-		species : d.Species,
-		acquisition : d.Acquisition,
-		year : +d.AcqYear
+		year : +d.AcqYear,
+		born : +d.Born,
+		capture : +d.Capture,
+		rescue : +d.Rescue,
+		total : +d.Total
 	}
 }
 
 
-function loadCetaceans(cb) {
-	d3.csv('assets/allCetaceans.csv', cleanCetaceans, (err, data) => {
+function loadAcquisitions(cb) {
+	d3.csv('assets/acquisitionsOnly.csv', cleanAcquisitions, (err, data) => {
 		cb (err, data)
 	})
 }
@@ -20,7 +23,7 @@ function loadCetaceans(cb) {
 function init() {
 	return new Promise((resolve, reject) => {
 		d3.queue()
-			.defer(loadCetaceans)
+			.defer(loadAcquisitions)
 			.awaitAll((err, result) => {
 				if (err) reject(err)
 				else resolve(result)

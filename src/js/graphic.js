@@ -13,12 +13,19 @@ let graphicH = 0
 let desktop = false
 let enterExitScene = null
 let timelineData = null
-let nestedData = null
+let stackedData = null
+
+let Acq = ['capture', 'born', 'rescue']
+
 
 const margin = 30
 const scaleX = d3.scaleBand()
+//const scaleX = d3.scaleTime()
 const scaleY = d3.scaleLinear()
 let svg = null
+
+const formatYear = d3.timeFormat("%Y")
+const parseYear = d3.timeParse("%Y")
 
 
 const stepScenes = []
@@ -29,6 +36,8 @@ const graphicSel = containerSel.select('.scroll__graphic')
 const proseSel = containerSel.select('.scroll__prose')
 const stepSel = containerSel.selectAll('.prose__step')
 const scrollSel = containerSel.select('.scroll')
+
+const color = d3.scaleOrdinal(d3.schemeCategory20)
 
 
 
@@ -90,22 +99,47 @@ function setupScroll(){
 	setupEnterExit()
 }
 
-function nest(data){
+
+function gettingData(data){
 
 	timelineData = data[0]
 
-	const filteredData = timelineData.filter(d => isNaN(d.AcqYear) == false)
+	const stacked = d3.stack()
+		.keys(['capture', 'born', 'rescue'])
+		.order(d3.stackOrderNone)
+		.offset(d3.stackOffsetNone)
 
+		console.log(stacked)
+
+	stackedData = stacked(timelineData)
+
+	console.log(stackedData)
+
+	let layers = d3.stack()
+		.keys((Acq.map(function(count){
+		return timelineData.map(function(d){
+			return {x: d.year, y: +d[count]}
+		})
+	})))
+
+	let layerTest = d3.stack()
+		.keys(Acq.map(function(count){
+			return timelineData.map(function(d){
+				return {x: d.year, y: +d[count]}
+			})
+		}))
+
+	console.log(layerTest(timelineData))
+
+	/*const filteredData = timelineData.filter(d => isNaN(d.year) == false)
 
 	nestedData = d3.nest()
-		.key( d => d.AcqYear )
+		.key( d => +d.year )
 		.sortKeys(d3.ascending)
 		.rollup( values => values.length )
-		.entries(filteredData)
-
+		.entries(filteredData)*/
 
 }
-
 
 function translate(x, y) {	
 
@@ -162,7 +196,7 @@ function resizeGraphic() {
 function enter(){
 	svg = graphicSel
 		.selectAll('svg')
-		.data([nestedData])
+		.data([stackedData])
 
 
 	const svgEnter = svg
@@ -192,26 +226,27 @@ function enter(){
 
 
 function updateScales( data ) {
+	const trimW = graphicW - margin
 	scaleX
-		.rangeRound([0, graphicW])
+		.rangeRound([0, trimW])
 		.padding(0.1)
-		.domain(nestedData.map(d => +d.key))
+		//.domain([parseYear("1938"), parseYear("2017")])
+		.domain(stackedData[0].map(d => d.data.year))
+
 
 		const trim = graphicH - (margin * 2)
 
 	scaleY
 		.range([trim, 0])
-		.domain([0, d3.max(data, d => d.value)])
-
-		console.log(graphicW)
-		console.log(graphicH)
+		//.domain([0, d3.max(stackedData, d => d[0] + d[1])])
+		//.domain([0, d3.max(stackedData[stackedData.length - 1], d => d[0] + d[1])])
+		.domain([0, 178])
+		console.log(stackedData[0] + stackedData[1])
 }
 
 
 
 function updateDom({ container, data }) {
-
-	console.log(graphicW)
 
 	const svg = graphicSel.select('svg')
 
@@ -226,17 +261,24 @@ function updateDom({ container, data }) {
 
 	const plot = g.select('.timelinePlot')
 
-	const bar = plot.selectAll('.bars').data(nestedData)
+	const plotGroup = plot.selectAll('.layers')
+		.data(stackedData)
+		.enter().append("g")
+		.attr("class", "layers")
+		.style("fill", function(d, i){return color(i)})
+
+
+	const bar = plotGroup.selectAll('.bars').data(d => d)
 
 	const trim = graphicH - (margin * 2)
 
 	bar.enter().append('rect')
 			.attr('class', 'bars')
 		.merge(bar)
-			.attr('x', d => scaleX(d.key))
-			.attr('y', d => scaleY(d.value))
+			.attr('x', d => scaleX(d.data.year))
+			.attr('y', d => scaleY(d[1]))
 			.attr('width', scaleX.bandwidth())
-			.attr('height', d => trim - scaleY(d.value) )
+			.attr('height', d => scaleY(d[0]) - scaleY(d[1]))
 }
 
 
@@ -245,13 +287,10 @@ function updateAxis({ container, data }) {
 	const axis = graphicSel.select('.g-axis')
 
 	const axisLeft = d3.axisLeft(scaleY)
-	const axisBottom = d3.axisBottom(scaleX)
+	const axisBottom = d3.axisBottom(scaleX).tickValues(["1938", "1950", "1960", "1970", "1980", "1990", "2000", "2010"])
 
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')
-
-	//const maxY = scaleY.range()[0]
-	//const offset = maxY
 
 	const trim = graphicH - (margin * 2)
 
@@ -271,17 +310,17 @@ function updateChart({ step, down }) {
 
 	if (step === '1') {
 		barsSel
-			.attr('fill', 'black')
+			//.attr('fill', 'black')
 	}
 
 	if (step === '2') {
 		barsSel
-			.attr('fill', 'red')
+			//.attr('fill', 'red')
 	}
 
 	if (step === '3') {
 		barsSel
-			.attr('fill', 'blue')
+			//.attr('fill', 'blue')
 	}
 }
 
@@ -290,9 +329,9 @@ function resize() {
 	updateDimensions()
 	resizeScrollElements()
 	resizeGraphic()
-	updateScales(nestedData)
-	updateDom(nestedData)
-	updateAxis(nestedData)
+	updateScales(stackedData)
+	updateDom(stackedData)
+	updateAxis(stackedData)
 }
 
 function setup(data) {
@@ -305,7 +344,7 @@ function setup(data) {
 
 function init() {
 	loadData()
-		.then(nest)
+		.then(gettingData)
 		.then(setup)
 		.catch(err => console.log(err))
 }
