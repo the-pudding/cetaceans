@@ -192,8 +192,6 @@ var proseSel = containerSel.select('.scroll__prose');
 var stepSel = containerSel.selectAll('.prose__step');
 var scrollSel = containerSel.select('.scroll');
 
-var color = d3.scaleOrdinal(d3.schemeCategory20);
-
 function setupStep() {
 	var el = this;
 	var selection = d3.select(this);
@@ -350,21 +348,17 @@ function updateDom(_ref) {
 
 	var plot = g.select('.timelinePlot');
 
-	var plotGroup = plot.selectAll('.layers').data(stackedData).enter().append("g").attr("class", "layers").style("fill", function (d, i) {
-		return color(i);
+	var plotGroup = plot.selectAll('.layers').data(stackedData).enter().append("g").attr("class", function (d, i) {
+		return 'layers__' + d.key;
 	});
 
 	var bar = plotGroup.selectAll('.bars').data(function (d) {
 		return d;
 	});
 
-	bar.enter().append('rect').attr('class', 'bars').merge(bar).attr('x', function (d) {
-		return scaleX(d.data.year);
-	}).attr('y', function (d) {
-		return scaleY(d[1]);
-	}).attr('width', scaleX.bandwidth()).attr('height', function (d) {
-		return scaleY(d[0]) - scaleY(d[1]);
-	});
+	console.log(bar);
+
+	bar.enter().append('rect').attr('class', 'bars').attr('x', 0).attr('y', 0).attr('width', 0).attr('height', 0);
 }
 
 function updateBars() {

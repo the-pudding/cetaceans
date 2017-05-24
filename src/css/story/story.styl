@@ -1,9 +1,22 @@
 /* CUSTOM STORY STYLE */
 
-$color = #666666
+$captureColor = #999999
+$bornColor = #555555
+$rescueColor = #111111
 
-.whatever
-	background lighten($color, 50)
+.layers
 
-	p
-		font-size 20px
+	&__capture
+		
+		.bars
+			fill $captureColor
+			
+	&__born
+	
+		.bars
+			fill $bornColor
+			
+	&__rescue
+	
+		.bars
+			fill $rescueColor

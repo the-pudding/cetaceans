@@ -37,7 +37,6 @@ const proseSel = containerSel.select('.scroll__prose')
 const stepSel = containerSel.selectAll('.prose__step')
 const scrollSel = containerSel.select('.scroll')
 
-const color = d3.scaleOrdinal(d3.schemeCategory20)
 
 
 
@@ -236,19 +235,19 @@ function updateDom({ container, data }) {
 	const plotGroup = plot.selectAll('.layers')
 		.data(stackedData)
 		.enter().append("g")
-		.attr("class", "layers")
-		.style("fill", function(d, i){return color(i)})
+		.attr("class", function(d, i){ return 'layers__' + d.key})
 
 
 	const bar = plotGroup.selectAll('.bars').data(d => d)
 
+	console.log(bar)
+
 	bar.enter().append('rect')
 			.attr('class', 'bars')
-		.merge(bar)
-			.attr('x', d => scaleX(d.data.year))
-			.attr('y', d => scaleY(d[1]))
-			.attr('width', scaleX.bandwidth())
-			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
+			.attr('x', 0)
+			.attr('y', 0)
+			.attr('width', 0)
+			.attr('height', 0)
 
 
 }

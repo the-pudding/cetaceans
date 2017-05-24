@@ -337,12 +337,16 @@ header a.logo svg {
   margin: 0;
 }
 
-.whatever {
-  background: #e6e6e6;
+.layers__capture .bars {
+  fill: #999;
 }
 
-.whatever p {
-  font-size: 20px;
+.layers__born .bars {
+  fill: #555;
+}
+
+.layers__rescue .bars {
+  fill: #111;
 }
 
 @media only screen and (min-width: 40em) {
