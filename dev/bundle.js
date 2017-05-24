@@ -367,6 +367,18 @@ function updateDom(_ref) {
 	});
 }
 
+function updateBars() {
+	console.log(svg.selectAll);
+
+	var barResize = d3.selectAll('.bars').attr('x', function (d) {
+		return scaleX(d.data.year);
+	}).attr('y', function (d) {
+		return scaleY(d[1]);
+	}).attr('width', scaleX.bandwidth()).attr('height', function (d) {
+		return scaleY(d[0]) - scaleY(d[1]);
+	});
+}
+
 function updateAxis(_ref2) {
 	var container = _ref2.container,
 	    data = _ref2.data;
@@ -414,6 +426,7 @@ function resize() {
 	updateScales(stackedData);
 	updateAxis(stackedData);
 	updateDom(stackedData);
+	updateBars();
 }
 
 function setup(data) {

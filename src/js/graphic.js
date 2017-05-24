@@ -250,6 +250,17 @@ function updateDom({ container, data }) {
 			.attr('width', scaleX.bandwidth())
 			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
 
+
+}
+
+function updateBars(){
+	console.log(svg.selectAll)
+
+	const barResize = d3.selectAll('.bars')
+			.attr('x', d => scaleX(d.data.year))
+			.attr('y', d => scaleY(d[1]))
+			.attr('width', scaleX.bandwidth())
+			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
 }
 
 
@@ -303,6 +314,7 @@ function resize() {
 	updateScales(stackedData)
 	updateAxis(stackedData)
 	updateDom(stackedData)
+	updateBars()
 }
 
 function setup(data) {
