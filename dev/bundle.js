@@ -171,12 +171,12 @@ var desktop = false;
 var enterExitScene = null;
 var timelineData = null;
 var stackedData = null;
+var bar = null;
 
 var Acq = ['capture', 'born', 'rescue'];
 
 var margin = 30;
 var scaleX = d3.scaleBand();
-//const scaleX = d3.scaleTime()
 var scaleY = d3.scaleLinear();
 var svg = null;
 
@@ -244,16 +244,30 @@ function setupScroll() {
 	setupEnterExit();
 }
 
-function gettingData(data) {
+function gettingData(endYear, acquisition) {
 
-	timelineData = data[0];
+	var filtered = timelineData.filter(function (d) {
+		return d.year <= endYear;
+	});
 
 	var stacked = d3.stack().keys(['capture', 'born', 'rescue']).order(d3.stackOrderNone).offset(d3.stackOffsetNone);
 
-	console.log(stacked);
+	var stackFilter = stacked(filtered);
 
-	stackedData = stacked(timelineData);
+	console.log(stackFilter[0]);
+
+	if (acquisition == 'capture') {
+		stackedData = [stackFilter[0]];
+	} else if (acquisition == 'bornCapture') {
+		stackedData = [stackFilter[0], stackFilter[1]];
+	} else if (acquisition == 'all') {
+		stackedData = stackFilter;
+	}
+
+	console.log(stackedData);
 }
+
+//const filtered = timelineData.filter(d => d.year <= endYear)
 
 function translate(x, y) {
 
@@ -321,8 +335,10 @@ function updateScales(data) {
 	var trimW = graphicW - margin;
 	var trimH = graphicH - margin * 2;
 
-	scaleX.rangeRound([0, trimW]).padding(0.1).domain(stackedData[0].map(function (d) {
-		return d.data.year;
+	scaleX.rangeRound([0, trimW]).padding(0.1)
+	//.domain(stackedData[0].map(d => d.data.year))
+	.domain(timelineData.map(function (d) {
+		return d.year;
 	}));
 
 	scaleY.range([trimH, 0])
@@ -349,20 +365,41 @@ function updateDom(_ref) {
 	var plot = g.select('.timelinePlot');
 
 	var plotGroup = plot.selectAll('.layers').data(stackedData).enter().append("g").attr("class", function (d, i) {
-		return 'layers__' + d.key;
+		return 'layers ' + 'layers__' + d.key;
 	});
 
-	var bar = plotGroup.selectAll('.bars').data(function (d) {
+	bar = plotGroup.selectAll('.bars').data(function (d) {
 		return d;
 	});
 
 	console.log(bar);
 
-	bar.enter().append('rect').attr('class', 'bars').attr('x', 0).attr('y', 0).attr('width', 0).attr('height', 0);
+	bar.enter().append('rect').attr('class', 'bars')
+	//.attr('x', 0)
+	//.attr('y', 0)
+	//.attr('width', 0)
+	//.attr('height', 0)
+	.transition().duration(5000);
 }
 
-function updateBars() {
+function updateBars(acquisition) {
+
+	var filtered = graphicSel.selectAll('.layers');
+
+	var filteredData = filtered.filter(function (d) {
+		return d.key == acquisition;
+	});
+
+	console.log(bar);
+
+	console.log(graphicSel.selectAll('.layers'));
+}
+
+function resizeBars() {
 	console.log(svg.selectAll);
+
+	/*const barResize = d3.selectAll('.bars')
+ */
 
 	var barResize = d3.selectAll('.bars').attr('x', function (d) {
 		return scaleX(d.data.year);
@@ -405,7 +442,8 @@ function updateChart(_ref3) {
 	}
 
 	if (step === '2') {
-		barsSel.attr('fill', 'red');
+		gettingData(1972);
+		updateBars();
 	}
 
 	if (step === '3') {
@@ -420,18 +458,28 @@ function resize() {
 	updateScales(stackedData);
 	updateAxis(stackedData);
 	updateDom(stackedData);
-	updateBars();
+	resizeBars();
+}
+
+function updateData() {
+	gettingData(1978, "bornCapture");
 }
 
 function setup(data) {
+	updateData();
 	enter();
 	resize();
+
 	setupScroll();
 	updateChart({ step: '1', down: true });
+
+	console.log(gettingData(timelineData, 1985));
 }
 
 function init() {
-	(0, _loadData2.default)().then(gettingData).then(setup).catch(function (err) {
+	(0, _loadData2.default)().then(function (result) {
+		return timelineData = result[0];
+	}).then(setup).catch(function (err) {
 		return console.log(err);
 	});
 }

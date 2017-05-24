@@ -14,13 +14,14 @@ let desktop = false
 let enterExitScene = null
 let timelineData = null
 let stackedData = null
+let bar = null
+
 
 let Acq = ['capture', 'born', 'rescue']
 
 
 const margin = 30
 const scaleX = d3.scaleBand()
-//const scaleX = d3.scaleTime()
 const scaleY = d3.scaleLinear()
 let svg = null
 
@@ -29,6 +30,7 @@ const parseYear = d3.timeParse("%Y")
 
 
 const stepScenes = []
+
 
 const bodySel = d3.select('body') 
 const containerSel = bodySel.select('.section--scroll')
@@ -99,20 +101,28 @@ function setupScroll(){
 }
 
 
-function gettingData(data){
+function gettingData(endYear, acquisition){
 
-	timelineData = data[0]
+	const filtered = timelineData.filter(d => d.year <= endYear)
 
 	const stacked = d3.stack()
 		.keys(['capture', 'born', 'rescue'])
 		.order(d3.stackOrderNone)
 		.offset(d3.stackOffsetNone)
 
-		console.log(stacked)
+	const stackFilter = stacked(filtered)
 
-	stackedData = stacked(timelineData)
+	console.log(stackFilter[0])
+
+	if(acquisition == 'capture'){ stackedData = [stackFilter[0]] }
+		else if(acquisition == 'bornCapture'){ stackedData = [stackFilter[0], stackFilter[1]]}
+			else if(acquisition == 'all'){ stackedData = stackFilter}
+
+		console.log(stackedData)
 
 }
+
+	//const filtered = timelineData.filter(d => d.year <= endYear)
 
 function translate(x, y) {	
 
@@ -205,7 +215,8 @@ function updateScales( data ) {
 	scaleX
 		.rangeRound([0, trimW])
 		.padding(0.1)
-		.domain(stackedData[0].map(d => d.data.year))
+		//.domain(stackedData[0].map(d => d.data.year))
+		.domain(timelineData.map(d => d.year))
 
 	scaleY
 		.range([trimH, 0])
@@ -235,31 +246,50 @@ function updateDom({ container, data }) {
 	const plotGroup = plot.selectAll('.layers')
 		.data(stackedData)
 		.enter().append("g")
-		.attr("class", function(d, i){ return 'layers__' + d.key})
+		.attr("class", function(d, i){ return 'layers ' + 'layers__' + d.key})
 
 
-	const bar = plotGroup.selectAll('.bars').data(d => d)
+	bar = plotGroup.selectAll('.bars').data(d => d)
 
 	console.log(bar)
 
 	bar.enter().append('rect')
 			.attr('class', 'bars')
-			.attr('x', 0)
-			.attr('y', 0)
-			.attr('width', 0)
-			.attr('height', 0)
-
+			//.attr('x', 0)
+			//.attr('y', 0)
+			//.attr('width', 0)
+			//.attr('height', 0)
+		.transition()
+			.duration(5000)
 
 }
 
-function updateBars(){
+function updateBars(acquisition){
+
+	const filtered = graphicSel.selectAll('.layers')
+
+	const filteredData  = filtered.filter(d => d.key == acquisition)
+
+console.log(bar)
+
+console.log(graphicSel.selectAll('.layers'))
+
+}
+
+
+
+function resizeBars(){
 	console.log(svg.selectAll)
+
+	/*const barResize = d3.selectAll('.bars')
+*/
 
 	const barResize = d3.selectAll('.bars')
 			.attr('x', d => scaleX(d.data.year))
 			.attr('y', d => scaleY(d[1]))
 			.attr('width', scaleX.bandwidth())
 			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
+
 }
 
 
@@ -295,8 +325,8 @@ function updateChart({ step, down }) {
 	}
 
 	if (step === '2') {
-		barsSel
-			.attr('fill', 'red')
+		gettingData(1972)
+		updateBars()
 	}
 
 	if (step === '3') {
@@ -313,20 +343,28 @@ function resize() {
 	updateScales(stackedData)
 	updateAxis(stackedData)
 	updateDom(stackedData)
-	updateBars()
+	resizeBars()
+}
+
+function updateData(){
+	gettingData(1978, "bornCapture")
 }
 
 function setup(data) {
+	updateData()
 	enter()
 	resize()
+
 	setupScroll()
 	updateChart({ step: '1', down: true })
+
+	console.log(gettingData(timelineData, 1985))
 
 }
 
 function init() {
 	loadData()
-		.then(gettingData)
+		.then(result => timelineData = result[0])
 		.then(setup)
 		.catch(err => console.log(err))
 }
