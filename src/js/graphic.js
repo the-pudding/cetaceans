@@ -307,11 +307,22 @@ function resize() {
 	updateChart({ step: currentStep, down: currentDirection })
 }
 
+function setupEvents() {
+	const videoSel = containerSel.select('.scroll__video')
+	stepSel.on('mouseenter', () => {
+		videoSel.classed('is-visible', true)
+	})
+
+	stepSel.on('mouseout', () => {
+		videoSel.classed('is-visible', false)
+	})
+}
+
 function setup(data) {
-	// const data = getData(1938, "all")
 	setupDOM()
 	resize()
 	setupScroll()
+	// setupEvents()
 }
 
 function init() {

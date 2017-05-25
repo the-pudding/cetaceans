@@ -11,6 +11,7 @@
 	transform translate3d(0, 0, 0)
 	display flex
 	align-items center
+	// opacity 0.25
 	&.is-bottom
 		top auto
 		bottom 0
@@ -22,12 +23,35 @@
 .scroll__prose
 	max-width 20rem
 	margin 0 auto
+	position relative
 	+mq('bp-desktop')
 		margin 0
-		
-
 		
 .prose__step
 	padding 1rem
 	p 
 		margin 0
+	
+.scroll__video
+	position fixed
+	top 0
+	left 0
+	width 100%
+	overflow hidden
+	height 100vh
+	opacity 0
+	transition opacity 500ms
+	&.is-visible
+		opacity 1
+	video 
+		position absolute
+		top 0
+		top 50%
+		left 50%
+		min-width 100%
+		min-height 100%
+		width auto
+		height auto
+		z-index 0
+		transform translate(-50%,-50%)
+		background-size cover
