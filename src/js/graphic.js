@@ -268,23 +268,28 @@ function updateDom({ container, data }) {
 
 }
 
-function updateBars(acquisition){
+function updateBars(){
 
 	const plotGroup = graphicSel.selectAll('.layers')
 		.data(stackedData)
-		//.attr("class", function(d, i){ return 'layers ' + 'layers__' + d.key})
 
-	const barResize = plotGroup.selectAll('.bars').data( d => d )
+	const barUpdate = plotGroup.selectAll('.bars').data( d => d )
 
-	barResize.exit().remove()
+	barUpdate.exit().remove()
 
-	barResize.enter().append('rect')
+	barUpdate.enter().append('rect')
 			.attr('class', 'bars')
-			.attr('height', 0)
-		.merge(barResize)
 			.attr('x', d => scaleX(d.data.year))
-			.attr('y', d => scaleY(d[1]))
 			.attr('width', scaleX.bandwidth())
+			.attr('y', d => scaleY(d[0]))
+			.attr('height', 0)
+		.merge(barUpdate)
+			.transition()
+			.delay(function(d, i){ return i * 50; })
+			.duration(400)
+			//.attr('x', d => scaleX(d.data.year))
+			.attr('y', d => scaleY(d[1]))
+			//.attr('width', scaleX.bandwidth())
 			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
 
 
@@ -296,8 +301,6 @@ function resizeBars(){
 	console.log(svg.selectAll)
 
 	const barResize = d3.selectAll('.bars')
-
-
 
 	barResize
 			.attr('x', d => scaleX(d.data.year))
@@ -337,20 +340,35 @@ function updateChart({ step, down }) {
 
 
 	if (step === '1') {
-		gettingData(1960, "capture")
+		gettingData(1963, "capture")
 		updateBars()
 	}
 
 	if (step === '2') {
-		gettingData(1972, "capture")
+		gettingData(1971, "capture")
 		updateBars()
-
-		console.log(stackedData)
 	}
 
 	if (step === '3') {
-
+		gettingData(1972, "capture")
+		updateBars()
 	}
+
+	if (step === '4') {
+		gettingData(2017, "capture")
+		updateBars()
+	}
+
+	if (step === '5') {
+		gettingData(2017, "bornCapture")
+		updateBars()
+	}
+
+	if (step === '6') {
+		gettingData(2017, "all")
+		updateBars()
+	}
+
 }
 
 
@@ -367,7 +385,7 @@ function resize() {
 
 
 function setup(data) {
-	gettingData(1938, "capture")
+	gettingData(1938, "all")
 	enter()
 	resize()
 	setupScroll()
