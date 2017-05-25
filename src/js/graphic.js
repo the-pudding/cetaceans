@@ -338,13 +338,22 @@ function updateAxis({ container, data }) {
 
 function updateChart({ step, down }) {
 
+	if (step === '0') {
+		gettingData(1938, "capture")
+		updateBars()
+	}
 
 	if (step === '1') {
-		gettingData(1963, "capture")
+		gettingData(1962, "capture")
 		updateBars()
 	}
 
 	if (step === '2') {
+		gettingData(1971, "capture")
+		updateBars()
+	}
+
+	if (step === '2.5') {
 		gettingData(1971, "capture")
 		updateBars()
 	}

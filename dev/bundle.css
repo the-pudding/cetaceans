@@ -293,6 +293,13 @@ header a.logo svg {
   line-height: 1.7;
 }
 
+.intro__prose {
+  max-width: 40rem;
+  margin: 0 auto 4rem auto;
+  padding: 0 1rem;
+  margin-bottom: 1.3em;
+}
+
 .section--scroll {
   position: relative;
   min-height: 480px;
