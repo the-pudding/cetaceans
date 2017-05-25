@@ -4,7 +4,6 @@ import loadData from './load-data'
 
 const controller = new ScrollMagic.Controller({ refreshInterval: 0 })
 
-let viewportHeight = 0
 let width = 0
 let height = 0
 let graphicW = 0
@@ -13,21 +12,13 @@ let graphicH = 0
 let desktop = false
 let enterExitScene = null
 let timelineData = null
-let stackedData = null
-let bar = null
 
-
-let Acq = ['capture', 'born', 'rescue']
-
-
-const margin = 30
+const margin = 40
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
-let svg = null
 
 const formatYear = d3.timeFormat("%Y")
 const parseYear = d3.timeParse("%Y")
-
 
 const stepScenes = []
 
@@ -39,8 +30,8 @@ const proseSel = containerSel.select('.scroll__prose')
 const stepSel = containerSel.selectAll('.prose__step')
 const scrollSel = containerSel.select('.scroll')
 
-
-
+let currentStep = '0'
+let currentDirection = true
 
 function setupStep() {
 	const el = this
@@ -57,12 +48,16 @@ function setupStep() {
 		.on('enter', (event) => {
 			const step = selection.attr('data-step')
 			const down = event.scrollDirection === 'FORWARD'
+			currentStep = step
+			currentDirection = down
 			updateChart({ step: step, down: down })
 		})
 		.on('leave', (event) => {
 			const step = selection.attr('data-step')
 			const down = event.scrollDirection === 'FORWARD'
-			updateChart({ step: step, down: down })
+			currentStep = step
+			currentDirection = down
+			// updateChart({ step: step, down: down })
 		})
 		.addTo(controller)
 
@@ -85,7 +80,7 @@ function setupEnterExit() {
 			graphicSel.classed('is-fixed', true)
 			const bottom = event.scrollDirection === 'REVERSE'
 			if (bottom) graphicSel.classed('is-bottom', false)
-				console.log(graphicSel.classed('is-bottom'))
+				// console.log(graphicSel.classed('is-bottom'))
 		})
 		.on('leave', (event) => {
 			graphicSel.classed('is-fixed', false)
@@ -95,13 +90,13 @@ function setupEnterExit() {
 		.addTo(controller)
 }
 
-function setupScroll(){
+function setupScroll() {
 	stepSel.each(setupStep)
 	setupEnterExit()
 }
 
 
-function gettingData(endYear, acquisition){
+function getData(endYear, acquisition) {
 
 	const filtered = timelineData.filter(d => d.year <= endYear)
 
@@ -112,14 +107,11 @@ function gettingData(endYear, acquisition){
 
 	const stackFilter = stacked(filtered)
 
-	console.log(stackFilter[0])
+	// console.log(stackFilter[0])
 
-	if(acquisition == 'capture'){ stackedData = [stackFilter[0]] }
-		else if(acquisition == 'bornCapture'){ stackedData = [stackFilter[0], stackFilter[1]]}
-			else if(acquisition == 'all'){ stackedData = stackFilter}
-
-		console.log(stackedData)
-
+	if (acquisition == 'capture') return [stackFilter[0]]
+	else if (acquisition == 'bornCapture') return [stackFilter[0], stackFilter[1]]
+	else if (acquisition == 'all') return stackFilter
 }
 
 	//const filtered = timelineData.filter(d => d.year <= endYear)
@@ -135,7 +127,7 @@ function updateDimensions() {
 	height = window.innerHeight
 	desktop = window.matchMedia('(min-width: 800px)').matches
 
-	console.log(window.innerHeight)
+	// console.log(window.innerHeight)
 }
 
 function resizeScrollElements() {
@@ -153,7 +145,6 @@ function resizeScrollElements() {
 	}
 }
 
-
 function resizeGraphic() {
 	const ratio = 1.5
 	const proseW = proseSel.node().offsetWidth
@@ -164,29 +155,21 @@ function resizeGraphic() {
 		.style('width', `${graphicW}px`)
 		.style('height', `${height}px`)
 
-	const trim = graphicH - margin
+	// const trim = graphicH - margin
 
-	graphicSel.select('svg')
-		.attr('width', graphicW)
-		.attr('height', trim)
+	// graphicSel.select('svg')
+	// 	.attr('width', graphicW)
+	// 	.attr('height', trim)
 
-		console.log(graphicH)
-		console.log(graphicH-margin)
+		// console.log(graphicH)
+		// console.log(graphicH-margin)
 }
 
-
-
-function enter(){
-	svg = graphicSel
-		.selectAll('svg')
-		.data([stackedData])
-
-
-	const svgEnter = svg
-		.enter()
+function setupDOM(){
+	const svg = graphicSel
 		.append('svg')
 
-	const gEnter = svgEnter
+	const gEnter = svg
 		.append('g')
 		.attr('class', 'plotG')
 
@@ -207,9 +190,8 @@ function enter(){
 		.attr('class', 'axis axis--y')
 }
 
-
-function updateScales( data ) {
-	const trimW = graphicW - margin
+function updateScales(data) {
+	const trimW = graphicW - (margin * 2)
 	const trimH = graphicH - (margin * 2)
 
 	scaleX
@@ -227,10 +209,7 @@ function updateScales( data ) {
 		//console.log(stackedData[stackedData.length-2])
 }
 
-
-
-function updateDom({ container, data }) {
-
+function updateDom(data) {
 	const svg = graphicSel.select('svg')
 
 	svg
@@ -243,80 +222,48 @@ function updateDom({ container, data }) {
 
 	const plot = g.select('.timelinePlot')
 
-	const plotGroup = plot.selectAll('.layers')
-		.data(stackedData)
-		.enter().append("g")
-		.attr("class", function(d, i){ return 'layers ' + 'layers__' + d.key})
+	const layer = plot.selectAll('.layer')
+		.data(data, d => d.key)
 
-	bar = plotGroup.selectAll('.bars').data(d => d)
+	const layerEnter = layer.enter().append('g')
+		.attr('class', d => `layer layer--${d.key}`)
 
-	bar.enter().append('rect')
-			.attr('class', 'bars')
-			/*.attr('x', 0)
-			.attr('width', 0)
-			.attr('y', 0)
-			.attr('height', 0)*/
-		/*.merge(bar)
-			.attr('x', d => scaleX(d.data.year))
-			.attr('width', scaleX.bandwidth())
-			.attr('y', d => scaleY(d[1]))
-			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))*/
-			//.attr('x', d => scaleX(d.data.year))
-			
-			//.attr('width', scaleX.bandwidth())
-			
+	layer.exit()
+		.transition()
+		.duration(500)
+		.ease(d3.easeCubicInOut)
+		.style('opacity', 0)
+		.remove()
 
+	const layerMerge = layerEnter.merge(layer)
+
+	const bar = layerMerge.selectAll('.bar').data(d => d)
+
+	// enter
+	const barEnter = bar.enter().append('rect')
+		.attr('class', 'bar')
+		.attr('x', d => scaleX(d.data.year))
+		.attr('y', d => scaleY(d[0]))
+		.attr('width', scaleX.bandwidth())
+		.attr('height', 0)
+
+	// exit
+	bar.exit().remove()
+
+	// update
+
+	const barMerge = barEnter.merge(bar)
+	
+	barMerge.transition()
+		.delay(function(d, i){ return i * 50; })
+		.duration(400)
+		.attr('x', d => scaleX(d.data.year))
+		.attr('y', d => scaleY(d[1]))
+		.attr('width', scaleX.bandwidth())
+		.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
 }
 
-function updateBars(){
-
-	const plotGroup = graphicSel.selectAll('.layers')
-		.data(stackedData)
-
-	const barUpdate = plotGroup.selectAll('.bars').data( d => d )
-
-	barUpdate.exit().remove()
-
-	barUpdate.enter().append('rect')
-			.attr('class', 'bars')
-			.attr('x', d => scaleX(d.data.year))
-			.attr('width', scaleX.bandwidth())
-			.attr('y', d => scaleY(d[0]))
-			.attr('height', 0)
-		.merge(barUpdate)
-			.transition()
-			.delay(function(d, i){ return i * 50; })
-			.duration(400)
-			//.attr('x', d => scaleX(d.data.year))
-			.attr('y', d => scaleY(d[1]))
-			//.attr('width', scaleX.bandwidth())
-			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
-
-
-}
-
-
-
-function resizeBars(){
-	console.log(svg.selectAll)
-
-	const barResize = d3.selectAll('.bars')
-
-	barResize
-			.attr('x', d => scaleX(d.data.year))
-			.attr('y', d => scaleY(d[1]))
-			.attr('width', scaleX.bandwidth())
-			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
-
-
-
-	//console.log(barResize)
-
-}
-
-
-
-function updateAxis({ container, data }) {
+function updateAxis(data) {
 	const axis = graphicSel.select('.g-axis')
 
 	const axisLeft = d3.axisLeft(scaleY)
@@ -337,47 +284,19 @@ function updateAxis({ container, data }) {
 
 
 function updateChart({ step, down }) {
-
-	if (step === '0') {
-		gettingData(1938, "capture")
-		updateBars()
-	}
-
-	if (step === '1') {
-		gettingData(1962, "capture")
-		updateBars()
-	}
-
-	if (step === '2') {
-		gettingData(1971, "capture")
-		updateBars()
-	}
-
-	if (step === '2.5') {
-		gettingData(1971, "capture")
-		updateBars()
-	}
-
-	if (step === '3') {
-		gettingData(1972, "capture")
-		updateBars()
-	}
-
-	if (step === '4') {
-		gettingData(2017, "capture")
-		updateBars()
-	}
-
-	if (step === '5') {
-		gettingData(2017, "bornCapture")
-		updateBars()
-	}
-
-	if (step === '6') {
-		gettingData(2017, "all")
-		updateBars()
-	}
-
+	let data = []
+	if (step === '0') data = getData(1938, "capture")
+	if (step === '1') data = getData(1962, "capture")
+	if (step === '2') data = getData(1971, "capture")
+	if (step === '2.5') data = getData(1971, "capture")
+	if (step === '3') data = getData(1972, "capture")
+	if (step === '4') data = getData(2017, "capture")
+	if (step === '5') data = getData(2017, "bornCapture")
+	if (step === '6') data = getData(2017, "all")
+	console.log({ step, data })
+	updateScales(data)
+	updateAxis(data)
+	updateDom(data)
 }
 
 
@@ -385,20 +304,14 @@ function resize() {
 	updateDimensions()
 	resizeScrollElements()
 	resizeGraphic()
-	updateScales(stackedData)
-	updateAxis(stackedData)
-	updateDom(stackedData)
-	resizeBars()
+	updateChart({ step: currentStep, down: currentDirection })
 }
 
-
-
 function setup(data) {
-	gettingData(1938, "all")
-	enter()
+	// const data = getData(1938, "all")
+	setupDOM()
 	resize()
 	setupScroll()
-	updateChart({ step: '1', down: true })
 }
 
 function init() {
