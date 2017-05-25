@@ -248,31 +248,45 @@ function updateDom({ container, data }) {
 		.enter().append("g")
 		.attr("class", function(d, i){ return 'layers ' + 'layers__' + d.key})
 
-
 	bar = plotGroup.selectAll('.bars').data(d => d)
-
-	console.log(bar)
 
 	bar.enter().append('rect')
 			.attr('class', 'bars')
-			//.attr('x', 0)
-			//.attr('y', 0)
-			//.attr('width', 0)
-			//.attr('height', 0)
-		.transition()
-			.duration(5000)
+			/*.attr('x', 0)
+			.attr('width', 0)
+			.attr('y', 0)
+			.attr('height', 0)*/
+		/*.merge(bar)
+			.attr('x', d => scaleX(d.data.year))
+			.attr('width', scaleX.bandwidth())
+			.attr('y', d => scaleY(d[1]))
+			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))*/
+			//.attr('x', d => scaleX(d.data.year))
+			
+			//.attr('width', scaleX.bandwidth())
+			
 
 }
 
 function updateBars(acquisition){
 
-	const filtered = graphicSel.selectAll('.layers')
+	const plotGroup = graphicSel.selectAll('.layers')
+		.data(stackedData)
+		//.attr("class", function(d, i){ return 'layers ' + 'layers__' + d.key})
 
-	const filteredData  = filtered.filter(d => d.key == acquisition)
+	const barResize = plotGroup.selectAll('.bars').data( d => d )
 
-console.log(bar)
+	barResize.exit().remove()
 
-console.log(graphicSel.selectAll('.layers'))
+	barResize.enter().append('rect')
+			.attr('class', 'bars')
+			.attr('height', 0)
+		.merge(barResize)
+			.attr('x', d => scaleX(d.data.year))
+			.attr('y', d => scaleY(d[1]))
+			.attr('width', scaleX.bandwidth())
+			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
+
 
 }
 
@@ -281,14 +295,19 @@ console.log(graphicSel.selectAll('.layers'))
 function resizeBars(){
 	console.log(svg.selectAll)
 
-	/*const barResize = d3.selectAll('.bars')
-*/
-
 	const barResize = d3.selectAll('.bars')
+
+
+
+	barResize
 			.attr('x', d => scaleX(d.data.year))
 			.attr('y', d => scaleY(d[1]))
 			.attr('width', scaleX.bandwidth())
 			.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
+
+
+
+	//console.log(barResize)
 
 }
 
@@ -317,21 +336,20 @@ function updateAxis({ container, data }) {
 function updateChart({ step, down }) {
 
 
-	const barsSel = d3.selectAll('.bars')
-
 	if (step === '1') {
-		barsSel
-			//.attr('fill', 'black')
-	}
-
-	if (step === '2') {
-		gettingData(1972)
+		gettingData(1960, "capture")
 		updateBars()
 	}
 
+	if (step === '2') {
+		gettingData(1972, "capture")
+		updateBars()
+
+		console.log(stackedData)
+	}
+
 	if (step === '3') {
-		barsSel
-			.attr('fill', 'blue')
+
 	}
 }
 
@@ -346,20 +364,14 @@ function resize() {
 	resizeBars()
 }
 
-function updateData(){
-	gettingData(1978, "bornCapture")
-}
+
 
 function setup(data) {
-	updateData()
+	gettingData(1938, "capture")
 	enter()
 	resize()
-
 	setupScroll()
 	updateChart({ step: '1', down: true })
-
-	console.log(gettingData(timelineData, 1985))
-
 }
 
 function init() {

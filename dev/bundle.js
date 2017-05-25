@@ -372,42 +372,56 @@ function updateDom(_ref) {
 		return d;
 	});
 
-	console.log(bar);
+	bar.enter().append('rect').attr('class', 'bars');
+	/*.attr('x', 0)
+ .attr('width', 0)
+ .attr('y', 0)
+ .attr('height', 0)*/
+	/*.merge(bar)
+ 	.attr('x', d => scaleX(d.data.year))
+ 	.attr('width', scaleX.bandwidth())
+ 	.attr('y', d => scaleY(d[1]))
+ 	.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))*/
+	//.attr('x', d => scaleX(d.data.year))
 
-	bar.enter().append('rect').attr('class', 'bars')
-	//.attr('x', 0)
-	//.attr('y', 0)
-	//.attr('width', 0)
-	//.attr('height', 0)
-	.transition().duration(5000);
+	//.attr('width', scaleX.bandwidth())
+
 }
 
 function updateBars(acquisition) {
 
-	var filtered = graphicSel.selectAll('.layers');
+	var plotGroup = graphicSel.selectAll('.layers').data(stackedData);
+	//.attr("class", function(d, i){ return 'layers ' + 'layers__' + d.key})
 
-	var filteredData = filtered.filter(function (d) {
-		return d.key == acquisition;
+	var barResize = plotGroup.selectAll('.bars').data(function (d) {
+		return d;
 	});
 
-	console.log(bar);
+	barResize.exit().remove();
 
-	console.log(graphicSel.selectAll('.layers'));
-}
-
-function resizeBars() {
-	console.log(svg.selectAll);
-
-	/*const barResize = d3.selectAll('.bars')
- */
-
-	var barResize = d3.selectAll('.bars').attr('x', function (d) {
+	barResize.enter().append('rect').attr('class', 'bars').attr('height', 0).merge(barResize).attr('x', function (d) {
 		return scaleX(d.data.year);
 	}).attr('y', function (d) {
 		return scaleY(d[1]);
 	}).attr('width', scaleX.bandwidth()).attr('height', function (d) {
 		return scaleY(d[0]) - scaleY(d[1]);
 	});
+}
+
+function resizeBars() {
+	console.log(svg.selectAll);
+
+	var barResize = d3.selectAll('.bars');
+
+	barResize.attr('x', function (d) {
+		return scaleX(d.data.year);
+	}).attr('y', function (d) {
+		return scaleY(d[1]);
+	}).attr('width', scaleX.bandwidth()).attr('height', function (d) {
+		return scaleY(d[0]) - scaleY(d[1]);
+	});
+
+	//console.log(barResize)
 }
 
 function updateAxis(_ref2) {
@@ -434,21 +448,19 @@ function updateChart(_ref3) {
 	    down = _ref3.down;
 
 
-	var barsSel = d3.selectAll('.bars');
-
 	if (step === '1') {
-		barsSel;
-		//.attr('fill', 'black')
-	}
-
-	if (step === '2') {
-		gettingData(1972);
+		gettingData(1960, "capture");
 		updateBars();
 	}
 
-	if (step === '3') {
-		barsSel.attr('fill', 'blue');
+	if (step === '2') {
+		gettingData(1972, "capture");
+		updateBars();
+
+		console.log(stackedData);
 	}
+
+	if (step === '3') {}
 }
 
 function resize() {
@@ -461,19 +473,12 @@ function resize() {
 	resizeBars();
 }
 
-function updateData() {
-	gettingData(1978, "bornCapture");
-}
-
 function setup(data) {
-	updateData();
+	gettingData(1938, "capture");
 	enter();
 	resize();
-
 	setupScroll();
 	updateChart({ step: '1', down: true });
-
-	console.log(gettingData(timelineData, 1985));
 }
 
 function init() {
