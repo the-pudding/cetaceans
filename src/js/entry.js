@@ -1,7 +1,8 @@
 import debounce from 'lodash.debounce'
 import { select, addClass } from './utils/dom'
 import isMobile from './utils/is-mobile'
-import graphic from './graphic'
+import graphicAcquisitions from './graphic-acquisitions'
+import graphicExplore from './graphic-explore'
 
 const bodyEl = select('body')
 let previousWidth = 0
@@ -10,7 +11,8 @@ function handleResize() {
 	const width = bodyEl.offsetWidth
 	if (previousWidth !== width) {
 		previousWidth = width
-		graphic.resize()
+		graphicAcquisitions.resize()
+		graphicExplore.resize()
 	}
 }
 
@@ -20,7 +22,8 @@ function init() {
 	// setup resize event
 	window.addEventListener('resize', debounce(handleResize, 150))
 	// kick off graphic code
-	graphic.init()
+	graphicAcquisitions.init()
+	graphicExplore.init()
 }
 
 init()

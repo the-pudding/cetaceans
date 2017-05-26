@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 import ScrollMagic from 'scrollmagic'
-import loadData from './load-data'
+import loadData from './load-data-acquisitions'
 
 const controller = new ScrollMagic.Controller({ refreshInterval: 0 })
 
@@ -327,8 +327,10 @@ function setup(data) {
 
 function init() {
 	loadData()
-		.then(result => timelineData = result[0])
-		.then(setup)
+		.then((result) => {
+			timelineData = result
+			setup()
+		})
 		.catch(err => console.log(err))
 }
 

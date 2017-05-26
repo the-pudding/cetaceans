@@ -1,7 +1,6 @@
 import * as d3 from 'd3'
 import 'promis'
 
-
 function cleanAcquisitions(d) {
 	return {
 		...d,
@@ -9,7 +8,7 @@ function cleanAcquisitions(d) {
 		born : +d.Born,
 		capture : +d.Capture,
 		rescue : +d.Rescue,
-		total : +d.Total
+		total : +d.Total,
 	}
 }
 
@@ -22,12 +21,16 @@ function loadAcquisitions(cb) {
 
 function init() {
 	return new Promise((resolve, reject) => {
-		d3.queue()
-			.defer(loadAcquisitions)
-			.awaitAll((err, result) => {
-				if (err) reject(err)
-				else resolve(result)
-			})
+		loadAcquisitions((err, data) => {
+			if (err) reject('error loading data')
+			else resolve(data)
+		})
+		// d3.queue()
+		// 	.defer(loadAcquisitions)
+		// 	.awaitAll((err, result) => {
+		// 		if (err) reject(err)
+		// 		else resolve(result)
+		// 	})
 	})
 }
 
