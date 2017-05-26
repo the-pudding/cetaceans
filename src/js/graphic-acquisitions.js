@@ -26,12 +26,17 @@ const stepScenes = []
 const bodySel = d3.select('body') 
 const containerSel = bodySel.select('.section--scroll')
 const graphicSel = containerSel.select('.scroll__graphic')
+const graphicContainerSel = graphicSel.select('.graphic__container')
 const proseSel = containerSel.select('.scroll__prose')
 const stepSel = containerSel.selectAll('.prose__step')
 const scrollSel = containerSel.select('.scroll')
+const scrollVideoSel = containerSel.selectAll('.scroll__video')
 
 let currentStep = '0'
 let currentDirection = true
+
+let currentVideoPlayer = null
+let muted = true
 
 function setupStep() {
 	const el = this
@@ -123,17 +128,17 @@ function translate(x, y) {
 
 
 function updateDimensions() {
-	width = scrollSel.node().offsetWidth
+	width = graphicContainerSel.node().offsetWidth
 	height = window.innerHeight
-	desktop = window.matchMedia('(min-width: 800px)').matches
+	desktop = window.matchMedia('(min-width: 20000px)').matches
 
 	// console.log(window.innerHeight)
 }
 
 function resizeScrollElements() {
-	const factor = desktop ? 0.67 : 1
+	const factor = 0.9
 	const h = Math.floor(height * factor)
-	stepSel.style('height', `${h}px`)
+	stepSel.style('padding-bottom', `${h}px`)
 
 	if (enterExitScene) {
 		const proseEl = proseSel.node()
@@ -147,12 +152,11 @@ function resizeScrollElements() {
 
 function resizeGraphic() {
 	const ratio = 1.5
-	const proseW = proseSel.node().offsetWidth
-	graphicW = desktop ? width - proseW : width
+	// const proseW = proseSel.node().offsetWidth
+	graphicW = width
 	graphicH = graphicW / ratio
-
+	console.log({graphicW, graphicH})
 	graphicSel
-		.style('width', `${graphicW}px`)
 		.style('height', `${height}px`)
 
 	// const trim = graphicH - margin
@@ -166,7 +170,7 @@ function resizeGraphic() {
 }
 
 function setupDOM(){
-	const svg = graphicSel
+	const svg = graphicContainerSel
 		.append('svg')
 
 	const gEnter = svg
@@ -282,21 +286,44 @@ function updateAxis(data) {
 		.call(axisLeft)
 }
 
+function updateVideo(step) {
+	const videoSel = containerSel.select(`.scroll__video[data-step='${step}']`)
+	const hasVideo = videoSel.size()
+
+
+	if (currentVideoPlayer) currentVideoPlayer.pause()
+
+	if (hasVideo) {
+		videoSel.classed('is-visible', true)
+		currentVideoPlayer = videoSel.select('video').node()
+		currentVideoPlayer.play()
+		currentVideoPlayer.muted = muted
+	} else {
+		scrollVideoSel.classed('is-visible', false)
+	}
+
+	// make clickable
+	graphicSel.classed('is-untouchable', hasVideo)
+	proseSel.classed('is-untouchable', hasVideo)
+
+
+}	
 
 function updateChart({ step, down }) {
 	let data = []
 	if (step === '0') data = getData(1938, "capture")
 	if (step === '1') data = getData(1962, "capture")
 	if (step === '2') data = getData(1971, "capture")
-	if (step === '2.5') data = getData(1971, "capture")
-	if (step === '3') data = getData(1972, "capture")
-	if (step === '4') data = getData(2017, "capture")
-	if (step === '5') data = getData(2017, "bornCapture")
-	if (step === '6') data = getData(2017, "all")
-	console.log({ step, data })
+	if (step === '3') data = getData(1971, "capture")
+	if (step === '4') data = getData(1972, "capture")
+	if (step === '5') data = getData(2017, "capture")
+	if (step === '6') data = getData(2017, "bornCapture")
+	if (step === '7') data = getData(2017, "all")
+	// console.log({ step, data })
 	updateScales(data)
 	updateAxis(data)
 	updateDom(data)
+	updateVideo(step)
 }
 
 
@@ -308,13 +335,12 @@ function resize() {
 }
 
 function setupEvents() {
-	const videoSel = containerSel.select('.scroll__video')
-	stepSel.on('mouseenter', () => {
-		videoSel.classed('is-visible', true)
-	})
+	scrollVideoSel.on('click', () => {
+		// if muted restart and unmute
+		muted = !muted
+		currentVideoPlayer.muted = muted
+		if (!muted) currentVideoPlayer.currentTime = 0
 
-	stepSel.on('mouseout', () => {
-		videoSel.classed('is-visible', false)
 	})
 }
 
@@ -322,7 +348,7 @@ function setup(data) {
 	setupDOM()
 	resize()
 	setupScroll()
-	// setupEvents()
+	setupEvents()
 }
 
 function init() {
