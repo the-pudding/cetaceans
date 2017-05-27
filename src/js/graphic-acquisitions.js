@@ -311,15 +311,14 @@ function updateVideo(step) {
 
 function updateChart({ step, down }) {
 	let data = []
-	if (step === '0') data = getData(1938, "capture")
-	if (step === '1') data = getData(1962, "capture")
-	if (step === '2') data = getData(1971, "capture")
-	if (step === '3') data = getData(1971, "capture")
-	if (step === '4') data = getData(1972, "capture")
-	if (step === '5') data = getData(2017, "capture")
-	if (step === '6') data = getData(2017, "bornCapture")
-	if (step === '7') data = getData(2017, "all")
-	// console.log({ step, data })
+	if (step === ('0' || 'video--1')) data = getData(1938, "capture")
+	if (step === 'data--1') data = getData(1962, "capture")
+	if (step === 'data--2' || step === 'video--2') data = getData(1971, "capture")
+	if (step === 'data--3'|| step === 'video--3') data = getData(1972, "capture")
+	if (step === 'data--4'|| step === 'data--5' || step === 'video--4' || step === 'video--5' || step === 'video--6') data = getData(2017, "capture")
+	if (step === 'data--6') data = getData(2017, "bornCapture")
+	if (step === 'data--7' || step === 'video--7') data = getData(2017, "all")
+	 console.log({ step, data })
 	updateScales(data)
 	updateAxis(data)
 	updateDom(data)
