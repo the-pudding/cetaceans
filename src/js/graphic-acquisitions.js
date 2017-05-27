@@ -83,12 +83,14 @@ function setupEnterExit() {
 	enterExitScene
 		.on('enter', (event) => {
 			graphicSel.classed('is-fixed', true)
+			scrollVideoSel.classed('is-visible', true)
 			const bottom = event.scrollDirection === 'REVERSE'
 			if (bottom) graphicSel.classed('is-bottom', false)
-				// console.log(graphicSel.classed('is-bottom'))
+				 console.log(graphicSel.classed('is-bottom'))
 		})
 		.on('leave', (event) => {
 			graphicSel.classed('is-fixed', false)
+			scrollVideoSel.classed('is-visible', false)
 			const bottom = event.scrollDirection === 'FORWARD'
 			if (bottom) graphicSel.classed('is-bottom', true)
 		})
@@ -300,7 +302,9 @@ function updateVideo(step) {
 		currentVideoPlayer.muted = muted
 	} else {
 		scrollVideoSel.classed('is-visible', false)
-	}
+	} 
+
+
 
 	// make clickable
 	graphicSel.classed('is-untouchable', hasVideo)
