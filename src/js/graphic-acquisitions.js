@@ -84,6 +84,7 @@ function setupEnterExit() {
 		.on('enter', (event) => {
 			graphicSel.classed('is-fixed', true)
 			scrollVideoSel.classed('is-visible', true)
+			currentVideoPlayer.play()
 			const bottom = event.scrollDirection === 'REVERSE'
 			if (bottom) graphicSel.classed('is-bottom', false)
 				 console.log(graphicSel.classed('is-bottom'))
@@ -91,6 +92,8 @@ function setupEnterExit() {
 		.on('leave', (event) => {
 			graphicSel.classed('is-fixed', false)
 			scrollVideoSel.classed('is-visible', false)
+			currentVideoPlayer.pause()
+
 			const bottom = event.scrollDirection === 'FORWARD'
 			if (bottom) graphicSel.classed('is-bottom', true)
 		})
@@ -322,7 +325,7 @@ function updateChart({ step, down }) {
 	if (step === 'data--4'|| step === 'data--5' || step === 'video--4' || step === 'video--5' || step === 'video--6') data = getData(2017, "capture")
 	if (step === 'data--6') data = getData(2017, "bornCapture")
 	if (step === 'data--7' || step === 'video--7') data = getData(2017, "all")
-	 console.log({ step, data })
+
 	updateScales(data)
 	updateAxis(data)
 	updateDom(data)
