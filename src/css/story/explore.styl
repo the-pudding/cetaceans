@@ -2,6 +2,39 @@
 	position relative
 	min-height 1000px
 	width 100%
+	transition fill $video-transition
+	.square
+		&--Capture
+				fill $captureColor
+				
+	.square
+		&--Born
+				fill $bornColor
+
+	.square
+		&--Rescue
+				fill $rescueColor	
+				
+	.square
+		&--Alive
+				fill $aliveColor
+				
+	.square
+		&--Died
+				fill $deadColor
+				
+	.square
+		&--Escaped
+				fill $escapeColor
+				
+	.square
+		&--Released
+				fill $releaseColor
+
+	.square
+		&--Unknown
+				fill $unknownColor
+
 
 .prose
 	max-width 30rem

@@ -92,6 +92,7 @@ function setupEvents(data){
 
 		const squares = d3.selectAll('.square')
 			.data(statusSort)
+			.attr('class', d => `square square--${d.Status}`)
 
 			console.log(squares)
 
@@ -100,7 +101,7 @@ function setupEvents(data){
 		squares.transition()
 			.duration(1000)
 				.ease(d3.easeCubicInOut)
-				.attr('fill', d => color(d.Status))
+				/*.attr('fill', d => color(d.Status))*/
 				.attr('x', (d,i) => {col = Math.floor( i / widthSquares );
 	            	return (col * squareSize) + (col * gapSize)})
 	      		.attr('y', (d,i) => {row = i % heightSquares;
@@ -118,6 +119,7 @@ function setupEvents(data){
 
 		const squares = d3.selectAll('.square')
 			.data(acqSort, d => d.ID)
+			.attr('class', d => `square square--${d.Acquisition}`)
 
 			console.log(squares)
 
@@ -125,7 +127,7 @@ function setupEvents(data){
 			.transition()
 				.duration(1000)
 				.ease(d3.easeCubicInOut)
-				.attr('fill', d => color(d.Acquisition))
+				/*.attr('fill', d => color(d.Acquisition))*/
 			    .attr('x', (d,i) => {col = Math.floor( i / widthSquares );
 	            	return (col * squareSize) + (col * gapSize)})
 	      		.attr('y', (d,i) => {row = i % heightSquares;
