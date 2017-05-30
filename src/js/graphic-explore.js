@@ -88,6 +88,12 @@ function setupDOM(){
       locationButton.append('button')
       .text('Location')
       .attr('class', 'toggle location')
+
+    // Slider
+    const slider = svg
+    	.append('g')
+    	.attr('class', 'slider')
+
 }
 
 function setupEvents(data){
