@@ -11,29 +11,33 @@
 		&--Born
 				fill $bornColor
 
-	.square
 		&--Rescue
 				fill $rescueColor	
 				
-	.square
 		&--Alive
 				fill $aliveColor
 				
-	.square
 		&--Died
 				fill $deadColor
 				
-	.square
 		&--Escaped
 				fill $escapeColor
 				
-	.square
 		&--Released
 				fill $releaseColor
 
-	.square
 		&--Unknown
 				fill $unknownColor
+				
+		&--SeaWorld
+				fill darken($aliveColor, 20)
+		
+		&--USNavy
+				fill lighten($aliveColor, 20)
+				
+		&--Other
+				fill $aliveColor
+		
 
 
 .prose
@@ -55,7 +59,7 @@
 
 .explore__graphic
 	width 100%
-	background rgba(255,0,0,0.1)
+/*	background rgba(255,0,0,0.1)*/
 	top 0
 	right 0
 	transform translate3d(0, 0, 0)

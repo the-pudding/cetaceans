@@ -15,13 +15,14 @@ let heightSquares = 50
 let col =  null
 let row =  null
 let squareSize = 10
-let gapSize = 1
+let gapSize = 2
 
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleBand()
 
 let statusButton = null
 let acqButton = null
+let locationButton = null
 
 const bodySel = d3.select('body') 
 const containerSel = bodySel.select('.section--explore')
@@ -81,6 +82,12 @@ function setupDOM(){
       acqButton.append('button')
       .text('Acquisition')
       .attr('class', 'toggle acq')
+
+    locationButton = d3.select('#toggleLocation')
+      
+      locationButton.append('button')
+      .text('Location')
+      .attr('class', 'toggle location')
 }
 
 function setupEvents(data){
@@ -94,15 +101,11 @@ function setupEvents(data){
 			.data(statusSort)
 			.attr('class', d => `square square--${d.Status}`)
 
-			console.log(squares)
-
-		updateDom(statusSort)
-
-		squares.transition()
-			.duration(1000)
+		squares
+			.transition()
+				.duration(1000)
 				.ease(d3.easeCubicInOut)
-				/*.attr('fill', d => color(d.Status))*/
-				.attr('x', (d,i) => {col = Math.floor( i / widthSquares );
+			    .attr('x', (d,i) => {col = Math.floor( i / widthSquares );
 	            	return (col * squareSize) + (col * gapSize)})
 	      		.attr('y', (d,i) => {row = i % heightSquares;
 	      			return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
@@ -115,8 +118,6 @@ function setupEvents(data){
             return d3.ascending(a.Acquisition, b.Acquisition);
     	});
 
-
-
 		const squares = d3.selectAll('.square')
 			.data(acqSort, d => d.ID)
 			.attr('class', d => `square square--${d.Acquisition}`)
@@ -127,13 +128,43 @@ function setupEvents(data){
 			.transition()
 				.duration(1000)
 				.ease(d3.easeCubicInOut)
-				/*.attr('fill', d => color(d.Acquisition))*/
 			    .attr('x', (d,i) => {col = Math.floor( i / widthSquares );
 	            	return (col * squareSize) + (col * gapSize)})
 	      		.attr('y', (d,i) => {row = i % heightSquares;
 	      			return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
 		
 		})
+
+
+		locationButton.on('click', () => {
+
+		const locationSort = data.sort(function(a, b) {
+            return d3.ascending(a.Status, b.Status);
+    	})
+    		.sort(function(a, b) {
+            return d3.descending(a.livingLocations, b.livingLocations);
+    	})
+
+		const squares = d3.selectAll('.square')
+			.data(locationSort)
+			//.attr('class', d => if(d.Status == "Alive") {return `square square--${d.livingLocations}`} else { return `square square--${d.Status}`})
+			.attr('class', function(d){
+				if(d.Status == "Alive") { return `square square--${d.livingLocations}`}
+					else {return `square square--${d.Status}`}
+			})
+
+
+
+		squares
+			.transition()
+				.duration(1000)
+				.ease(d3.easeCubicInOut)
+				//.attr('fill', d => color(d.livingLocations))
+			    .attr('x', (d,i) => {col = Math.floor( i / widthSquares );
+	            	return (col * squareSize) + (col * gapSize)})
+	      		.attr('y', (d,i) => {row = i % heightSquares;
+	      			return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
+	})
 
 }
 
