@@ -1,4 +1,7 @@
-// .section--explore
+.section--explore
+	position relative
+	min-height 1000px
+	width 100%
 
 .prose
 	max-width 30rem
@@ -16,3 +19,17 @@
 
 	+mq('bp-desktop')
 		margin 0
+
+.explore__graphic
+	width 100%
+	background rgba(255,0,0,0.1)
+	top 0
+	right 0
+	transform translate3d(0, 0, 0)
+	display flex
+	align-items center
+	
+	.graphic__container
+		width 100%
+		max-width 60rem
+		margin 0 auto

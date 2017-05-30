@@ -160,7 +160,7 @@ function resizeGraphic() {
 	// const proseW = proseSel.node().offsetWidth
 	graphicW = width
 	graphicH = graphicW / ratio
-	console.log({graphicW, graphicH})
+
 	graphicSel
 		.style('height', `${height}px`)
 
