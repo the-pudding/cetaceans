@@ -83,17 +83,13 @@ function setupEnterExit() {
 	enterExitScene
 		.on('enter', (event) => {
 			graphicSel.classed('is-fixed', true)
-			scrollVideoSel.classed('is-visible', true)
-			currentVideoPlayer.play()
 			const bottom = event.scrollDirection === 'REVERSE'
 			if (bottom) graphicSel.classed('is-bottom', false)
-				 console.log(graphicSel.classed('is-bottom'))
 		})
 		.on('leave', (event) => {
 			graphicSel.classed('is-fixed', false)
 			scrollVideoSel.classed('is-visible', false)
-			currentVideoPlayer.pause()
-
+			pauseVideo()
 			const bottom = event.scrollDirection === 'FORWARD'
 			if (bottom) graphicSel.classed('is-bottom', true)
 		})
@@ -105,6 +101,11 @@ function setupScroll() {
 	setupEnterExit()
 }
 
+
+// VIDEO STUFF
+function pauseVideo() {
+	if (currentVideoPlayer) currentVideoPlayer.pause()
+}
 
 function getData(endYear, acquisition) {
 
@@ -124,8 +125,6 @@ function getData(endYear, acquisition) {
 	else if (acquisition == 'all') return stackFilter
 }
 
-	//const filtered = timelineData.filter(d => d.year <= endYear)
-
 function translate(x, y) {	
 
 	return `translate(${x}, ${y})`
@@ -135,7 +134,7 @@ function translate(x, y) {
 function updateDimensions() {
 	width = graphicContainerSel.node().offsetWidth
 	height = window.innerHeight
-	desktop = window.matchMedia('(min-width: 20000px)').matches
+	desktop = window.matchMedia('(min-width: 600px)').matches
 
 	// console.log(window.innerHeight)
 }
@@ -293,10 +292,9 @@ function updateAxis(data) {
 
 function updateVideo(step) {
 	const videoSel = containerSel.select(`.scroll__video[data-step='${step}']`)
-	const hasVideo = videoSel.size()
+	const hasVideo = !!videoSel.size()
 
-
-	if (currentVideoPlayer) currentVideoPlayer.pause()
+	pauseVideo()
 
 	if (hasVideo) {
 		videoSel.classed('is-visible', true)
@@ -307,24 +305,21 @@ function updateVideo(step) {
 		scrollVideoSel.classed('is-visible', false)
 	} 
 
-
-
 	// make clickable
 	graphicSel.classed('is-untouchable', hasVideo)
 	proseSel.classed('is-untouchable', hasVideo)
-
-
 }	
 
 function updateChart({ step, down }) {
 	let data = []
-	if (step === ('0' || 'video--1')) data = getData(1938, "capture")
+	if (step === 'data--0') data = getData(1938, "capture")
 	if (step === 'data--1') data = getData(1962, "capture")
 	if (step === 'data--2' || step === 'video--2') data = getData(1971, "capture")
-	if (step === 'data--3'|| step === 'video--3') data = getData(1972, "capture")
-	if (step === 'data--4'|| step === 'data--5' || step === 'video--4' || step === 'video--5' || step === 'video--6') data = getData(2017, "capture")
-	if (step === 'data--6') data = getData(2017, "bornCapture")
-	if (step === 'data--7' || step === 'video--7') data = getData(2017, "all")
+	if (step === 'data--3') data = getData(1972, "capture")
+	if (step === 'data--4') data = getData(2017, "capture")
+	if (step === 'data--5') data = getData(2017, "capture")
+	if (step === 'data--6' || step === 'video--6') data = getData(2017, "bornCapture")
+	if (step === 'data--7') data = getData(2017, "all")
 
 	updateScales(data)
 	updateAxis(data)
@@ -346,7 +341,6 @@ function setupEvents() {
 		muted = !muted
 		currentVideoPlayer.muted = muted
 		if (!muted) currentVideoPlayer.currentTime = 0
-
 	})
 }
 

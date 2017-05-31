@@ -13,7 +13,7 @@ function handleResize() {
 	if (previousWidth !== width) {
 		previousWidth = width
 		graphicAcquisitions.resize()
-		graphicExplore.resize()
+		// graphicExplore.resize()
 	}
 }
 
@@ -24,8 +24,8 @@ function init() {
 	window.addEventListener('resize', debounce(handleResize, 150))
 	// kick off graphic code
 	graphicAcquisitions.init()
-	graphicExplore.init()
-	graphicDeath.init()
+	// graphicExplore.init()
+	// graphicDeath.init()
 }
 
 init()

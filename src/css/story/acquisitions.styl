@@ -45,14 +45,13 @@
 	max-width 30rem
 	margin 0 auto
 	position relative
+	// pointer-events none
 	&.is-untouchable
 		pointer-events none
-
-	+mq('bp-desktop')
-		margin 0
 		
 .prose__step
 	padding 1rem
+	position relative
 	p 
 		margin 0
 		padding 1rem
@@ -65,14 +64,15 @@
 		// 	text-shadow 0 0 2px black
 	
 .scroll__video
-	position fixed
-	top 0
-	left 0
 	width 100%
 	overflow hidden
-	height 100vh
 	opacity 0
 	transition opacity $video-transition
+	+mq('bp-desktop')
+		position fixed
+		top 0
+		left 0
+		height 100vh
 	&.is-visible
 		opacity 1
 		cursor pointer
