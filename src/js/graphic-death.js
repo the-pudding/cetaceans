@@ -18,8 +18,16 @@ let desktop = false
 
 const scaleXage = d3.scaleLinear()
 const scaleXbreeding = d3.scaleLinear()
+const scaleXchart = d3.scaleLinear()
+const scaleYchart = d3.scaleLinear()
+
+const populationLine = d3.line()
+	.x(d => scaleXchart(+d.year))
+	.y(d => scaleYchart(+d.population))
+
 let breedingSliderValue = null
 let ageSliderValue = null
+let maxYear = null
 
 
 const animalsAdded = 26
@@ -31,7 +39,8 @@ function translate(x, y) {
 }
 
 function updateDimensions() {
-	width = graphicContainerSel.node().offsetWidth
+/*	width = graphicContainerSel.node().offsetWidth*/
+	width = 800
 	height = window.innerHeight
 	desktop = window.matchMedia('(min-width: 20000px)').matches
 }
@@ -50,24 +59,65 @@ function updateScales(data) {
 
 	scaleXage
 		.range([0, graphicW])
-		//.padding(0.1)
-		//.domain(stackedData[0].map(d => d.data.year))
 		.domain([15, 62])
 		.clamp(true)
 
 	scaleXbreeding
 		.range([0, graphicW])
-		//.padding(0.1)
-		//.domain(stackedData[0].map(d => d.data.year))
 		.domain([2017, 2050])
 		.clamp(true)
+
+	scaleXchart
+		.range([0, graphicW])
+		.domain([2017, 2100])
+
+		console.log(maxYear)
+
+	scaleYchart
+		.range([(graphicH - margin*2), 0])
+		/*.domain([0, d3.max(predictionData, d => d.population)])*/
+		.domain([0, 600])
+
+}
+
+function updateLine(data){
+
+	populationLine
+
+
+
+	const svg = graphicSel.select('svg')
+
+	const g = svg.select('g')
+
+	const plot = g.select('.deathPlot')
+
+	const line = plot.selectAll('.line')
+		.data([data])
+
+	const lineEnter = line.enter()
+		.append('path')
+		.attr('class', 'line')
+		.attr('d', populationLine)
+
+	// exit
+	line.exit().remove()
+
+	// update
+
+	const lineMerge = lineEnter.merge(line)
+	
+	lineMerge.transition()
+		.duration(400)
+		.attr('d', populationLine)
+
+	console.log([data])
+
 }
 
 function setupDOM(){
 	const svg = graphicContainerSel
 		.append('svg')
-
-		console.log(graphicSel)
 
 	const gEnter = svg
 		.append('g')
@@ -82,18 +132,25 @@ function setupDOM(){
 		.attr('class', 'slider slider--Breeding')
 		.attr('transform', `translate(0, ${margin})`)
 
+	const axis = gEnter
+		.append('g')
+		.attr('class', 'g-axis')
+
+	const x = axis
+		.append('g')
+		.attr('class', 'axis axis--x')
+
+	const y = axis
+		.append('g')
+		.attr('class', 'axis axis--y')
+
 }
 
-function updateDOM(data) {
+function setupSliders (){
+
 	const svg = graphicSel.select('svg')
 
-	svg
-		.attr('width', graphicW)
-		.attr('height', graphicH)
-
 	const g = svg.select('g')
-
-	g.attr('transform', translate(margin, margin))
 
 	// "All Animals Live to...." Slider
 
@@ -111,7 +168,8 @@ function updateDOM(data) {
 	  		.on("start.interrupt", function() { ageSlider.interrupt(); })
 	  		.on("start drag", function() { updateAgeSlider(Math.floor(scaleXage.invert(d3.event.x)))})
 	  		.on('end', d => {ageSliderValue = Math.floor(scaleXage.invert(d3.event.x))
-	  			calculateData(ageSliderValue, breedingSliderValue)}))
+	  			calculateData(ageSliderValue, breedingSliderValue)
+	  			updateDOM(predictionData)}))
 
 	ageSlider.insert('g', '.track-overlay')
 		.attr('class', 'ticks')
@@ -145,7 +203,8 @@ function updateDOM(data) {
 	  		.on("start.interrupt", function() { breedingSlider.interrupt(); })
 	  		.on("start drag", function() { updateBreedingSlider(Math.floor(scaleXbreeding.invert(d3.event.x)))})
 	  		.on('end', function() {breedingSliderValue = Math.floor(scaleXbreeding.invert(d3.event.x))
-	  			calculateData(ageSliderValue, breedingSliderValue)}))
+	  			calculateData(ageSliderValue, breedingSliderValue)
+	  			updateDOM(predictionData)}))
 
 	breedingSlider.insert('g', '.track-overlay')
 		.attr('class', 'ticks')
@@ -161,29 +220,77 @@ function updateDOM(data) {
 		.attr('class', 'breedingHandle')
 		.attr('r', 9)
 
+
+}
+
+function updateDOM(data) {
+	const svg = graphicSel.select('svg')
+
+	svg
+		.attr('width', graphicW)
+		.attr('height', graphicH)
+
+	const g = svg.select('g')
+
+	g.attr('transform', translate(margin, margin))
+
+	const plot = g.select('.explorePlot')
+
+	const line = g.selectAll('.line')
+		.data([data])
+
+
+	const lineEnter = line.enter()
+		.append('path')
+		.attr('class', 'line')
+		.attr('d', populationLine)
+
+	// exit
+	line.exit().remove()
+
+	// update
+
+	const lineMerge = lineEnter.merge(line)
+	
+	lineMerge.transition()
+		.duration(400)
+		.attr('d', populationLine)
+
+
+		console.log(line)
+
+
+
+}
+
+function updateAxis(data) {
+	const axis = graphicSel.select('.g-axis')
+
+	const axisLeft = d3.axisLeft(scaleYchart)
+	const axisBottom = d3.axisBottom(scaleXchart)
+
+	const x = axis.select('.axis--x')
+	const y = axis.select('.axis--y')
+
+	const trim = graphicH - (margin * 2)
+
+	x
+		.attr('transform', `translate(0, ${trim})`)
+		.call(axisBottom)
+
+	y
+		.call(axisLeft)
 }
 
 function updateAgeSlider(sliderValue){
+
 	const ageHandle = d3.select('.ageHandle')
 		.attr('cx', scaleXage(sliderValue))
-
-	//ageSliderValue = sliderValue
-
-/*	sliderData = data
-	sliderData.forEach(function(d){
-		d.deathYear = (sliderValue - d.currentAge) + 2017
-		console.log(sliderValue)
-	})*/
 }
 
 function updateBreedingSlider(sliderValue){
 	const breedingHandle = d3.select('.breedingHandle')
 		.attr('cx', scaleXbreeding(sliderValue))
-
-	//breedingSliderValue = sliderValue
-
-/*	let maxYear = Math.max.apply(Math, data.map( d => d.deathYear))*/
-
 }
 
 function calculateData(ageSliderValue, breedingSliderValue){
@@ -200,7 +307,7 @@ function calculateData(ageSliderValue, breedingSliderValue){
 		.rollup(leaves => d3.sum(leaves, d => d.count))
 		.entries(sliderData)
 
-	let maxYear = Math.max.apply(Math, sliderData.map( d => d.deathYear))
+	maxYear = Math.max.apply(Math, sliderData.map( d => d.deathYear))
 
 	const births = d3.range(breedingSliderValue, maxYear + 1).map(i => ({birthYear: i, count: 0})) 
 
@@ -215,6 +322,7 @@ function calculateData(ageSliderValue, breedingSliderValue){
 		population -= nestSlider[i].value
 	}
 
+console.log(predictionData)
 
 }
 
@@ -228,8 +336,11 @@ function setup() {
 function resize() {
 	updateDimensions()
 	resizeGraphic()
-	updateScales()
+	updateScales(predictionData)
+	setupSliders()
 	updateDOM(tkData)
+	updateLine()
+	updateAxis()
 }
 
 
