@@ -41,8 +41,6 @@ function updateDimensions() {
 	height = window.innerHeight
 	desktop = window.matchMedia('(min-width: 20000px)').matches
 	gridSize = Math.floor(width / 53)
-
-	console.log(graphicContainerSel.node())
 }
 
 function sort(){
@@ -63,8 +61,6 @@ function resizeGraphic() {
 function setupDOM(){
 	const svg = graphicContainerSel
 		.append('svg')
-
-		console.log(graphicSel)
 
 	const gEnter = svg
 		.append('g')
@@ -89,10 +85,7 @@ function setupDOM(){
       .text('Location')
       .attr('class', 'toggle location')
 
-    // Slider
-    const slider = svg
-    	.append('g')
-    	.attr('class', 'slider')
+
 
 }
 
@@ -127,8 +120,6 @@ function setupEvents(data){
 		const squares = d3.selectAll('.square')
 			.data(acqSort, d => d.ID)
 			.attr('class', d => `square square--${d.Acquisition}`)
-
-			console.log(squares)
 
 		squares
 			.transition()
@@ -186,14 +177,10 @@ function updateDom(data) {
 
 	g.attr('transform', translate(margin, margin))
 
-	console.log(g)
-
 	const plot = g.select('.explorePlot')
 
 	const square = g.selectAll('.square')
 		.data(data)
-
-		console.log(square)
 
 	const squareEnter = square.enter().append('rect')
 		.attr('class', 'square')
@@ -241,7 +228,6 @@ function init() {
 	loadData()
 		.then((result) => {
 			tkData = result
-			console.log(tkData)
 			setup()
 		})
 		.catch(err => console.log(err))
