@@ -69,51 +69,19 @@ function updateScales(data) {
 
 	scaleXchart
 		.range([0, graphicW])
-		.domain([2017, 2100])
+		.domain([2017, d3.max(data, d => d.year)])
 
-		console.log(maxYear)
+		console.log(scaleXchart.domain())
 
 	scaleYchart
 		.range([(graphicH - margin*2), 0])
-		/*.domain([0, d3.max(predictionData, d => d.population)])*/
-		.domain([0, 600])
+		.domain([0, d3.max(data, d => d.population)])
+
+		console.log(d3.max(data, d=>d.population))
+		/*.domain([0, 600])*/
 
 }
 
-function updateLine(data){
-
-	populationLine
-
-
-
-	const svg = graphicSel.select('svg')
-
-	const g = svg.select('g')
-
-	const plot = g.select('.deathPlot')
-
-	const line = plot.selectAll('.line')
-		.data([data])
-
-	const lineEnter = line.enter()
-		.append('path')
-		.attr('class', 'line')
-		.attr('d', populationLine)
-
-	// exit
-	line.exit().remove()
-
-	// update
-
-	const lineMerge = lineEnter.merge(line)
-	
-	lineMerge.transition()
-		.duration(400)
-		.attr('d', populationLine)
-
-	console.log([data])
-
-}
 
 function setupDOM(){
 	const svg = graphicContainerSel
@@ -256,9 +224,10 @@ function updateDOM(data) {
 		.duration(400)
 		.attr('d', populationLine)
 
+	updateScales(data)
 
-		console.log(line)
 
+	updateAxis(data)
 
 
 }
@@ -269,6 +238,8 @@ function updateAxis(data) {
 	const axisLeft = d3.axisLeft(scaleYchart)
 	const axisBottom = d3.axisBottom(scaleXchart)
 
+	console.log(axisBottom)
+
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')
 
@@ -276,7 +247,10 @@ function updateAxis(data) {
 
 	x
 		.attr('transform', `translate(0, ${trim})`)
-		.call(axisBottom)
+		.transition()
+		.duration(1500)
+		.call(axisBottom
+			.tickFormat(d3.format('d')))
 
 	y
 		.call(axisLeft)
