@@ -9,7 +9,8 @@ const graphicContainerSel = graphicSel.select('.graphic__container')
 let tkData = []
 let sliderData = []
 let predictionData = []
-let margin = 100
+/*let margin = 100*/
+let margin = {top: 200, bottom: 25, left: 100, right: 50}
 let width = 0
 let height = 0
 let graphicW = 0
@@ -22,8 +23,7 @@ const scaleXchart = d3.scaleLinear()
 const scaleYchart = d3.scaleLinear()
 
 const populationLine = d3.line()
-	.x(d => scaleXchart(+d.year))
-	.y(d => scaleYchart(+d.population))
+
 
 let breedingSliderValue = null
 let ageSliderValue = null
@@ -39,10 +39,10 @@ function translate(x, y) {
 }
 
 function updateDimensions() {
-/*	width = graphicContainerSel.node().offsetWidth*/
-	width = 800
+	width = graphicContainerSel.node().offsetWidth
+/*	width = 800*/
 	height = window.innerHeight
-	desktop = window.matchMedia('(min-width: 20000px)').matches
+	//desktop = window.matchMedia('(min-width: 20000px)').matches
 }
 
 function resizeGraphic() {
@@ -58,26 +58,30 @@ function resizeGraphic() {
 function updateScales(data) {
 
 	scaleXage
-		.range([0, graphicW])
+		.range([0, (graphicW - (margin.left + margin.right))])
 		.domain([15, 62])
 		.clamp(true)
 
 	scaleXbreeding
-		.range([0, graphicW])
+		.range([0, (graphicW - (margin.left + margin.right))])
 		.domain([2017, 2050])
 		.clamp(true)
 
 	scaleXchart
-		.range([0, graphicW])
+		.range([0, (graphicW - (margin.left + margin.right))])
 		.domain([2017, d3.max(data, d => d.year)])
 
 		console.log(scaleXchart.domain())
 
 	scaleYchart
-		.range([(graphicH - margin*2), 0])
+		.range([(graphicH - margin.top - margin.bottom), 0])
 		.domain([0, d3.max(data, d => d.population)])
 
 		console.log(d3.max(data, d=>d.population))
+
+	populationLine
+		.x(d => scaleXchart(+d.year))
+		.y(d => scaleYchart(+d.population))
 		/*.domain([0, 600])*/
 
 }
@@ -92,13 +96,14 @@ function setupDOM(){
 		.attr('class', 'deathPlot')
 
 	// "All Animals Live to...." Slider
-	const ageSlider = gEnter.append('g')
+	const ageSlider = svg.append('g')
 		.attr('class', 'slider slider--Age')
+		.attr('transform', `translate(${margin.left}, ${margin.bottom})`)
 
 	// "If Breeding Ended in..." Slider
-	const breedingSlider = gEnter.append('g')
+	const breedingSlider = svg.append('g')
 		.attr('class', 'slider slider--Breeding')
-		.attr('transform', `translate(0, ${margin})`)
+		.attr('transform', `translate(${margin.left}, ${margin.left})`)
 
 	const axis = gEnter
 		.append('g')
@@ -140,8 +145,8 @@ function setupSliders (){
 	  			updateDOM(predictionData)}))
 
 	ageSlider.insert('g', '.track-overlay')
-		.attr('class', 'ticks')
-		.attr('transform', 'translate(0' + 18 + ')')
+			.attr('class', 'ticks')
+			.attr('transform', 'translate(0,' + 20 + ')')
 		.selectAll('text')
 			.data(scaleXage.ticks(10))
 			.enter().append('text')
@@ -176,7 +181,7 @@ function setupSliders (){
 
 	breedingSlider.insert('g', '.track-overlay')
 		.attr('class', 'ticks')
-		.attr('transform', 'translate(0' + 18 + ')')
+		.attr('transform', 'translate(0,' + 20 + ')')
 		.selectAll('text')
 			.data(scaleXbreeding.ticks(10))
 			.enter().append('text')
@@ -192,15 +197,20 @@ function setupSliders (){
 }
 
 function updateDOM(data) {
+	updateScales(data)
+	updateAxis(data)
+
 	const svg = graphicSel.select('svg')
 
 	svg
 		.attr('width', graphicW)
 		.attr('height', graphicH)
 
+		console.log(graphicW)
+
 	const g = svg.select('g')
 
-	g.attr('transform', translate(margin, margin))
+	g.attr('transform', translate(margin.right, margin.top))
 
 	const plot = g.select('.explorePlot')
 
@@ -224,10 +234,7 @@ function updateDOM(data) {
 		.duration(400)
 		.attr('d', populationLine)
 
-	updateScales(data)
 
-
-	updateAxis(data)
 
 
 }
@@ -243,7 +250,7 @@ function updateAxis(data) {
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')
 
-	const trim = graphicH - (margin * 2)
+	const trim = graphicH - (margin.top + margin.bottom)
 
 	x
 		.attr('transform', `translate(0, ${trim})`)
@@ -281,13 +288,24 @@ function calculateData(ageSliderValue, breedingSliderValue){
 		.rollup(leaves => d3.sum(leaves, d => d.count))
 		.entries(sliderData)
 
+/*	const missingYears = d3.range(2017, d3.min(nestSlider, d => d.key)).map(i => ({key: i, value: 0}))
+
+	const totalNest = missingYears.concat(nestSlider)
+*/
+/*	console.log(missingYears)
+	console.log(totalNest)*/
+
 	maxYear = Math.max.apply(Math, sliderData.map( d => d.deathYear))
+
+/*	const allYears = d3.range(2017, maxYear).map(i => ({key: i, value: }))*/
 
 	const births = d3.range(breedingSliderValue, maxYear + 1).map(i => ({birthYear: i, count: 0})) 
 
 	const birthsAll = newYears.concat(births)
 
 	predictionData = d3.range(2017, maxYear + 1).map(i => ({year: i, population: 500}))
+
+	console.log(predictionData)
 
 	let population = 563
 	for (let i = 0; i < predictionData.length; i++){
@@ -296,7 +314,7 @@ function calculateData(ageSliderValue, breedingSliderValue){
 		population -= nestSlider[i].value
 	}
 
-console.log(predictionData)
+
 
 }
 
@@ -312,9 +330,8 @@ function resize() {
 	resizeGraphic()
 	updateScales(predictionData)
 	setupSliders()
-	updateDOM(tkData)
-	updateLine()
-	updateAxis()
+	updateDOM(predictionData)
+/*	updateAxis()*/
 }
 
 

@@ -39,7 +39,7 @@ function translate(x, y) {
 function updateDimensions() {
 	width = graphicContainerSel.node().offsetWidth
 	height = window.innerHeight
-	desktop = window.matchMedia('(min-width: 20000px)').matches
+	//desktop = window.matchMedia('(min-width: 20000px)').matches
 	gridSize = Math.floor(width / 53)
 }
 
