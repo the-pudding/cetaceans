@@ -8,6 +8,7 @@ const graphicContainerSel = graphicSel.select('.graphic__container')
 
 let tkData = []
 let sliderData = []
+let predictionData = []
 let margin = 100
 let width = 0
 let height = 0
@@ -19,6 +20,7 @@ const scaleXage = d3.scaleLinear()
 const scaleXbreeding = d3.scaleLinear()
 let breedingSliderValue = null
 let ageSliderValue = null
+
 
 const animalsAdded = 26
 
@@ -108,7 +110,8 @@ function updateDOM(data) {
 	  	.call(d3.drag()
 	  		.on("start.interrupt", function() { ageSlider.interrupt(); })
 	  		.on("start drag", function() { updateAgeSlider(Math.floor(scaleXage.invert(d3.event.x)))})
-	  		.on('end', d => {ageSliderValue = Math.floor(scaleXage.invert(d3.event.x))}))
+	  		.on('end', d => {ageSliderValue = Math.floor(scaleXage.invert(d3.event.x))
+	  			calculateData(ageSliderValue, breedingSliderValue)}))
 
 	ageSlider.insert('g', '.track-overlay')
 		.attr('class', 'ticks')
@@ -195,12 +198,34 @@ function calculateData(ageSliderValue, breedingSliderValue){
 
 	sliderData.sort((a,b) => d3.ascending(a.birthYear, b.birthYear))
 
-	console.log(breedingSliderValue)
+
+	sliderData.forEach(d => d.deathYear = ageSliderValue + d.birthYear)
+
+	let maxYear = Math.max.apply(Math, sliderData.map( d => d.deathYear))
 
 	console.log(sliderData)
 
-	/*let maxYear = Math.max.apply(Math, data.map( d => d.deathYear))
-*/
+	const deathsMap = d3.map(sliderData, d => d.deathYear)
+
+
+	for (let i = 0; i < maxYear - 2016; i++){
+
+		predictionData.push({year: maxYear - i})
+
+	}		
+
+	const ternary = function(d, i){
+		return deathsMap.get(d.year).count
+	}
+
+	predictionData.forEach((d, i) => d.population = d.year == 2017 ? 563 : ternary())
+
+	console.log(predictionData)
+
+
+
+	console.log(deathsMap.get(2013).count)
+
 
 
 }
