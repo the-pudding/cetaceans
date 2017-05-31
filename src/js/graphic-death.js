@@ -189,43 +189,31 @@ function updateBreedingSlider(sliderValue){
 function calculateData(ageSliderValue, breedingSliderValue){
 	sliderData = tkData
 
-	for (let i = 0; i < breedingSliderValue-2017; i++){
+	const newYears = d3.range(2017, breedingSliderValue).map(i => ({birthYear: i, count: animalsAdded}))
 
-		sliderData.push({birthYear: breedingSliderValue - i, 
-			count : animalsAdded})
+	sliderData = sliderData.concat(newYears)
 
-	}
+	sliderData.forEach(d => d.deathYear = Math.max((ageSliderValue + d.birthYear), 2017))
 
-	sliderData.sort((a,b) => d3.ascending(a.birthYear, b.birthYear))
-
-
-	sliderData.forEach(d => d.deathYear = ageSliderValue + d.birthYear)
+	let nestSlider = d3.nest()
+		.key(d => +d.deathYear)
+		.rollup(leaves => d3.sum(leaves, d => d.count))
+		.entries(sliderData)
 
 	let maxYear = Math.max.apply(Math, sliderData.map( d => d.deathYear))
 
-	console.log(sliderData)
+	const births = d3.range(breedingSliderValue, maxYear + 1).map(i => ({birthYear: i, count: 0})) 
 
-	const deathsMap = d3.map(sliderData, d => d.deathYear)
+	const birthsAll = newYears.concat(births)
 
+	predictionData = d3.range(2017, maxYear + 1).map(i => ({year: i, population: 500}))
 
-	for (let i = 0; i < maxYear - 2016; i++){
-
-		predictionData.push({year: maxYear - i})
-
-	}		
-
-	const ternary = function(d, i){
-		return deathsMap.get(d.year).count
+	let population = 563
+	for (let i = 0; i < predictionData.length; i++){
+		predictionData[i].population = population
+		population += birthsAll[i].count
+		population -= nestSlider[i].value
 	}
-
-	predictionData.forEach((d, i) => d.population = d.year == 2017 ? 563 : ternary())
-
-	console.log(predictionData)
-
-
-
-	console.log(deathsMap.get(2013).count)
-
 
 
 }
