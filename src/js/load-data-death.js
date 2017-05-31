@@ -5,14 +5,14 @@ import 'promis'
 function cleanDeath(d) {
 	return {
 		...d,
-		currentAge : +d.currentAge,
+		birthYear : +d.BirthYear,
 		count : +d.count
 	}
 }
 
 
 function loadDeath(cb) {
-	d3.csv('assets/currentAges.csv', cleanDeath, (err, data) => {
+	d3.csv('assets/birthYears.csv', cleanDeath, (err, data) => {
 		cb (err, data)
 	})
 }

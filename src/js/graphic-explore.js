@@ -8,7 +8,7 @@ let height = 0
 let gridSize = 0
 let graphicW = 0
 let graphicH = 0
-let desktop = false
+
 
 let widthSquares = 50
 let heightSquares = 50

@@ -15,7 +15,13 @@ let graphicW = 0
 let graphicH = 0
 let desktop = false
 
-const scaleX = d3.scaleLinear()
+const scaleXage = d3.scaleLinear()
+const scaleXbreeding = d3.scaleLinear()
+let breedingSliderValue = null
+let ageSliderValue = null
+
+const animalsAdded = 26
+
 
 function translate(x, y) {	
 
@@ -40,11 +46,18 @@ function resizeGraphic() {
 
 function updateScales(data) {
 
-	scaleX
+	scaleXage
 		.range([0, graphicW])
 		//.padding(0.1)
 		//.domain(stackedData[0].map(d => d.data.year))
 		.domain([15, 62])
+		.clamp(true)
+
+	scaleXbreeding
+		.range([0, graphicW])
+		//.padding(0.1)
+		//.domain(stackedData[0].map(d => d.data.year))
+		.domain([2017, 2050])
 		.clamp(true)
 }
 
@@ -62,6 +75,11 @@ function setupDOM(){
 	const ageSlider = gEnter.append('g')
 		.attr('class', 'slider slider--Age')
 
+	// "If Breeding Ended in..." Slider
+	const breedingSlider = gEnter.append('g')
+		.attr('class', 'slider slider--Breeding')
+		.attr('transform', `translate(0, ${margin})`)
+
 }
 
 function updateDOM(data) {
@@ -75,46 +93,116 @@ function updateDOM(data) {
 
 	g.attr('transform', translate(margin, margin))
 
+	// "All Animals Live to...." Slider
+
 	const ageSlider = svg.select('.slider--Age')
 
 	ageSlider.append('line')
 		.attr('class', 'track')
-		.attr('x1', scaleX.range()[0])
-		.attr('x2', scaleX.range()[1])
+		.attr('x1', scaleXage.range()[0])
+		.attr('x2', scaleXage.range()[1])
 		.select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
 		.attr("class", "track-inset")
 		.select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
 	  	.attr('class', 'track-overlay')
 	  	.call(d3.drag()
 	  		.on("start.interrupt", function() { ageSlider.interrupt(); })
-	  		.on("start drag", function() { updateData(data, scaleX.invert(d3.event.x))
-	  			console.log(sliderData)}))
+	  		.on("start drag", function() { updateAgeSlider(Math.floor(scaleXage.invert(d3.event.x)))})
+	  		.on('end', d => {ageSliderValue = Math.floor(scaleXage.invert(d3.event.x))}))
 
 	ageSlider.insert('g', '.track-overlay')
 		.attr('class', 'ticks')
 		.attr('transform', 'translate(0' + 18 + ')')
 		.selectAll('text')
-			.data(scaleX.ticks(10))
+			.data(scaleXage.ticks(10))
 			.enter().append('text')
-				.attr('x', scaleX)
+				.attr('x', scaleXage)
 				.attr('text-anchor', 'middle')
 				.text(d => d)
 
-	const handle = ageSlider.insert('circle', '.track-overlay')
-		.attr('class', 'handle')
+	const ageHandle = ageSlider.insert('circle', '.track-overlay')
+		.attr('class', 'ageHandle')
+		.attr('r', 9)
+
+
+
+	// "If Breeding Ended in..." Slider
+
+	const breedingSlider = svg.select('.slider--Breeding')
+
+	breedingSlider.append('line')
+		.attr('class', 'track')
+		.attr('x1', scaleXbreeding.range()[0])
+		.attr('x2', scaleXbreeding.range()[1])
+		.select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+		.attr("class", "track-inset")
+		.select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+	  	.attr('class', 'track-overlay')
+	  	.call(d3.drag()
+	  		.on("start.interrupt", function() { breedingSlider.interrupt(); })
+	  		.on("start drag", function() { updateBreedingSlider(Math.floor(scaleXbreeding.invert(d3.event.x)))})
+	  		.on('end', function() {breedingSliderValue = Math.floor(scaleXbreeding.invert(d3.event.x))
+	  			calculateData(ageSliderValue, breedingSliderValue)}))
+
+	breedingSlider.insert('g', '.track-overlay')
+		.attr('class', 'ticks')
+		.attr('transform', 'translate(0' + 18 + ')')
+		.selectAll('text')
+			.data(scaleXbreeding.ticks(10))
+			.enter().append('text')
+				.attr('x', scaleXbreeding)
+				.attr('text-anchor', 'middle')
+				.text(d => d)
+
+	const breedingHandle = breedingSlider.insert('circle', '.track-overlay')
+		.attr('class', 'breedingHandle')
 		.attr('r', 9)
 
 }
 
-function updateData(data, sliderValue){
-	const handle = d3.select('.handle')
-		.attr('cx', scaleX(sliderValue))
+function updateAgeSlider(sliderValue){
+	const ageHandle = d3.select('.ageHandle')
+		.attr('cx', scaleXage(sliderValue))
 
-	sliderData = data
+	//ageSliderValue = sliderValue
+
+/*	sliderData = data
 	sliderData.forEach(function(d){
-		d.deathYear = Math.floor(sliderValue - d.currentAge) + 2017
+		d.deathYear = (sliderValue - d.currentAge) + 2017
 		console.log(sliderValue)
-	})
+	})*/
+}
+
+function updateBreedingSlider(sliderValue){
+	const breedingHandle = d3.select('.breedingHandle')
+		.attr('cx', scaleXbreeding(sliderValue))
+
+	//breedingSliderValue = sliderValue
+
+/*	let maxYear = Math.max.apply(Math, data.map( d => d.deathYear))*/
+
+}
+
+function calculateData(ageSliderValue, breedingSliderValue){
+	sliderData = tkData
+
+	for (let i = 0; i < breedingSliderValue-2017; i++){
+
+		sliderData.push({birthYear: breedingSliderValue - i, 
+			count : animalsAdded})
+
+	}
+
+	sliderData.sort((a,b) => d3.ascending(a.birthYear, b.birthYear))
+
+	console.log(breedingSliderValue)
+
+	console.log(sliderData)
+
+	/*let maxYear = Math.max.apply(Math, data.map( d => d.deathYear))
+*/
+
+
 }
 
 
