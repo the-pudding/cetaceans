@@ -3,6 +3,7 @@ import { select, addClass } from './utils/dom'
 import isMobile from './utils/is-mobile'
 import graphicAcquisitions from './graphic-acquisitions'
 import graphicExplore from './graphic-explore'
+import graphicOrcaDeath from './graphic-orca-death'
 import graphicDeath from './graphic-death'
 
 const bodyEl = select('body')
@@ -14,6 +15,7 @@ function handleResize() {
 		previousWidth = width
 		graphicAcquisitions.resize()
 		graphicExplore.resize()
+		/*graphicOrcaDeath.resize()*/
 		graphicDeath.resize()
 	}
 }
@@ -26,6 +28,7 @@ function init() {
 	// kick off graphic code
 	graphicAcquisitions.init()
 	graphicExplore.init()
+	graphicOrcaDeath.init()
 	graphicDeath.init()
 }
 
