@@ -69,7 +69,8 @@ function updateScales(data) {
 
 	scaleXchart
 		.range([0, (graphicW - (margin.left + margin.right))])
-		.domain([2017, d3.max(data, d => d.year)])
+		/*.domain([2017, d3.max(data, d => d.year)])*/
+		.domain([2017, 2100])
 
 		console.log(scaleXchart.domain())
 
@@ -155,7 +156,7 @@ function setupSliders (){
 				.text(d => d)
 
 	const ageHandle = ageSlider.insert('circle', '.track-overlay')
-		.attr('class', 'ageHandle')
+		.attr('class', 'handle ageHandle')
 		.attr('r', 9)
 
 
@@ -190,7 +191,7 @@ function setupSliders (){
 				.text(d => d)
 
 	const breedingHandle = breedingSlider.insert('circle', '.track-overlay')
-		.attr('class', 'breedingHandle')
+		.attr('class', 'handle breedingHandle')
 		.attr('r', 9)
 
 
