@@ -3,6 +3,29 @@
 	min-height 1000px
 	width 100%
 	
+	.prose
+		margin 0 auto
+		max-width 40rem
+		position relative
+
+	//+mq('bp-desktop')
+		//margin 0
+		
+		.prose--title
+			max-width 40rem
+			margin 0 auto
+			position relative
+			text-align center
+	
+.prose__paragraphs
+	padding 1rem
+	position relative
+	
+	p 
+		
+		padding 1rem
+		background rgba(255,255,255, 0.9)
+	
 .death__graphic
 	width 100%
 	background rgba(255,0,0,0.1)
@@ -18,19 +41,7 @@
 		max-width 60rem
 		margin 0 auto
 	
-.prose
-	max-width 30rem
-	margin 0 auto
-	position relative
 
-	+mq('bp-desktop')
-		margin 0
-		
-.prose--title
-	max-width 40rem
-	margin 0 auto
-	position relative
-	text-align center
 
 /*	+mq('bp-desktop')
 		margin 0*/

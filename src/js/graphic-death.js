@@ -58,12 +58,12 @@ function resizeGraphic() {
 function updateScales(data) {
 
 	scaleXage
-		.range([0, (graphicW - (margin.left + margin.right))])
+		.range([0, (graphicW - (margin.left + margin.right))/3])
 		.domain([15, 62])
 		.clamp(true)
 
 	scaleXbreeding
-		.range([0, (graphicW - (margin.left + margin.right))])
+		.range([0, (graphicW - (margin.left + margin.right))/3])
 		.domain([2017, 2050])
 		.clamp(true)
 
@@ -98,12 +98,12 @@ function setupDOM(){
 	// "All Animals Live to...." Slider
 	const ageSlider = svg.append('g')
 		.attr('class', 'slider slider--Age')
-		.attr('transform', `translate(${margin.left}, ${margin.bottom})`)
+		.attr('transform', `translate(${margin.left}, ${margin.bottom *4})`)
 
 	// "If Breeding Ended in..." Slider
 	const breedingSlider = svg.append('g')
 		.attr('class', 'slider slider--Breeding')
-		.attr('transform', `translate(${margin.left}, ${margin.left})`)
+		.attr('transform', `translate(${margin.left *5}, ${margin.bottom *4})`)
 
 	const axis = gEnter
 		.append('g')
@@ -148,7 +148,7 @@ function setupSliders (){
 			.attr('class', 'ticks')
 			.attr('transform', 'translate(0,' + 20 + ')')
 		.selectAll('text')
-			.data(scaleXage.ticks(10))
+			.data(scaleXage.ticks(5))
 			.enter().append('text')
 				.attr('x', scaleXage)
 				.attr('text-anchor', 'middle')
@@ -183,7 +183,7 @@ function setupSliders (){
 		.attr('class', 'ticks')
 		.attr('transform', 'translate(0,' + 20 + ')')
 		.selectAll('text')
-			.data(scaleXbreeding.ticks(10))
+			.data(scaleXbreeding.ticks(3))
 			.enter().append('text')
 				.attr('x', scaleXbreeding)
 				.attr('text-anchor', 'middle')
