@@ -83,11 +83,13 @@ function setupEnterExit() {
 	enterExitScene
 		.on('enter', (event) => {
 			graphicSel.classed('is-fixed', true)
+			proseSel.classed('is-fixed', true)
 			const bottom = event.scrollDirection === 'REVERSE'
 			if (bottom) graphicSel.classed('is-bottom', false)
 		})
 		.on('leave', (event) => {
 			graphicSel.classed('is-fixed', false)
+			proseSel.classed('is-fixed', false)
 			scrollVideoSel.classed('is-visible', false)
 			pauseVideo()
 			const bottom = event.scrollDirection === 'FORWARD'
@@ -307,7 +309,7 @@ function updateVideo(step) {
 
 	// make clickable
 	graphicSel.classed('is-untouchable', hasVideo)
-	proseSel.classed('is-untouchable', hasVideo)
+	scrollSel.classed('is-touchable', hasVideo)
 }	
 
 function updateChart({ step, down }) {
@@ -316,7 +318,7 @@ function updateChart({ step, down }) {
 	if (step === 'data--1') data = getData(1962, "capture")
 	if (step === 'data--2' || step === 'video--2') data = getData(1971, "capture")
 	if (step === 'data--3') data = getData(1972, "capture")
-	if (step === 'data--4') data = getData(2017, "capture")
+	if (step === 'data--4' || step === 'video--4') data = getData(2017, "capture")
 	if (step === 'data--5') data = getData(2017, "capture")
 	if (step === 'data--6' || step === 'video--6') data = getData(2017, "bornCapture")
 	if (step === 'data--7') data = getData(2017, "all")
@@ -336,11 +338,11 @@ function resize() {
 }
 
 function setupEvents() {
-	scrollVideoSel.on('click', () => {
+	scrollSel.on('click', () => {
 		// if muted restart and unmute
 		muted = !muted
-		currentVideoPlayer.muted = muted
-		if (!muted) currentVideoPlayer.currentTime = 0
+		if (currentVideoPlayer) currentVideoPlayer.muted = muted
+		if (currentVideoPlayer && !muted) currentVideoPlayer.currentTime = 0
 	})
 }
 
