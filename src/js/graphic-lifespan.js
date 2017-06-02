@@ -81,6 +81,32 @@ function setupDOM(){
 
 }
 
+function toggleSetup(){
+	const allAnimals = d3.select('#toggle.toggle')
+
+	allAnimals.append('button')
+		.text('All')
+		.attr('class', 'toggle all')
+
+	const bottlenose = d3.select('#toggle.toggle')
+
+	allAnimals.append('button')
+		.text('Bottlenose')
+		.attr('class', 'toggle bottlenose')
+
+	const orca = d3.select('#toggle.toggle')
+
+	allAnimals.append('button')
+		.text('Orca')
+		.attr('class', 'toggle orca')
+
+	const beluga = d3.select('#toggle.toggle')
+
+	allAnimals.append('button')
+		.text('Beluga')
+		.attr('class', 'toggle beluga')
+}
+
 
 function updateDOM(data) {
 	const svg = graphicSel.select('svg')
@@ -96,7 +122,7 @@ function updateDOM(data) {
 /*	const plot = g.select('.lifespanPlot')*/
 
 	const bar = g.selectAll('.bar')
-		.data(data)
+		.data(data, d => d.age)
 
 		console.log(bar)
 
@@ -112,7 +138,11 @@ function updateDOM(data) {
 		console.log(scaleX.bandwidth())
 
 	// exit
-	bar.exit().remove()
+	bar.exit()
+		.transition()
+		.style('opacity', 0)
+		.duration(400)
+		.remove()
 
 	// update
 
@@ -136,12 +166,41 @@ function resizeGraphic() {
 		.style('height', `${graphicH}px`)
 }
 
+function setupEvents(){
+	const allAnimals = d3.select('.toggle.all')
+		.on('click', d => {
+			filterData('All')
+			updateDOM(filteredData)
+		})
+
+	const bottlenose = d3.select('.toggle.bottlenose')
+		.on('click', d => {
+			filterData('Bottlenose')
+			updateDOM(filteredData)
+		})
+
+	const orca = d3.select('.toggle.orca')
+		.on('click', d => {
+			filterData('Orca')
+			updateDOM(filteredData)
+		})
+
+	const beluga = d3.select('.toggle.beluga')
+		.on('click', d => {
+			filterData('Beluga')
+			updateDOM(filteredData)
+		})
+
+}
+
 
 function setup() {
 	filterData("All")
 	setupDOM()
 	resize()
+	toggleSetup()
 	updateDOM(filteredData)
+	setupEvents()
 }
 
 function resize() {
