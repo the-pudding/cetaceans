@@ -47,8 +47,6 @@ function updateScales(data) {
 /*		.domain(data.map(d => d.age))*/
 		.domain(d3.range(0, 62))
 
-		console.log(d3.range(0, d3.max(data, d => d.age)))
-
 	scaleY
 		.range([trimH, 0])
 		.domain(d3.extent(data, d => d.count))
@@ -113,7 +111,7 @@ function updateDOM(data) {
 
 		console.log(scaleX.bandwidth())
 
-/*	// exit
+	// exit
 	bar.exit().remove()
 
 	// update
@@ -121,12 +119,12 @@ function updateDOM(data) {
 	const barMerge = barEnter.merge(bar)
 	
 	barMerge.transition()
-		.delay(function(d, i){ return i * 50; })
 		.duration(400)
-		.attr('x', d => scaleX(d.data.year))
-		.attr('y', 0 - margin.top - margin.bottom)
+		.attr('x', d => scaleX(d.age))
+		.attr('y', d => { if (d.count > 0){ return scaleY(d.count) - 5}
+			else { return scaleY(0) +5}})
 		.attr('width', scaleX.bandwidth())
-		.attr('height', d => (scaleY(d.count)))*/
+		.attr('height', d => (Math.abs(scaleY(d.count) - scaleY(0))))
 }
 
 function resizeGraphic() {
@@ -150,8 +148,7 @@ function resize() {
 	updateDimensions()
 	resizeGraphic()
 	updateScales(filteredData)
-	/*updateDOM(allPredictionData)
-	updateAxis(allPredictionData)*/
+	updateDOM(filteredData)
 }
 
 
