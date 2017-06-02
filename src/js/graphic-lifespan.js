@@ -32,23 +32,26 @@ function updateDimensions() {
 
 
 function filterData(animals){
-	filteredData = lifespanData.filter(d => d.animals == animals)
-
-	console.log(filteredData)
+	filteredData = lifespanData.filter(d => d.animals == animals && d.age > 0)
 }
 
 function updateScales(data) {
 	const trimW = graphicW - (margin.left + margin.right)
 	const trimH = graphicH - (margin.top + margin.bottom)
 
+	console.log(data)
+
 	scaleX
 		.rangeRound([0, trimW])
 		.padding(0.1)
-		.domain([0, 62])
+/*		.domain(data.map(d => d.age))*/
+		.domain(d3.range(0, 62))
+
+		console.log(d3.range(0, d3.max(data, d => d.age)))
 
 	scaleY
 		.range([trimH, 0])
-		.domain(d3.extent(data, d => d.value))
+		.domain(d3.extent(data, d => d.count))
 }
 
 
@@ -88,24 +91,29 @@ function updateDOM(data) {
 		.attr('width', graphicW)
 		.attr('height', graphicH)
 
-	const g = svg.select('g')
+	const g = svg.select('.lifespanPlot')
 
 	g.attr('transform', translate(margin.right, margin.top))
 
-	const plot = g.select('.lifespanPlot')
+/*	const plot = g.select('.lifespanPlot')*/
 
-	const bar = plot.selectAll('.bar')
+	const bar = g.selectAll('.bar')
 		.data(data)
+
+		console.log(bar)
 
 	// enter
 	const barEnter = bar.enter().append('rect')
 		.attr('class', 'bar')
-		.attr('x', d => scaleX(d.data.year))
-		.attr('y', d => scaleY(d[0]))
+		.attr('x', d => scaleX(d.age))
+		.attr('y', d => { if (d.count > 0){ return scaleY(d.count) - 5}
+			else { return scaleY(0) +5}})
 		.attr('width', scaleX.bandwidth())
-		.attr('height', 0)
+		.attr('height', d => (Math.abs(scaleY(d.count) - scaleY(0))))
 
-	// exit
+		console.log(scaleX.bandwidth())
+
+/*	// exit
 	bar.exit().remove()
 
 	// update
@@ -116,9 +124,9 @@ function updateDOM(data) {
 		.delay(function(d, i){ return i * 50; })
 		.duration(400)
 		.attr('x', d => scaleX(d.data.year))
-		.attr('y', d => scaleY(d[1]))
+		.attr('y', 0 - margin.top - margin.bottom)
 		.attr('width', scaleX.bandwidth())
-		.attr('height', d => (scaleY(d[0]) - scaleY(d[1])))
+		.attr('height', d => (scaleY(d.count)))*/
 }
 
 function resizeGraphic() {
@@ -140,7 +148,6 @@ function setup() {
 
 function resize() {
 	updateDimensions()
-	updateScales(filteredData)
 	resizeGraphic()
 	updateScales(filteredData)
 	/*updateDOM(allPredictionData)
