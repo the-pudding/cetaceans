@@ -15,7 +15,7 @@ function handleResize() {
 		previousWidth = width
 		graphicAcquisitions.resize()
 		graphicExplore.resize()
-		/*graphicOrcaDeath.resize()*/
+		graphicOrcaDeath.resize()
 		graphicDeath.resize()
 	}
 }

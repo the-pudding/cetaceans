@@ -10,7 +10,8 @@ const graphicContainerSel = graphicSel.select('.graphic__container')
 let birthData = []
 let predictionDataLow = []
 let predictionDataHigh = []
-let margin = {top: 200, bottom: 25, left: 100, right: 50}
+let allPredictionData = []
+let margin = {top: 50, bottom: 50, left: 100, right: 50}
 let width = 0
 let height = 0
 let graphicW = 0
@@ -22,6 +23,7 @@ const scaleX = d3.scaleLinear()
 const scaleY = d3.scaleLinear()
 
 const populationLine = d3.line()
+const areaFill = d3.area()
 
 function calculateData(){
 
@@ -52,6 +54,8 @@ function calculateData(){
 		populationH -= allHighData[i].value
 	}
 
+	predictionDataHigh.forEach(d => d.Level = "High")
+
 	// low estimate
 
 	const lowData = birthData
@@ -80,8 +84,15 @@ function calculateData(){
 		population -= allLowData[i].value
 	}
 
-}
+	predictionDataLow.forEach(d => d.Level = "Low")
 
+	const bothPredictionData = predictionDataHigh.concat(predictionDataLow)
+
+	allPredictionData = d3.nest()
+		.key(d => d.Level)
+		.entries(bothPredictionData)
+
+}
 
 
 function translate(x, y) {	
@@ -92,6 +103,7 @@ function translate(x, y) {
 function updateDimensions() {
 	width = graphicContainerSel.node().offsetWidth
 	height = window.innerHeight
+
 }
 
 function resizeGraphic() {
@@ -107,15 +119,22 @@ function updateScales(data) {
 
 	scaleX
 		.range([0, (graphicW - (margin.left + margin.right))])
-		.domain([2017, d3.max(data, d => d.year)])
+		.domain([2017, 2070])
 
 	scaleY
 		.range([(graphicH - margin.top - margin.bottom), 0])
-		.domain([0, d3.max(data, d => d.population)])
+		.domain([0, 25])
 
 	populationLine
-		.x(d => scaleXchart(+d.year))
-		.y(d => scaleYchart(+d.population))
+		.x(d => scaleX(+d.year))
+		.y(d => scaleY(+d.population))
+
+	areaFill
+		.x(d => scaleX(d.year))
+		.y0(graphicH- margin.top - margin.bottom)
+		.y1(d => scaleY(d.population))
+
+
 }
 
 
@@ -124,6 +143,10 @@ function setupDOM(){
 		.append('svg')
 
 	const gEnter = svg
+		.append('g')
+		.attr('class', 'plotG')
+
+	gEnter
 		.append('g')
 		.attr('class', 'orcaDeathPlot')
 
@@ -142,8 +165,6 @@ function setupDOM(){
 }
 
 function updateDOM(data) {
-	updateScales(data)
-	updateAxis(data)
 
 	const svg = graphicSel.select('svg')
 
@@ -151,32 +172,94 @@ function updateDOM(data) {
 		.attr('width', graphicW)
 		.attr('height', graphicH)
 
-		console.log(graphicW)
 
-	const g = svg.select('g')
+	const g = svg.select('.plotG')
 
 	g.attr('transform', translate(margin.right, margin.top))
 
-	const plot = g.select('.explorePlot')
+	const plot = g.select('.orcaDeathPlot')
 
-	const line = g.selectAll('.line')
-		.data([data])
+	const level = plot.selectAll('.level')
+		.data(data/*, d => d.key*/)
 
+	const levelEnter = level.enter().append('g')
+		.attr('class', d => `level level--${d.key}`)
+
+	level.exit()
+		.transition()
+		.duration(500)
+		.ease(d3.easeCubicInOut)
+		.style('opacity', 0)
+		.remove()
+
+	const levelMerge = levelEnter.merge(level)
+
+	const line = levelMerge.selectAll('.line').data(d => [d.values])
 
 	const lineEnter = line.enter()
 		.append('path')
 		.attr('class', 'line')
 		.attr('d', populationLine)
 
-	// exit
+		// exit
 	line.exit().remove()
 
 	// update
+
 	const lineMerge = lineEnter.merge(line)
 	
 	lineMerge.transition()
-		.duration(400)
+		.duration(200)
 		.attr('d', populationLine)
+
+	// Filling in the area
+
+	const area = levelMerge.selectAll('.area').data(d => [d.values])
+
+/*	area.append('clipPath')
+		.attr('id', 'clipBelow')
+		.append('path')
+		.attr('d', areaFill.y0(0))*/
+
+	const areaEnter = area.enter()
+		.append('path')
+		.attr('class', 'area')
+		.attr('d', areaFill)
+
+	area.exit().remove()
+
+	const areaMerge = areaEnter.merge(area)
+
+	areaMerge.transition()
+		.duration(200)
+		.attr('d', areaFill)
+
+
+
+}
+
+
+
+function updateAxis(data) {
+	const axis = graphicSel.select('.g-axis')
+
+	const axisLeft = d3.axisLeft(scaleY)
+	const axisBottom = d3.axisBottom(scaleX)
+
+	const x = axis.select('.axis--x')
+	const y = axis.select('.axis--y')
+
+	const trim = graphicH - (margin.top + margin.bottom)
+
+	x
+		.attr('transform', `translate(0, ${trim})`)
+		.transition()
+		.duration(200)
+		.call(axisBottom
+			.tickFormat(d3.format('d')))
+
+	y
+		.call(axisLeft)
 }
 
 
@@ -184,16 +267,18 @@ function updateDOM(data) {
 
 function setup() {
 	setupDOM()
-	resize()
 	calculateData()
+	resize()
+
 
 }
 
 function resize() {
-/*	updateDimensions()
+	updateDimensions()
 	resizeGraphic()
-	updateScales(predictionData)
-	updateDOM(predictionData)*/
+	updateScales(allPredictionData)
+	updateDOM(allPredictionData)
+	updateAxis(allPredictionData)
 }
 
 

@@ -213,7 +213,7 @@ function updateDOM(data) {
 
 	g.attr('transform', translate(margin.right, margin.top))
 
-	const plot = g.select('.explorePlot')
+	const plot = g.select('.deathPlot')
 
 	const line = g.selectAll('.line')
 		.data([data])
@@ -234,10 +234,6 @@ function updateDOM(data) {
 	lineMerge.transition()
 		.duration(400)
 		.attr('d', populationLine)
-
-
-
-
 }
 
 function updateAxis(data) {
