@@ -19,7 +19,7 @@ function loadCOD(cb) {
 
 function init() {
 	return new Promise((resolve, reject) => {
-		loadDeath((err, data) => {
+		loadCOD((err, data) => {
 			if (err) reject('error loading data')
 			else resolve(data)
 		})

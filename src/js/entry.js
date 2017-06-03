@@ -6,6 +6,7 @@ import graphicExplore from './graphic-explore'
 import graphicOrcaDeath from './graphic-orca-death'
 import graphicDeath from './graphic-death'
 import graphicLifespan from './graphic-lifespan'
+import graphicCOD from './graphic-cod'
 
 const bodyEl = select('body')
 let previousWidth = 0
@@ -19,6 +20,7 @@ function handleResize() {
 		graphicLifespan.resize()
 		graphicOrcaDeath.resize()
 		graphicDeath.resize()
+		graphicCOD.resize()
 	}
 }
 
@@ -33,6 +35,7 @@ function init() {
 	graphicLifespan.init()
 	graphicOrcaDeath.init()
 	graphicDeath.init()
+	graphicCOD.init()
 }
 
 init()
