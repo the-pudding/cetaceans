@@ -110,9 +110,8 @@ function setupEvents(data){
 				.ease(d3.easeCubicInOut)
 			    .attr('x', (d,i) => {col = Math.floor( i / widthSquares );
 	            	return (col * squareSize) + (col * gapSize)})
-	      		.attr('y', (d,i) => {row = i % heightSquares;
-	      			return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
-		
+	      		.attr('y', (d,i) => {row = Math.abs(49 - (i % heightSquares));
+      				return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
 	})
 
 	acqButton.on('click', () => {
@@ -131,8 +130,8 @@ function setupEvents(data){
 				.ease(d3.easeCubicInOut)
 			    .attr('x', (d,i) => {col = Math.floor( i / widthSquares );
 	            	return (col * squareSize) + (col * gapSize)})
-	      		.attr('y', (d,i) => {row = i % heightSquares;
-	      			return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
+	      		.attr('y', (d,i) => {row = Math.abs(49 - (i % heightSquares));
+      				return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
 		
 		})
 
@@ -163,8 +162,8 @@ function setupEvents(data){
 				//.attr('fill', d => color(d.livingLocations))
 			    .attr('x', (d,i) => {col = Math.floor( i / widthSquares );
 	            	return (col * squareSize) + (col * gapSize)})
-	      		.attr('y', (d,i) => {row = i % heightSquares;
-	      			return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
+	      		.attr('y', (d,i) => {row = Math.abs(49 - (i % heightSquares));
+      				return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
 	})
 
 }
@@ -203,7 +202,7 @@ function updateDom(data) {
 		.duration(400)
         .attr('x', (d,i) => {col = Math.floor( i / widthSquares );
             return (col * squareSize) + (col * gapSize)})
-      	.attr('y', (d,i) => {row = i % heightSquares;
+      	.attr('y', (d,i) => {row = Math.abs(49 - (i % heightSquares));
       		return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
 		.attr('width', squareSize)
 		.attr('height', squareSize)
