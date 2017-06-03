@@ -72,13 +72,9 @@ function updateScales(data) {
 		/*.domain([2017, d3.max(data, d => d.year)])*/
 		.domain([2017, 2100])
 
-		console.log(scaleXchart.domain())
-
 	scaleYchart
 		.range([(graphicH - margin.top - margin.bottom), 0])
 		.domain([0, d3.max(data, d => d.population)])
-
-		console.log(d3.max(data, d=>d.population))
 
 	populationLine
 		.x(d => scaleXchart(+d.year))
@@ -207,8 +203,6 @@ function updateDOM(data) {
 		.attr('width', graphicW)
 		.attr('height', graphicH)
 
-		console.log(graphicW)
-
 	const g = svg.select('g')
 
 	g.attr('transform', translate(margin.right, margin.top))
@@ -241,8 +235,6 @@ function updateAxis(data) {
 
 	const axisLeft = d3.axisLeft(scaleYchart)
 	const axisBottom = d3.axisBottom(scaleXchart)
-
-	console.log(axisBottom)
 
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')
@@ -302,7 +294,6 @@ function calculateData(ageSliderValue, breedingSliderValue){
 
 	predictionData = d3.range(2017, maxYear + 1).map(i => ({year: i, population: 500}))
 
-	console.log(predictionData)
 
 	let population = 563
 	for (let i = 0; i < predictionData.length; i++){
@@ -336,7 +327,6 @@ function init() {
 	loadData()
 		.then((result) => {
 			tkData = result
-			console.log(tkData)
 			setup()
 		})
 		.catch(err => console.log(err))

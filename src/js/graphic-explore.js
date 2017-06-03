@@ -15,7 +15,7 @@ let heightSquares = 50
 let col =  null
 let row =  null
 let squareSize = 10
-let gapSize = 2
+let gapSize = 1
 
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleBand()
@@ -40,7 +40,6 @@ function updateDimensions() {
 	width = graphicContainerSel.node().offsetWidth
 	height = window.innerHeight
 	//desktop = window.matchMedia('(min-width: 20000px)').matches
-	gridSize = Math.floor(width / 53)
 }
 
 function sort(){
@@ -52,6 +51,11 @@ function resizeGraphic() {
 	const ratio = 1
 	graphicW = width
 	graphicH = height
+
+	squareSize = Math.floor(graphicW / 100)
+
+	console.log(squareSize)
+
 
 	graphicSel
 		.style('height', `${height}px`)
@@ -201,8 +205,9 @@ function updateDom(data) {
             return (col * squareSize) + (col * gapSize)})
       	.attr('y', (d,i) => {row = i % heightSquares;
       		return (heightSquares * squareSize) - ((row * squareSize) + (row * gapSize))})
-/*		.attr('width', squareSize)
-		.attr('height', squareSize)*/
+		.attr('width', squareSize)
+		.attr('height', squareSize)
+
 
 }
 
@@ -221,6 +226,7 @@ function resize() {
 	updateDimensions()
 	resizeGraphic()
 	updateDom(tkData)
+	setupEvents(tkData)
 }
 
 

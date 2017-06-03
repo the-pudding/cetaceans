@@ -39,8 +39,6 @@ function updateScales(data) {
 	const trimW = graphicW - (margin.left + margin.right)
 	const trimH = graphicH - (margin.top + margin.bottom)
 
-	console.log(data)
-
 	scaleX
 		.rangeRound([0, trimW])
 		.padding(0.1)
@@ -56,8 +54,6 @@ function updateScales(data) {
 function setupDOM(){
 	const svg = graphicContainerSel
 		.append('svg')
-
-		console.log(graphicContainerSel)
 
 	const gEnter = svg
 		.append('g')
@@ -124,8 +120,6 @@ function updateDOM(data) {
 	const bar = g.selectAll('.bar')
 		.data(data, d => d.age)
 
-		console.log(bar)
-
 	// enter
 	const barEnter = bar.enter().append('rect')
 		.attr('class', 'bar')
@@ -135,7 +129,6 @@ function updateDOM(data) {
 		.attr('width', scaleX.bandwidth())
 		.attr('height', d => (Math.abs(scaleY(d.count) - scaleY(0))))
 
-		console.log(scaleX.bandwidth())
 
 	// exit
 	bar.exit()
@@ -215,7 +208,6 @@ function init() {
 	loadData()
 		.then((result) => {
 			lifespanData = result
-			console.log(lifespanData)
 			setup()
 		})
 		.catch(err => console.log(err))
