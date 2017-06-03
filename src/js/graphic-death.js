@@ -70,7 +70,7 @@ function updateScales(data) {
 	scaleXchart
 		.range([0, (graphicW - (margin.left + margin.right))])
 		/*.domain([2017, d3.max(data, d => d.year)])*/
-		.domain([2017, 2100])
+		.domain([2017, 2115])
 
 	scaleYchart
 		.range([(graphicH - margin.top - margin.bottom), 0])
@@ -277,30 +277,47 @@ function calculateData(ageSliderValue, breedingSliderValue){
 		.rollup(leaves => d3.sum(leaves, d => d.count))
 		.entries(sliderData)
 
-/*	const missingYears = d3.range(2017, d3.min(nestSlider, d => d.key)).map(i => ({key: i, value: 0}))
-
-	const totalNest = missingYears.concat(nestSlider)
-*/
-/*	console.log(missingYears)
-	console.log(totalNest)*/
+		console.log(nestSlider)
 
 	maxYear = Math.max.apply(Math, sliderData.map( d => d.deathYear))
 
-/*	const allYears = d3.range(2017, maxYear).map(i => ({key: i, value: }))*/
+	const cleanNest = d3.range(2017, maxYear).map(i => {
+		const key = i.toString()
+		const match = nestSlider.find(d => d.key === key)
+		if (match) return match
+			else return { key, value: 0}
+	})
 
-	const births = d3.range(breedingSliderValue, maxYear + 1).map(i => ({birthYear: i, count: 0})) 
+
+	const births = d3.range(breedingSliderValue, maxYear ).map(i => ({birthYear: i, count: 0})) 
 
 	const birthsAll = newYears.concat(births)
 
-	predictionData = d3.range(2017, maxYear + 1).map(i => ({year: i, population: 500}))
+	console.log(birthsAll)
 
+	const cleanedBirths = d3.range(2017, maxYear ).map( i => {
+		const birthYear = i
+		const match = birthsAll.find(d => d.birthYear === birthYear)
+		if (match) return match
+			else return { birthYear: birthYear, count: 0}
+	})
+
+	cleanedBirths.forEach(d => d.deathYear = Math.max((ageSliderValue + d.birthYear), 2017))
+
+	console.log(cleanedBirths)
+
+	predictionData = d3.range(2017, maxYear  ).map(i => ({year: i, population: 500}))
 
 	let population = 563
 	for (let i = 0; i < predictionData.length; i++){
 		predictionData[i].population = population
-		population += birthsAll[i].count
-		population -= nestSlider[i].value
+		population += cleanedBirths[i].count
+		population -= cleanNest[i].value
 	}
+
+	console.log(predictionData)
+
+	predictionData.push({year: maxYear , population: 0})
 
 
 
