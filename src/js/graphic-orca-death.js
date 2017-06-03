@@ -54,7 +54,10 @@ function calculateData(){
 		populationH -= allHighData[i].value
 	}
 
+	predictionDataHigh.push({year: maxYearHigh + 1, population: 0})
 	predictionDataHigh.forEach(d => d.Level = "High")
+
+
 
 	// low estimate
 
@@ -76,6 +79,7 @@ function calculateData(){
 			else return { key, value: 0}
 	})
 
+
 	predictionDataLow = d3.range(2017, maxYearLow).map(i => ({year: i, population: 500}))
 
 	let population = 24
@@ -84,6 +88,8 @@ function calculateData(){
 		population -= allLowData[i].value
 	}
 
+	predictionDataLow.push({year: maxYearLow, population: 0})
+
 	predictionDataLow.forEach(d => d.Level = "Low")
 
 	const bothPredictionData = predictionDataHigh.concat(predictionDataLow)
@@ -91,6 +97,8 @@ function calculateData(){
 	allPredictionData = d3.nest()
 		.key(d => d.Level)
 		.entries(bothPredictionData)
+
+
 
 }
 
