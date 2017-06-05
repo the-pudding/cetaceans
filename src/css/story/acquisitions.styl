@@ -14,9 +14,9 @@
 			.bar
 				fill $tertiary
 
-.scroll
-	&.is-touchable
-		cursor pointer
+// .scroll
+// 	&.is-touchable
+// 		cursor pointer
 				
 .scroll__graphic
 	width 100%
@@ -36,12 +36,26 @@
 			
 	&.is-untouchable
 		pointer-events none
-		opacity 0.25
 	
 	.graphic__container
 		width 100%
 		max-width 60rem
 		margin 0 auto
+		position relative
+	
+	.container__video
+		position absolute
+		top 0
+		left 0
+		width 100%
+		height 100%
+	
+	video 
+		position absolute
+		width 10rem
+		height @width
+		top 50%
+		left 50%
 
 	.axis
 		path
@@ -55,10 +69,10 @@
 	max-width 30rem
 	margin 0 auto
 	position relative
-	&.is-fixed
-		+mq('bp-desktop')
-			.scroll__video
-				position fixed
+	// &.is-fixed
+	// 	+mq('bp-desktop')
+	// 		.scroll__video
+	// 			position fixed
 		
 .prose__step
 	padding 1rem
@@ -70,41 +84,47 @@
 		border-radius 3px
 		box-shadow 0 0 12px 3px $blue-dark
 	
-		// &.quote
-		// 	background none
-		// 	font-size 1.2em
-		// 	color yellow
-		// 	text-shadow 0 0 2px black
-
 .scroll__video
 	width 100%
 	overflow hidden
 	opacity 0
 	transition opacity $video-transition
 	+mq('bp-desktop')
-		position absolute
-		top 0
-		left 0
-		height 100vh
-		z-index set-index('bottom')
-		
+		position fixed
+		top 50%
+		left 50%
+		width 15rem
+		height @width
+		border-radius @width
+		transform translate(-50%, -50%)
+		z-index set-index('overlay')
+		transition 250ms all
+	
 	&.is-visible
-		opacity 0.75
+		opacity 1
 		cursor pointer
 		pointer-events auto
+	
+	&:hover
+		width 20rem
+		
+	
+	
 	
 	video 
 		position absolute
 		top 0
+		left 0
 		top 50%
 		left 50%
 		min-width 100%
 		min-height 100%
 		width auto
 		height auto
-		z-index 0
 		transform translate(-50%,-50%)
 		background-size cover
+		// z-index 0
+		
 
 	.video__overlay
 		position absolute

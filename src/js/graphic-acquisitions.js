@@ -2,6 +2,8 @@ import * as d3 from 'd3'
 import ScrollMagic from 'scrollmagic'
 import loadData from './load-data-acquisitions'
 
+const videoData = [{ id: 'flipper', step: 2 }, { id: 'hitchhikersguide', step: 4 }, { id: 'dolphintale', step: 6 }]
+
 const controller = new ScrollMagic.Controller({ refreshInterval: 0 })
 
 let width = 0
@@ -23,14 +25,14 @@ const parseYear = d3.timeParse("%Y")
 const stepScenes = []
 
 
-const bodySel = d3.select('body') 
+const bodySel = d3.select('body')
 const containerSel = bodySel.select('.section--scroll')
 const graphicSel = containerSel.select('.scroll__graphic')
 const graphicContainerSel = graphicSel.select('.graphic__container')
 const proseSel = containerSel.select('.scroll__prose')
 const stepSel = containerSel.selectAll('.prose__step')
 const scrollSel = containerSel.select('.scroll')
-const scrollVideoSel = containerSel.selectAll('.scroll__video')
+let scrollVideoSel = null
 
 let currentStep = '0'
 let currentDirection = true
@@ -158,24 +160,15 @@ function resizeScrollElements() {
 
 function resizeGraphic() {
 	const ratio = 1.5
-	// const proseW = proseSel.node().offsetWidth
 	graphicW = width
 	graphicH = graphicW / ratio
 
 	graphicSel
 		.style('height', `${height}px`)
 
-	// const trim = graphicH - margin
-
-	// graphicSel.select('svg')
-	// 	.attr('width', graphicW)
-	// 	.attr('height', trim)
-
-		// console.log(graphicH)
-		// console.log(graphicH-margin)
 }
 
-function setupDOM(){
+function setupDOM() {
 	const svg = graphicContainerSel
 		.append('svg')
 
@@ -293,6 +286,7 @@ function updateAxis(data) {
 }
 
 function updateVideo(step) {
+	console.log(step)
 	const videoSel = containerSel.select(`.scroll__video[data-step='${step}']`)
 	const hasVideo = !!videoSel.size()
 
@@ -344,13 +338,44 @@ function setupEvents() {
 		if (currentVideoPlayer) currentVideoPlayer.muted = muted
 		if (currentVideoPlayer && !muted) currentVideoPlayer.currentTime = 0
 	})
+
+	// scrollVideoSel.on('mouseenter', (d, i, nodes) => {
+	// 	console.log('mouseenter')
+	// 	d3.select(nodes[i]).classed('is-expand', true)
+	// })
+
+	// scrollVideoSel.on('mouseout', (d, i, nodes) => {
+	// 	console.log('mousout')
+	// 	d3.select(nodes[i]).classed('is-expand', false)
+	// })
+}
+
+function setupVideo() {
+	const videoContainer = graphicContainerSel.append('div')
+		.attr('class', 'container__video')
+
+	const item = videoContainer.selectAll('video')
+		.data(videoData)
+		.enter().append('div')
+		.attr('class', 'scroll__video')
+		.attr('data-step', d => `video--${d.step}`)
+
+	item.append('video')
+		.attr('src', d => `assets/${d.id}.mp4`)
+		.attr('playsinline', true)
+		.attr('preload', true)
+		.attr('muted', true)
+		.attr('loop', true)
+
+	scrollVideoSel = containerSel.selectAll('.scroll__video')
 }
 
 function setup(data) {
 	setupDOM()
+	setupVideo()
+	setupEvents()
 	resize()
 	setupScroll()
-	setupEvents()
 }
 
 function init() {
