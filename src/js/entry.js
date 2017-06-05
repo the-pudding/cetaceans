@@ -16,7 +16,7 @@ function handleResize() {
 	if (previousWidth !== width) {
 		previousWidth = width
 		graphicAcquisitions.resize()
-		graphicExplore.resize()
+		/*graphicExplore.resize()*/
 		graphicLifespan.resize()
 		graphicOrcaDeath.resize()
 		graphicDeath.resize()
@@ -31,7 +31,7 @@ function init() {
 	window.addEventListener('resize', debounce(handleResize, 150))
 	// kick off graphic code
 	graphicAcquisitions.init()
-	graphicExplore.init()
+	/*graphicExplore.init()*/
 	graphicLifespan.init()
 	graphicOrcaDeath.init()
 	graphicDeath.init()
