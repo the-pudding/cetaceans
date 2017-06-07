@@ -10,24 +10,22 @@ let tkData = []
 let sliderData = []
 let predictionData = []
 /*let margin = 100*/
-let margin = {top: 200, bottom: 25, left: 100, right: 50}
+let margin = {top: 100, bottom: 25, left: 100, right: 50}
 let width = 0
 let height = 0
 let graphicW = 0
 let graphicH = 0
 let desktop = false
 
-const scaleXage = d3.scaleLinear()
-const scaleXbreeding = d3.scaleLinear()
-const scaleXchart = d3.scaleLinear()
-const scaleYchart = d3.scaleLinear()
+const scaleX = d3.scaleLinear()
+const scaleY = d3.scaleLinear()
 
 const populationLine = d3.line()
 
 
 let breedingSliderValue = null
-let ageSliderValue = null
-let maxYear = null
+let ageSliderValue = 20
+let maxYear = 2030
 
 
 const animalsAdded = 26
@@ -46,7 +44,7 @@ function updateDimensions() {
 }
 
 function resizeGraphic() {
-	const ratio = 1.5
+	const ratio = 1.7
 	graphicW = width
 	graphicH = graphicW / ratio
 
@@ -57,29 +55,17 @@ function resizeGraphic() {
 
 function updateScales(data) {
 
-	scaleXage
-		.range([0, (graphicW - (margin.left + margin.right))/3])
-		.domain([15, 62])
-		.clamp(true)
-
-	scaleXbreeding
-		.range([0, (graphicW - (margin.left + margin.right))/3])
-		.domain([2017, 2050])
-		.clamp(true)
-
-	scaleXchart
+	scaleX
 		.range([0, (graphicW - (margin.left + margin.right))])
-		/*.domain([2017, d3.max(data, d => d.year)])*/
 		.domain([2017, 2115])
 
-	scaleYchart
+	scaleY
 		.range([(graphicH - margin.top - margin.bottom), 0])
 		.domain([0, d3.max(data, d => d.population)])
 
 	populationLine
-		.x(d => scaleXchart(+d.year))
-		.y(d => scaleYchart(+d.population))
-		/*.domain([0, 600])*/
+		.x(d => scaleX(+d.year))
+		.y(d => scaleY(+d.population))
 
 }
 
@@ -91,16 +77,6 @@ function setupDOM(){
 	const gEnter = svg
 		.append('g')
 		.attr('class', 'deathPlot')
-
-	// "All Animals Live to...." Slider
-	const ageSlider = svg.append('g')
-		.attr('class', 'slider slider--Age')
-		.attr('transform', `translate(${margin.left}, ${margin.bottom *4})`)
-
-	// "If Breeding Ended in..." Slider
-	const breedingSlider = svg.append('g')
-		.attr('class', 'slider slider--Breeding')
-		.attr('transform', `translate(${margin.left *5}, ${margin.bottom *4})`)
 
 	const axis = gEnter
 		.append('g')
@@ -118,21 +94,21 @@ function setupDOM(){
 
 function setupSliders (){
 
-d3.select('.slider#lifespan')
-	.on('input', function(){
-		ageSliderValue = +this.value
-		/*updateSlideValue(+this.value)*/
-		calculateData(+this.value, breedingSliderValue)
-		updateDOM(predictionData)
-	})
+	d3.select('.slider#lifespan')
+		.on('input', function(){
+			ageSliderValue = +this.value
+			/*updateSlideValue(+this.value)*/
+			calculateData(+this.value, breedingSliderValue)
+			updateDOM(predictionData)
+		})
 
-d3.select('.slider#breedingban')
-	.on('input', function(){
-		breedingSliderValue = +this.value
-		/*updateSlideValue(+this.value)*/
-		calculateData(ageSliderValue, +this.value)
-		updateDOM(predictionData)
-	})
+	d3.select('.slider#breedingban')
+		.on('input', function(){
+			breedingSliderValue = +this.value
+			/*updateSlideValue(+this.value)*/
+			calculateData(ageSliderValue, +this.value)
+			updateDOM(predictionData)
+		})
 
 }
 
@@ -141,10 +117,14 @@ function updateSlideValue(value){
 }
 
 function updateDOM(data) {
+
 	updateScales(data)
 	updateAxis(data)
 
 	const svg = graphicSel.select('svg')
+
+	console.log(graphicW)
+	console.log(graphicH)
 
 	svg
 		.attr('width', graphicW)
@@ -180,8 +160,8 @@ function updateDOM(data) {
 function updateAxis(data) {
 	const axis = graphicSel.select('.g-axis')
 
-	const axisLeft = d3.axisLeft(scaleYchart)
-	const axisBottom = d3.axisBottom(scaleXchart)
+	const axisLeft = d3.axisLeft(scaleY)
+	const axisBottom = d3.axisBottom(scaleX)
 
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')
@@ -199,16 +179,6 @@ function updateAxis(data) {
 		.call(axisLeft)
 }
 
-function updateAgeSlider(sliderValue){
-
-	const ageHandle = d3.select('.ageHandle')
-		.attr('cx', scaleXage(sliderValue))
-}
-
-function updateBreedingSlider(sliderValue){
-	const breedingHandle = d3.select('.breedingHandle')
-		.attr('cx', scaleXbreeding(sliderValue))
-}
 
 function calculateData(ageSliderValue, breedingSliderValue){
 	sliderData = tkData
@@ -267,6 +237,7 @@ function calculateData(ageSliderValue, breedingSliderValue){
 
 function setup() {
 	setupDOM()
+	setupSliders()
 	calculateData(20, 2030)
 	resize()
 
@@ -276,10 +247,7 @@ function setup() {
 function resize() {
 	updateDimensions()
 	resizeGraphic()
-	updateScales(predictionData)
-	setupSliders()
 	updateDOM(predictionData)
-/*	updateAxis()*/
 }
 
 
