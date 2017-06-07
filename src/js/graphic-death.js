@@ -1,4 +1,5 @@
 import * as d3 from 'd3'
+import * as interpolatePath from 'd3-interpolate-path'
 import loadData from './load-data-death'
 
 const bodySel = d3.select('body') 
@@ -50,6 +51,8 @@ function resizeGraphic() {
 
 	graphicSel
 		.style('height', `${graphicH}px`)
+
+		console.log(interpolatePath)
 
 }
 
@@ -154,6 +157,11 @@ function updateDOM(data) {
 	
 	lineMerge.transition()
 		.duration(400)
+/*		.attrTween('d', d => {
+			let previous = d3.select('.line').attr('d')
+			let current = populationLine
+			return interpolatePath(previous, current)
+		})*/
 		.attr('d', populationLine)
 }
 
