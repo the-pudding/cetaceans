@@ -3,10 +3,10 @@ import ScrollMagic from 'scrollmagic'
 import loadData from './load-data-acquisitions'
 
 const videoData = [
-	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330 },
-	{ id: 'flipper', step: 2, year: '1963', w: 480, h: 270 },
-	{ id: 'hitchhikers', step: 4, year: '1978', w: 440, h: 300 },
-	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260 },
+	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330, align: 'left' },
+	{ id: 'flipper', step: 2, year: '1963', w: 480, h: 270, align: 'center' },
+	{ id: 'hitchhikers', step: 4, year: '1978', w: 440, h: 300, align: 'center' },
+	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260, align: 'right' },
 ]
 
 const controller = new ScrollMagic.Controller({ refreshInterval: 0 })
@@ -113,7 +113,7 @@ function setupScroll() {
 
 // VIDEO STUFF
 function pauseVideo() {
-	if (currentVideoPlayer) currentVideoPlayer.pause()
+	if (currentVideoPlayer) currentVideoPlayer.node().pause()
 }
 
 function getData(endYear, acquisition) {
@@ -174,10 +174,25 @@ function resizeGraphic() {
 
 function resizeVideo() {
 	const videoW = Math.max(160, Math.floor(graphicW * 0.3))
+	const bandwidth = scaleX.bandwidth()
 	scrollVideoSel
+		.style('left', d => {
+			const x = scaleX(d.year) - videoW / 2 + margin + bandwidth / 2
+			if (d.align === 'left') return `${x + videoW / 2}px`
+			else if (d.align === 'right') return `${x - videoW / 2}px`
+			return `${x}px`
+		})
+
+	scrollVideoSel.select('video')
 		.style('width', `${videoW}px`)
 		.style('height', d => `${videoW / (d.w / d.h)}px`)
-		.style('left', d => `${scaleX(d.year) - videoW / 2}px`)
+
+	scrollVideoSel.select('.video__line')
+		.style('height', d => {
+			const videoH = videoW / (d.w / d.h)
+			return `${graphicH - videoH - margin * 2}px`
+		})
+		// .style('margin-left', `${bandwidth / 2}px`)
 }
 
 function setupDOM() {
@@ -304,16 +319,17 @@ function updateVideo(step) {
 
 	if (hasVideo) {
 		videoSel.classed('is-visible', true)
-		currentVideoPlayer = videoSel.node()
-		currentVideoPlayer.play()
-		currentVideoPlayer.muted = muted
+		currentVideoPlayer = videoSel.select('video')
+		currentVideoPlayer.node().play()
+		currentVideoPlayer.node().muted = muted
+		currentVideoPlayer.classed('unmuted', !muted)
 	} else {
 		scrollVideoSel.classed('is-visible', false)
-	} 
+	}
 
 	// make clickable
-	graphicSel.classed('is-untouchable', hasVideo)
-	scrollSel.classed('is-touchable', hasVideo)
+	// graphicSel.classed('is-untouchable', hasVideo)
+	scrollSel.classed('is-untouchable', hasVideo)
 }
 
 function updateChart({ step, down }) {
@@ -344,33 +360,32 @@ function resize() {
 }
 
 function setupEvents() {
-	scrollSel.on('click', () => {
+	scrollVideoSel.select('video').on('click', () => {
 		// if muted restart and unmute
 		muted = !muted
-		if (currentVideoPlayer) currentVideoPlayer.muted = muted
-		if (currentVideoPlayer && !muted) currentVideoPlayer.currentTime = 0
+		if (currentVideoPlayer) {
+			currentVideoPlayer.node().muted = muted
+			currentVideoPlayer.classed('unmuted', !muted)
+		}
+		if (currentVideoPlayer && !muted) currentVideoPlayer.node().currentTime = 0
 	})
-
-	// scrollVideoSel.on('mouseenter', (d, i, nodes) => {
-	// 	console.log('mouseenter')
-	// 	d3.select(nodes[i]).classed('is-expand', true)
-	// })
-
-	// scrollVideoSel.on('mouseout', (d, i, nodes) => {
-	// 	console.log('mousout')
-	// 	d3.select(nodes[i]).classed('is-expand', false)
-	// })
 }
 
 function setupVideo() {
 	const videoContainer = graphicContainerSel.append('div')
 		.attr('class', 'container__video')
 
-	videoContainer.selectAll('.scroll__video')
+	const enterSel = videoContainer.selectAll('.scroll__video')
 		.data(videoData)
-	.enter().append('video')
+	.enter().append('div')
 		.attr('class', 'scroll__video')
 		.attr('data-step', d => `video--${d.step}`)
+
+
+	enterSel.append('div')
+		.attr('class', d => `video__line ${d.align}`)
+
+	enterSel.append('video')
 		.attr('src', d => `assets/${d.id}.mp4`)
 		.attr('playsinline', true)
 		.attr('preload', true)

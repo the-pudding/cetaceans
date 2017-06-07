@@ -16,13 +16,12 @@ $chart-margin = 40px
 			.bar
 				fill $tertiary
 
-// .scroll
-// 	&.is-touchable
-// 		cursor pointer
+.scroll
+	&.is-untouchable
+		pointer-events none
 				
 .scroll__graphic
 	width 100%
-	// background rgba(255,0,0,0.1)
 	position absolute
 	top 0
 	right 0
@@ -36,9 +35,6 @@ $chart-margin = 40px
 	&.is-fixed
 		position fixed
 			
-	&.is-untouchable
-		pointer-events none
-	
 	.graphic__container
 		width 100%
 		max-width 60rem
@@ -78,39 +74,41 @@ $chart-margin = 40px
 		background-color $dark
 		border-radius 3px
 		box-shadow 0 0 12px 3px $blue-dark
-	
-// .scroll__video
-// 	width 100%
-// 	overflow hidden
-// 	opacity 0
-// 	transition opacity $video-transition
-// 	+mq('bp-desktop')
-// 		position fixed
-// 		top 50%
-// 		left 50%
-// 		width 20rem
-// 		height 15rem
-// 		border-radius 3px
-// 		transform translate(-50%, -50%)
-// 		z-index set-index('overlay')
-// 		transition 250ms all
-	
-// 	&.is-visible
-// 		opacity 1
-// 		cursor pointer
-// 		pointer-events auto
-	
+		
 .scroll__video 
 	position absolute
 	opacity 0
 	top $chart-margin
-	transition 300ms opacity ease-in-out
-	border-radius 3px
+	pointer-events none
+	transition 500ms all ease-in-out
 	&.is-visible
 		opacity 1
-		cursor pointer
 		pointer-events auto
+	video
+		transition 300ms all ease-in-out
+		border-radius 3px
+		box-shadow 0 0 12px 6px $blue-dark
+		cursor pointer
+		position relative
+		&:hover
+			box-shadow 0 0 12px 6px rgba(white, 0.5)
+		&.unmuted
+			box-shadow 0 0 12px 6px rgba(white, 0.5)
 	
+	.video__line
+		z-index 0
+		position absolute
+		top 100%
+		width 1px
+		border-left 1px dashed rgba(white, 0.5)
+		margin-left -1px
+		&.left
+			left 0
+		&.right
+			right 0
+		&.center
+			left 50%
+		
 .btn__audio
 	background-color transparent
 	background-color $primary
