@@ -202,11 +202,49 @@ function updateDOM(data) {
 
 	const levelMerge = levelEnter.merge(level)
 
+	// Creating a clipping path
+	const lowerArea = plot.selectAll('.level--Low')
+
+
+	const clip = lowerArea.selectAll('#areaClip').data(d => [d.values])
+
+	const clipEnter = clip.enter()
+/*		.append('clipPath')*/
+		.append('path')
+			.attr('id', 'areaClip')
+			.attr('d', areaFill)
+
+
+
+	// Filling in the area
+
+	const upperArea = plot.selectAll('.level--High')
+
+	const area = upperArea.selectAll('.area').data(d => [d.values])
+
+	const areaEnter = area.enter()
+		.append('path')
+		.attr('class', 'area')
+		.attr('d', areaFill)
+/*		.attr('clip-path', 'url(#areaClip)')*/
+		
+
+	area.exit().remove()
+
+	const areaMerge = areaEnter.merge(area)
+
+	areaMerge.transition()
+		.duration(200)
+		.attr('d', areaFill)
+
+
+	// Drawing lines
 	const line = levelMerge.selectAll('.line').data(d => [d.values])
+
 
 	const lineEnter = line.enter()
 		.append('path')
-		.attr('class', 'line')
+		.attr('class', (d, i) => `line line--${d.Level}`)
 		.attr('d', populationLine)
 
 		// exit
@@ -220,27 +258,7 @@ function updateDOM(data) {
 		.duration(200)
 		.attr('d', populationLine)
 
-	// Filling in the area
 
-	const area = levelMerge.selectAll('.area').data(d => [d.values])
-
-/*	area.append('clipPath')
-		.attr('id', 'clipBelow')
-		.append('path')
-		.attr('d', areaFill.y0(0))*/
-
-	const areaEnter = area.enter()
-		.append('path')
-		.attr('class', 'area')
-		.attr('d', areaFill)
-
-	area.exit().remove()
-
-	const areaMerge = areaEnter.merge(area)
-
-	areaMerge.transition()
-		.duration(200)
-		.attr('d', areaFill)
 
 
 
