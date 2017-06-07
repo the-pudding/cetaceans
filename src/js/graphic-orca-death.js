@@ -25,6 +25,10 @@ const scaleY = d3.scaleLinear()
 const populationLine = d3.line()
 const areaFill = d3.area()
 
+let lineWidth = 0
+let circleR = 0
+let dashArray = 0
+
 function calculateData(){
 
 	// high estimate
@@ -121,6 +125,12 @@ function resizeGraphic() {
 
 	graphicSel
 		.style('height', `${graphicH}px`)
+
+	lineWidth = Math.max(2, .007 * graphicW)
+
+	dashArray = Math.max(2, 0.01 * graphicW)
+
+	circleR = Math.max(10, 0.015 * graphicW)
 }
 
 function updateScales(data) {
@@ -202,6 +212,9 @@ function updateDOM(data) {
 
 	const levelMerge = levelEnter.merge(level)
 
+
+
+
 	// Creating a clipping path
 	const lowerArea = plot.selectAll('.level--Low')
 
@@ -256,6 +269,10 @@ function updateDOM(data) {
 		.append('path')
 		.attr('class', (d, i) => `line line--${d.Level}`)
 		.attr('d', populationLine)
+		.style('stroke-width', `${lineWidth}px`)
+		.style('stroke-dasharray', `${dashArray}, ${dashArray/2}`)
+
+		console.log(lineWidth)
 
 		// exit
 	line.exit().remove()
@@ -267,8 +284,50 @@ function updateDOM(data) {
 	lineMerge.transition()
 		.duration(200)
 		.attr('d', populationLine)
+		.style('stroke-width', `${lineWidth}px`)
+		.style('stroke-dasharray', `${dashArray}, ${dashArray/2}`)
+
+
+	// Adding circles
+
+	const circleData = [{
+		id: 'endHigh',
+		x: 2070,
+		y: 0
+	},{
+		id: 'endLow',
+		x: 2033,
+		y: 0
+	},{
+		id: 'beginning',
+		x: 2017,
+		y: 24
+	}]
+
+	const circle = plot.selectAll('.circle').data(circleData)
+
+	const circleEnter = circle.enter()
+		.append('circle')
+		.attr('class', d => `circle circle--${d.id}`)
+		.attr('cx', d => scaleX(d.x))
+		.attr('cy', d => scaleY(d.y))
+		.attr('r', `${circleR}`)
+
+	circle.exit().remove()
+
+	const circleMerge = circleEnter.merge(circle)
+
+	circleMerge.transition()
+		.duration(200)
+			.attr('cx', d => scaleX(d.x))
+			.attr('cy', d => scaleY(d.y))
+			.attr('r', `${circleR}`)
+
+
 
 }
+
+
 
 
 
