@@ -134,13 +134,13 @@ function updateDOM(data) {
 
 	const plot = g.select('.deathPlot')
 
-	const line = g.selectAll('.line')
+	const line = g.selectAll('.deathLine')
 		.data([data])
 
 
 	const lineEnter = line.enter()
 		.append('path')
-		.attr('class', 'line')
+		.attr('class', 'deathLine')
 		.attr('d', populationLine)
 
 	// exit

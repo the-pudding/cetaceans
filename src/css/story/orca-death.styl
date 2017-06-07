@@ -15,13 +15,63 @@
 		
 
 	.axis
-		path
+		display none
+
+/*		path
 			stroke $off-white
+			marker-end url(#arrowHead)
 		text
 			fill $off-white
 		line 
-			stroke $off-white
+			stroke $off-white*/
 			
 .area
 	fill $off-white
 	opacity .2
+	
+#areaClip
+	fill $purple-dark
+	
+.level
+	
+	&--High
+		
+		.line
+			stroke $primary
+			stroke-width 2px
+			stroke-dasharray 8,4
+			fill none
+			
+	&--Low
+		
+		.line
+			stroke $tertiary
+			fill none
+			
+		
+
+			
+.circle
+	
+	&--beginning
+		fill white
+		
+	&--endHigh
+		fill $primary
+		
+	&--endLow
+		fill $tertiary
+
+
+.popG
+			
+	.popLine
+		stroke $off-white
+		
+	.popText
+		fill $off-white
+		text-transform uppercase
+		
+	.popRect
+		fill $purple-dark
+	

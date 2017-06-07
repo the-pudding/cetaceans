@@ -25,6 +25,12 @@ const scaleY = d3.scaleLinear()
 const populationLine = d3.line()
 const areaFill = d3.area()
 
+let lineWidth = 0
+let circleR = 0
+let dashArray = 0
+let lineWidthPop = 0
+let padding = 0
+
 function calculateData(){
 
 	// high estimate
@@ -121,6 +127,16 @@ function resizeGraphic() {
 
 	graphicSel
 		.style('height', `${graphicH}px`)
+
+	lineWidth = Math.max(2, .007 * graphicW)
+
+	lineWidthPop = Math.max(2, 0.001 * graphicW)
+
+	dashArray = Math.max(2, 0.01 * graphicW)
+
+	circleR = Math.max(5, 0.015 * graphicW)
+
+	padding = Math.max(2, 0.005 * graphicW)
 }
 
 function updateScales(data) {
@@ -202,12 +218,67 @@ function updateDOM(data) {
 
 	const levelMerge = levelEnter.merge(level)
 
+
+
+
+	// Creating a clipping path
+	const lowerArea = plot.selectAll('.level--Low')
+
+
+	const clip = lowerArea.selectAll('#areaClip').data(d => [d.values])
+
+	const clipEnter = clip.enter()
+/*		.append('clipPath')*/
+		.append('path')
+			.attr('id', 'areaClip')
+			.attr('d', areaFill)
+
+	clip.exit().remove()
+
+	const clipMerge = clipEnter.merge(clip)
+
+	clipMerge.transition()
+		.duration(200)
+		.attr('d', areaFill)
+
+
+
+
+
+	// Filling in the area
+
+	const upperArea = plot.selectAll('.level--High')
+
+	const area = upperArea.selectAll('.area').data(d => [d.values])
+
+	const areaEnter = area.enter()
+		.append('path')
+		.attr('class', 'area')
+		.attr('d', areaFill)
+/*		.attr('clip-path', 'url(#areaClip)')*/
+		
+
+	area.exit().remove()
+
+	const areaMerge = areaEnter.merge(area)
+
+	areaMerge.transition()
+		.duration(200)
+		.attr('d', areaFill)
+
+
+	// Drawing lines
 	const line = levelMerge.selectAll('.line').data(d => [d.values])
+
 
 	const lineEnter = line.enter()
 		.append('path')
-		.attr('class', 'line')
+		.attr('class', (d, i) => `line line--${d.Level}`)
 		.attr('d', populationLine)
+		.style('stroke-width', `${lineWidth}px`)
+		.style('stroke-dasharray', `${dashArray}, ${dashArray/2}`)
+
+		console.log(lineWidth)
 
 		// exit
 	line.exit().remove()
@@ -219,32 +290,146 @@ function updateDOM(data) {
 	lineMerge.transition()
 		.duration(200)
 		.attr('d', populationLine)
+		.style('stroke-width', `${lineWidth}px`)
+		.style('stroke-dasharray', `${dashArray}, ${dashArray/2}`)
 
-	// Filling in the area
 
-	const area = levelMerge.selectAll('.area').data(d => [d.values])
+	// Adding circles
 
-/*	area.append('clipPath')
-		.attr('id', 'clipBelow')
-		.append('path')
-		.attr('d', areaFill.y0(0))*/
+	const circleData = [{
+		id: 'endHigh',
+		x: 2070,
+		y: 0
+	},{
+		id: 'endLow',
+		x: 2033,
+		y: 0
+	},{
+		id: 'beginning',
+		x: 2017,
+		y: 24
+	}]
 
-	const areaEnter = area.enter()
-		.append('path')
-		.attr('class', 'area')
-		.attr('d', areaFill)
+	const circle = plot.selectAll('.circle').data(circleData)
 
-	area.exit().remove()
+	const circleEnter = circle.enter()
+		.append('circle')
+		.attr('class', d => `circle circle--${d.id}`)
+		.attr('cx', d => scaleX(d.x))
+		.attr('cy', d => scaleY(d.y))
+		.attr('r', `${circleR}`)
 
-	const areaMerge = areaEnter.merge(area)
+	circle.exit().remove()
 
-	areaMerge.transition()
+	const circleMerge = circleEnter.merge(circle)
+
+	circleMerge.transition()
 		.duration(200)
-		.attr('d', areaFill)
+			.attr('cx', d => scaleX(d.x))
+			.attr('cy', d => scaleY(d.y))
+			.attr('r', `${circleR}`)
+
+
+	// Adding Y line element
+	const lineData = [{'id': 'data', 'x': 2017, 'y': 'other' }]
+
+	const populationGroup = plot.selectAll('.popG').data(lineData)
+
+	const popGroupEnter = populationGroup.enter()
+		.append('g')
+		.attr('class', 'popG')
+
+	populationGroup.exit().remove()
+
+	const popGroupMerge = popGroupEnter.merge(populationGroup)
+
+
+	// Adding line
+
+	const populationLabel = popGroupMerge.selectAll('.popLine').data(lineData)
+
+	const popEnter = populationLabel.enter()
+		.append('line')
+		.attr('class', 'popLine')
+		.attr('x1', scaleX(2017))
+		.attr('x2', scaleX(2017))
+		.attr('y1', scaleY(0))
+		.attr('y2', scaleY(24))
+		.attr('transform', `translate(${-graphicW/27}, 0)`)
+		.attr('class', 'popLine')
+		.style('stroke-width', `${lineWidthPop}px`)
+
+	populationLabel.exit().remove()
+
+	const popMerge = popEnter.merge(populationLabel)
+
+	popMerge.transition()
+		.duration(200)
+		.attr('x1', scaleX(2017))
+		.attr('x2', scaleX(2017))
+		.attr('y1', scaleY(0))
+		.attr('y2', scaleY(24))
+		.attr('transform', `translate(${-graphicW/27}, 0)`)
+		.style('stroke-width', `${lineWidthPop}px`)
+
+
+	// Adding Text
+
+	const populationText = popGroupMerge.selectAll('.popText').data(lineData)
+
+	const popTextEnter = populationText.enter()
+		.append('text')
+		.attr('class', 'popText')
+		.attr('transform', `translate(${-graphicW/33}, ${graphicH/2}) rotate(-90)`)
+		.text('population')
+
+	populationText.exit().remove()
+
+	const popTextMerge = popTextEnter.merge(populationText)
+
+	popTextMerge.transition()
+		.duration(200)
+		.attr('transform', `translate(${-graphicW/33}, ${graphicH/2}) rotate(-90)`)
+
+
+	// Adding rectangle behind text
+	let popTextMeas = d3.select('.popText')
+	let bbox = popTextMeas.node().getBBox()
+	
+
+	const popRect = popGroupMerge.selectAll('.popRect').data(lineData)
+
+	const popRectEnter = popRect.enter()
+		.append('rect')
+		.attr('x', bbox.x - padding)
+		.attr('y', bbox.y - padding)
+		.attr('width', bbox.width + (padding*2))
+		.attr('height', bbox.height + (padding*2))
+		.attr('class', 'popRect')
+		.attr('transform', `translate(${-graphicW/33}, ${graphicH/2}) rotate(-90)`)
+
+	popRect.exit().remove()
+
+	const popRectMerge = popRectEnter.merge(popRect)
+
+	popRectMerge.transition()
+		.duration(200)
+		.attr('x', bbox.x - padding)
+		.attr('y', bbox.y - padding)
+		.attr('width', bbox.width + (padding*2))
+		.attr('height', bbox.height + (padding*2))
+		.attr('transform', `translate(${-graphicW/33}, ${graphicH/2}) rotate(-90)`)
+
+	// Raise text on top of background rectangle
+	popTextMerge.raise()
+
+
 
 
 
 }
+
+
 
 
 
@@ -259,6 +444,18 @@ function updateAxis(data) {
 
 	const trim = graphicH - (margin.top + margin.bottom)
 
+
+	axis.append("marker")
+			.attr('refX', 5)
+			.attr('refY', 0)
+			.attr('markerWidth', 4)
+			.attr('markerHeight', 4)
+			.attr('orient', 'auto')
+			.attr('id', 'arrowHead')
+		.append("path")
+			.attr("d", "M0,-5L10,0L0,5")
+			.attr("class","arrowHead");
+
 	x
 		.attr('transform', `translate(0, ${trim})`)
 		.transition()
@@ -267,7 +464,9 @@ function updateAxis(data) {
 			.tickFormat(d3.format('d')))
 
 	y
-		.call(axisLeft)
+		.attr('transform', `translate(-50, 0)`)
+		.call(axisLeft
+			.ticks(0))
 }
 
 
