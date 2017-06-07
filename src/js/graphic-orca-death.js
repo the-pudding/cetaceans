@@ -214,6 +214,16 @@ function updateDOM(data) {
 			.attr('id', 'areaClip')
 			.attr('d', areaFill)
 
+	clip.exit().remove()
+
+	const clipMerge = clipEnter.merge(clip)
+
+	clipMerge.transition()
+		.duration(200)
+		.attr('d', areaFill)
+
+
+
 
 
 	// Filling in the area
@@ -257,10 +267,6 @@ function updateDOM(data) {
 	lineMerge.transition()
 		.duration(200)
 		.attr('d', populationLine)
-
-
-
-
 
 }
 
