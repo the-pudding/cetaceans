@@ -188,6 +188,33 @@ function setupDOM(){
 
 }
 
+function defineGradient(){
+	const svg = graphicSel.select('svg')
+
+	const gradDefs = svg.append('defs')
+
+	const linearGradient = gradDefs.append('linearGradient')
+		.attr('id', 'linearGradient')
+
+	linearGradient
+		.attr('x1', '0%')
+		.attr('y1', '0%')
+		.attr('x2', '100%')
+		.attr('y2', '100%')
+
+	linearGradient
+		.append('stop')
+		.attr('offset', '0%')
+		.attr('stop-color', '#FFFFFF')
+		.attr('stop-opacity', .4)
+
+	linearGradient
+		.append('stop')
+		.attr('offset', '90%')
+		.attr('stop-color', '#32313D')
+		.attr('stop-opacity', 0)
+}
+
 function updateDOM(data) {
 
 	const svg = graphicSel.select('svg')
@@ -255,7 +282,7 @@ function updateDOM(data) {
 		.append('path')
 		.attr('class', 'area')
 		.attr('d', areaFill)
-/*		.attr('clip-path', 'url(#areaClip)')*/
+		.attr('fill', 'url(#linearGradient)')
 		
 
 	area.exit().remove()
@@ -484,6 +511,7 @@ function updateAxis(data) {
 
 function setup() {
 	setupDOM()
+	defineGradient()
 	calculateData()
 	resize()
 
