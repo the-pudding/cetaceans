@@ -21,6 +21,7 @@ const scaleX = d3.scaleLinear()
 const scaleY = d3.scaleLinear()
 
 const populationLine = d3.line()
+	// .curve(d3.curveStep)
 
 
 let breedingSliderValue = null
@@ -123,9 +124,6 @@ function updateDOM(data) {
 
 	const svg = graphicSel.select('svg')
 
-	console.log(graphicW)
-	console.log(graphicH)
-
 	svg
 		.attr('width', graphicW)
 		.attr('height', graphicH)
@@ -152,8 +150,7 @@ function updateDOM(data) {
 
 	const lineMerge = lineEnter.merge(line)
 	
-	lineMerge.transition()
-		.duration(400)
+	lineMerge
 		.attr('d', populationLine)
 }
 
@@ -170,8 +167,6 @@ function updateAxis(data) {
 
 	x
 		.attr('transform', `translate(0, ${trim})`)
-		.transition()
-		.duration(1500)
 		.call(axisBottom
 			.tickFormat(d3.format('d')))
 
