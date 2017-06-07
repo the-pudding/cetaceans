@@ -118,79 +118,26 @@ function setupDOM(){
 
 function setupSliders (){
 
-	const svg = graphicSel.select('svg')
+d3.select('.slider#lifespan')
+	.on('input', function(){
+		ageSliderValue = +this.value
+		/*updateSlideValue(+this.value)*/
+		calculateData(+this.value, breedingSliderValue)
+		updateDOM(predictionData)
+	})
 
-	const g = svg.select('g')
+d3.select('.slider#breedingban')
+	.on('input', function(){
+		breedingSliderValue = +this.value
+		/*updateSlideValue(+this.value)*/
+		calculateData(ageSliderValue, +this.value)
+		updateDOM(predictionData)
+	})
 
-	// "All Animals Live to...." Slider
+}
 
-	const ageSlider = svg.select('.slider--Age')
-
-	ageSlider.append('line')
-		.attr('class', 'track')
-		.attr('x1', scaleXage.range()[0])
-		.attr('x2', scaleXage.range()[1])
-		.select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-		.attr("class", "track-inset")
-		.select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-	  	.attr('class', 'track-overlay')
-	  	.call(d3.drag()
-	  		.on("start.interrupt", function() { ageSlider.interrupt(); })
-	  		.on("start drag", function() { updateAgeSlider(Math.floor(scaleXage.invert(d3.event.x)))})
-	  		.on('end', d => {ageSliderValue = Math.floor(scaleXage.invert(d3.event.x))
-	  			calculateData(ageSliderValue, breedingSliderValue)
-	  			updateDOM(predictionData)}))
-
-	ageSlider.insert('g', '.track-overlay')
-			.attr('class', 'ticks')
-			.attr('transform', 'translate(0,' + 20 + ')')
-		.selectAll('text')
-			.data(scaleXage.ticks(5))
-			.enter().append('text')
-				.attr('x', scaleXage)
-				.attr('text-anchor', 'middle')
-				.text(d => d)
-
-	const ageHandle = ageSlider.insert('circle', '.track-overlay')
-		.attr('class', 'handle ageHandle')
-		.attr('r', 9)
-
-
-
-	// "If Breeding Ended in..." Slider
-
-	const breedingSlider = svg.select('.slider--Breeding')
-
-	breedingSlider.append('line')
-		.attr('class', 'track')
-		.attr('x1', scaleXbreeding.range()[0])
-		.attr('x2', scaleXbreeding.range()[1])
-		.select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-		.attr("class", "track-inset")
-		.select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-	  	.attr('class', 'track-overlay')
-	  	.call(d3.drag()
-	  		.on("start.interrupt", function() { breedingSlider.interrupt(); })
-	  		.on("start drag", function() { updateBreedingSlider(Math.floor(scaleXbreeding.invert(d3.event.x)))})
-	  		.on('end', function() {breedingSliderValue = Math.floor(scaleXbreeding.invert(d3.event.x))
-	  			calculateData(ageSliderValue, breedingSliderValue)
-	  			updateDOM(predictionData)}))
-
-	breedingSlider.insert('g', '.track-overlay')
-		.attr('class', 'ticks')
-		.attr('transform', 'translate(0,' + 20 + ')')
-		.selectAll('text')
-			.data(scaleXbreeding.ticks(3))
-			.enter().append('text')
-				.attr('x', scaleXbreeding)
-				.attr('text-anchor', 'middle')
-				.text(d => d)
-
-	const breedingHandle = breedingSlider.insert('circle', '.track-overlay')
-		.attr('class', 'handle breedingHandle')
-		.attr('r', 9)
-
-
+function updateSlideValue(value){
+	console.log(value)
 }
 
 function updateDOM(data) {
@@ -277,8 +224,6 @@ function calculateData(ageSliderValue, breedingSliderValue){
 		.rollup(leaves => d3.sum(leaves, d => d.count))
 		.entries(sliderData)
 
-		console.log(nestSlider)
-
 	maxYear = Math.max.apply(Math, sliderData.map( d => d.deathYear))
 
 	const cleanNest = d3.range(2017, maxYear).map(i => {
@@ -293,8 +238,6 @@ function calculateData(ageSliderValue, breedingSliderValue){
 
 	const birthsAll = newYears.concat(births)
 
-	console.log(birthsAll)
-
 	const cleanedBirths = d3.range(2017, maxYear ).map( i => {
 		const birthYear = i
 		const match = birthsAll.find(d => d.birthYear === birthYear)
@@ -304,7 +247,6 @@ function calculateData(ageSliderValue, breedingSliderValue){
 
 	cleanedBirths.forEach(d => d.deathYear = Math.max((ageSliderValue + d.birthYear), 2017))
 
-	console.log(cleanedBirths)
 
 	predictionData = d3.range(2017, maxYear  ).map(i => ({year: i, population: 500}))
 
@@ -315,7 +257,6 @@ function calculateData(ageSliderValue, breedingSliderValue){
 		population -= cleanNest[i].value
 	}
 
-	console.log(predictionData)
 
 	predictionData.push({year: maxYear , population: 0})
 
@@ -326,7 +267,9 @@ function calculateData(ageSliderValue, breedingSliderValue){
 
 function setup() {
 	setupDOM()
+	calculateData(20, 2030)
 	resize()
+
 
 }
 
