@@ -128,13 +128,13 @@ function resizeGraphic() {
 	graphicSel
 		.style('height', `${graphicH}px`)
 
-	lineWidth = Math.max(2, .007 * graphicW)
+	lineWidth = Math.max(2, .004 * graphicW)
 
 	lineWidthPop = Math.max(2, 0.001 * graphicW)
 
 	dashArray = Math.max(2, 0.01 * graphicW)
 
-	circleR = Math.max(5, 0.015 * graphicW)
+	circleR = Math.max(5, 0.01 * graphicW)
 
 	padding = Math.max(2, 0.005 * graphicW)
 }
