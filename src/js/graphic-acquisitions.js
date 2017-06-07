@@ -3,10 +3,10 @@ import ScrollMagic from 'scrollmagic'
 import loadData from './load-data-acquisitions'
 
 const videoData = [
-	{ id: 'marineland', step: 0, year: 1940 },
-	{ id: 'flipper', step: 2, year: 1963 },
-	{ id: 'hitchhikersguide', step: 4, year: 1978 },
-	{ id: 'dolphintale', step: 6, year: 2011 },
+	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330 },
+	{ id: 'flipper', step: 2, year: '1963', w: 480, h: 270 },
+	{ id: 'hitchhikers', step: 4, year: '1978', w: 440, h: 300 },
+	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260 },
 ]
 
 const controller = new ScrollMagic.Controller({ refreshInterval: 0 })
@@ -170,7 +170,14 @@ function resizeGraphic() {
 
 	graphicSel
 		.style('height', `${height}px`)
+}
 
+function resizeVideo() {
+	const videoW = Math.max(160, Math.floor(graphicW * 0.3))
+	scrollVideoSel
+		.style('width', `${videoW}px`)
+		.style('height', d => `${videoW / (d.w / d.h)}px`)
+		.style('left', d => `${scaleX(d.year) - videoW / 2}px`)
 }
 
 function setupDOM() {
@@ -291,15 +298,13 @@ function updateAxis(data) {
 }
 
 function updateVideo(step) {
-	console.log(step)
 	const videoSel = containerSel.select(`.scroll__video[data-step='${step}']`)
 	const hasVideo = !!videoSel.size()
-
 	pauseVideo()
 
 	if (hasVideo) {
 		videoSel.classed('is-visible', true)
-		currentVideoPlayer = videoSel.select('video').node()
+		currentVideoPlayer = videoSel.node()
 		currentVideoPlayer.play()
 		currentVideoPlayer.muted = muted
 	} else {
@@ -309,7 +314,7 @@ function updateVideo(step) {
 	// make clickable
 	graphicSel.classed('is-untouchable', hasVideo)
 	scrollSel.classed('is-touchable', hasVideo)
-}	
+}
 
 function updateChart({ step, down }) {
 	const stepNumber = step.split('--')[1]
@@ -335,6 +340,7 @@ function resize() {
 	resizeScrollElements()
 	resizeGraphic()
 	updateChart({ step: currentStep, down: currentDirection })
+	resizeVideo()
 }
 
 function setupEvents() {
@@ -360,13 +366,11 @@ function setupVideo() {
 	const videoContainer = graphicContainerSel.append('div')
 		.attr('class', 'container__video')
 
-	const item = videoContainer.selectAll('video')
+	videoContainer.selectAll('.scroll__video')
 		.data(videoData)
-		.enter().append('div')
+	.enter().append('video')
 		.attr('class', 'scroll__video')
 		.attr('data-step', d => `video--${d.step}`)
-
-	item.append('video')
 		.attr('src', d => `assets/${d.id}.mp4`)
 		.attr('playsinline', true)
 		.attr('preload', true)
