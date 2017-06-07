@@ -2,7 +2,12 @@ import * as d3 from 'd3'
 import ScrollMagic from 'scrollmagic'
 import loadData from './load-data-acquisitions'
 
-const videoData = [{ id: 'flipper', step: 2 }, { id: 'hitchhikersguide', step: 4 }, { id: 'dolphintale', step: 6 }]
+const videoData = [
+	{ id: 'marineland', step: 0, year: 1940 },
+	{ id: 'flipper', step: 2, year: 1963 },
+	{ id: 'hitchhikersguide', step: 4, year: 1978 },
+	{ id: 'dolphintale', step: 6, year: 2011 },
+]
 
 const controller = new ScrollMagic.Controller({ refreshInterval: 0 })
 
@@ -307,15 +312,16 @@ function updateVideo(step) {
 }	
 
 function updateChart({ step, down }) {
+	const stepNumber = step.split('--')[1]
 	let data = []
-	if (step === 'data--0') data = getData(1938, "capture")
-	if (step === 'data--1') data = getData(1962, "capture")
-	if (step === 'data--2' || step === 'video--2') data = getData(1971, "capture")
-	if (step === 'data--3') data = getData(1972, "capture")
-	if (step === 'data--4' || step === 'video--4') data = getData(2017, "capture")
-	if (step === 'data--5') data = getData(2017, "capture")
-	if (step === 'data--6' || step === 'video--6') data = getData(2017, "bornCapture")
-	if (step === 'data--7') data = getData(2017, "all")
+	if (stepNumber === '0') data = getData(1938, "capture")
+	if (stepNumber === '1') data = getData(1962, "capture")
+	if (stepNumber === '2') data = getData(1971, "capture")
+	if (stepNumber === '3') data = getData(1972, "capture")
+	if (stepNumber === '4') data = getData(2017, "capture")
+	if (stepNumber === '5') data = getData(2017, "capture")
+	if (stepNumber === '6') data = getData(2017, "bornCapture")
+	if (stepNumber === '7') data = getData(2017, "all")
 
 	updateScales(data)
 	updateAxis(data)
