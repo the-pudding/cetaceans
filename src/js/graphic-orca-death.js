@@ -136,7 +136,7 @@ function resizeGraphic() {
 
 	circleR = Math.max(5, 0.01 * graphicW)
 
-	padding = Math.max(2, 0.005 * graphicW)
+	padding = Math.max(2, 0.01 * graphicW)
 }
 
 function updateScales(data) {
@@ -343,6 +343,23 @@ function updateDOM(data) {
 
 	const popGroupMerge = popGroupEnter.merge(populationGroup)
 
+	// Adding arrowhead to population line
+	const arrow = popGroupMerge.selectAll('.popArrow').data(lineData)
+
+	const arrowEnter = arrow.enter()
+		.append('defs')
+		.append('marker')
+		.attr('id', 'arrowHead')
+	    .attr("refX", 6)
+	    .attr("refY", 4)
+	    .attr("markerWidth", 12)
+	    .attr("markerHeight", 12)
+	    .attr("orient", "auto-start-reverse")
+	    .append("path")
+	    .attr('d', 'M 1 1 7 4 1 7 Z')
+	    .style("fill", "white")
+
+
 
 	// Adding line
 
@@ -353,11 +370,12 @@ function updateDOM(data) {
 		.attr('class', 'popLine')
 		.attr('x1', scaleX(2017))
 		.attr('x2', scaleX(2017))
-		.attr('y1', scaleY(0))
-		.attr('y2', scaleY(24))
+		.attr('y1', scaleY(24))
+		.attr('y2', scaleY(0))
 		.attr('transform', `translate(${-graphicW/27}, 0)`)
 		.attr('class', 'popLine')
 		.style('stroke-width', `${lineWidthPop}px`)
+		.attr("marker-start", "url(#arrowHead)");
 
 	populationLabel.exit().remove()
 
@@ -371,6 +389,8 @@ function updateDOM(data) {
 		.attr('y2', scaleY(24))
 		.attr('transform', `translate(${-graphicW/27}, 0)`)
 		.style('stroke-width', `${lineWidthPop}px`)
+
+
 
 
 	// Adding Text
@@ -445,16 +465,6 @@ function updateAxis(data) {
 	const trim = graphicH - (margin.top + margin.bottom)
 
 
-	axis.append("marker")
-			.attr('refX', 5)
-			.attr('refY', 0)
-			.attr('markerWidth', 4)
-			.attr('markerHeight', 4)
-			.attr('orient', 'auto')
-			.attr('id', 'arrowHead')
-		.append("path")
-			.attr("d", "M0,-5L10,0L0,5")
-			.attr("class","arrowHead");
 
 	x
 		.attr('transform', `translate(0, ${trim})`)
