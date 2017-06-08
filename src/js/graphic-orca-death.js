@@ -11,7 +11,7 @@ let birthData = []
 let predictionDataLow = []
 let predictionDataHigh = []
 let allPredictionData = []
-let margin = {top: 50, bottom: 50, left: 100, right: 50}
+let margin = {top: 50, bottom: 50, left: 100, right: 100}
 let width = 0
 let height = 0
 let graphicW = 0
@@ -170,9 +170,10 @@ function setupDOM(){
 		.append('g')
 		.attr('class', 'plotG')
 
-	gEnter
+	const orcaPlot = gEnter
 		.append('g')
 		.attr('class', 'orcaDeathPlot')
+
 
 	const axis = gEnter
 		.append('g')
@@ -248,6 +249,7 @@ function updateDOM(data) {
 
 
 
+
 	// Creating a clipping path
 	const lowerArea = plot.selectAll('.level--Low')
 
@@ -267,6 +269,110 @@ function updateDOM(data) {
 	clipMerge.transition()
 		.duration(200)
 		.attr('d', areaFill)
+
+
+
+	// ANNOTATIONS
+
+
+	const lineData = [{'id': 'data', 'x': 2017, 'y': 'other' }]
+
+
+	const xAnnGroup = plot.selectAll('.xAnnGroup')
+		.data(lineData)
+
+	const xAnnGroupEnter = xAnnGroup.enter().append('g')
+		.attr('class', 'xAnnGroup')
+
+	xAnnGroup.exit().remove()
+
+	const xAnnGroupMerge = xAnnGroupEnter.merge(xAnnGroup)
+
+
+	// drawing line along x axis
+	const xAnn = xAnnGroupMerge.selectAll('.xAnnLine').data(lineData)
+
+
+	console.log(xAnn)
+
+	const xAnnEnter = xAnn.enter()
+		.append('line')
+		.attr('class', 'xAnnLine')
+		.attr('x1', scaleX(2017))
+		.attr('x2', scaleX(2070))
+		.attr('y1', scaleY(0))
+		.attr('y2', scaleY(0))
+		.attr('class', 'xAnnLine')
+		.style('stroke-width', `${lineWidthPop}px`)
+		
+
+	xAnn.exit().remove()
+
+	const xAnnMerge = xAnnEnter.merge(xAnn)
+
+	xAnnMerge.transition()
+		.duration(200)
+		.attr('x1', scaleX(2017))
+		.attr('x2', scaleX(2070))
+		.attr('y1', scaleY(0))
+		.attr('y2', scaleY(0))
+		.style('stroke-width', `${lineWidthPop}px`)
+
+
+	// Adding text
+	const xAnnTextLabel = xAnnGroupMerge.selectAll('.xAnnTextLabel').data(lineData)
+
+	const xAnnTextEnter = xAnnTextLabel.enter()
+		.append('text')
+		.attr('class', 'xAnnTextLabel')
+		.attr('x', scaleX(2017))
+		.attr('y', scaleY(0))
+		.attr('transform', `translate(0, ${graphicW * 0.005})`)
+		.text('0 orcas by')
+
+	xAnnTextLabel.exit().remove()
+
+	const xAnnTextMerge = xAnnTextEnter.merge(xAnnTextLabel)
+
+	xAnnTextMerge.transition()
+		.duration(200)
+		.attr('x', scaleX(2017))
+		.attr('y', scaleY(0))
+		.attr('transform', `translate(0, ${graphicW * 0.005})`)
+
+
+	// Adding rect behind text
+	// Adding rectangle behind text
+	let xTextMeas = d3.select('.xAnnTextLabel')
+	let bboxX = xTextMeas.node().getBBox()
+	
+
+	const xRect = xAnnGroupMerge.selectAll('.xRect').data(lineData)
+
+	const xRectEnter = xRect.enter()
+		.append('rect')
+		.attr('x', bboxX.x - padding)
+		.attr('y', bboxX.y - padding)
+		.attr('width', bboxX.width + (padding*2))
+		.attr('height', bboxX.height + (padding*2))
+		.attr('class', 'xRect')
+
+
+	xRect.exit().remove()
+
+	const xRectMerge = xRectEnter.merge(xRect)
+
+	xRectMerge.transition()
+		.duration(200)
+		.attr('x', bboxX.x - padding)
+		.attr('y', bboxX.y - padding)
+		.attr('width', bboxX.width + (padding*2))
+		.attr('height', bboxX.height + (padding*2))
+
+
+
+
+	xAnnTextMerge.raise()
 
 
 
@@ -321,6 +427,11 @@ function updateDOM(data) {
 		.style('stroke-dasharray', `${dashArray}, ${dashArray/2}`)
 
 
+
+
+		
+
+
 	// Adding circles
 
 	const circleData = [{
@@ -357,8 +468,11 @@ function updateDOM(data) {
 			.attr('r', `${circleR}`)
 
 
+
+
+
+
 	// Adding Y line element
-	const lineData = [{'id': 'data', 'x': 2017, 'y': 'other' }]
 
 	const populationGroup = plot.selectAll('.popG').data(lineData)
 
@@ -470,11 +584,11 @@ function updateDOM(data) {
 	// Raise text on top of background rectangle
 	popTextMerge.raise()
 
-
-
+	console.log('updateDom ran!')
 
 
 }
+
 
 
 
