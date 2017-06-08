@@ -1,25 +1,33 @@
 import * as d3 from 'd3'
 import loadData from './load-data-lifespan'
+import chroma from 'chroma-js'
 
-const bodySel = d3.select('body') 
+const bodySel = d3.select('body')
 const containerSel = bodySel.select('.section--lifespan')
 const graphicSel = containerSel.select('.lifespan__graphic')
 const graphicContainerSel = graphicSel.select('.graphic__container')
+const toggleSel = graphicSel.selectAll('.btn--toggle')
 
 let lifespanData = []
 let filteredData = []
 
-let margin = {top: 50, bottom: 50, left: 100, right: 50}
+let margin = { top: 30, bottom: 30, left: 60, right: 30 }
 let width = 0
 let height = 0
 let graphicW = 0
 let graphicH = 0
 let desktop = false
 
+const FONT_SIZE = 12
+
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
+const scaleColor = chroma.scale(['#426b59', '#76a267', '#dad154'])
+		.domain([0, 62])
+		.mode('lab')
+		.correctLightness()
 
-function translate(x, y) {	
+function translate(x, y) {
 
 	return `translate(${x}, ${y})`
 }
@@ -30,9 +38,8 @@ function updateDimensions() {
 }
 
 
-
-function filterData(animals){
-	filteredData = lifespanData.filter(d => d.animals == animals && d.age > 0)
+function filterData(animals) {
+	filteredData = lifespanData.filter(d => d.animals === animals && d.age > 0)
 }
 
 function updateScales(data) {
@@ -59,10 +66,6 @@ function setupDOM(){
 		.append('g')
 		.attr('class', 'lifespanPlot')
 
-/*	gEnter
-		.append('g')
-		.attr('class', 'lifespanPlot')*/
-
 	const axis = gEnter
 		.append('g')
 		.attr('class', 'g-axis')
@@ -75,32 +78,50 @@ function setupDOM(){
 		.append('g')
 		.attr('class', 'axis axis--y')
 
-}
+	const z = axis
+		.append('g')
+		.attr('class', 'axis axis--z')
 
-function toggleSetup(){
-	const allAnimals = d3.select('#toggle.toggle')
+	// Adding arrowhead
+	const xLine = x.append('line')
 
-	allAnimals.append('button')
-		.text('All')
-		.attr('class', 'toggle all')
+	x.append('defs')
+		.append('marker')
+		.attr('id', 'life-arrow')
+		.attr('refX', 6)
+		.attr('refY', 4)
+		.attr('markerWidth', 12)
+		.attr('markerHeight', 12)
+		.attr('orient', 'auto')
+		.append('path')
+		.attr('d', 'M 1 1 7 4 1 7 Z')
 
-	const bottlenose = d3.select('#toggle.toggle')
+	xLine.attr('marker-end', 'url(#life-arrow)')
 
-	allAnimals.append('button')
-		.text('Bottlenose')
-		.attr('class', 'toggle bottlenose')
+	const age = x.append('g').attr('class', 'g-age')
+	const ageItem = age.selectAll('g').data([10, 20, 30, 40, 50, 60])
+		.enter().append('g')
+			.attr('class', 'age')
 
-	const orca = d3.select('#toggle.toggle')
+	ageItem.append('rect')
+	ageItem.append('text')
+		.text(d => d)
+		.attr('text-anchor', 'middle')
+		.attr('alignment-baseline', 'middle')
 
-	allAnimals.append('button')
-		.text('Orca')
-		.attr('class', 'toggle orca')
 
-	const beluga = d3.select('#toggle.toggle')
+	z.append('text')
+		// .attr('transform', 'rotate(-90)')
+		.attr('class', 'living')
+		.attr('text-anchor', 'middle')
+		.text('Living')
 
-	allAnimals.append('button')
-		.text('Beluga')
-		.attr('class', 'toggle beluga')
+	z.append('text')
+		// .attr('transform', 'rotate(-90)')
+		.attr('class', 'deceased')
+		.attr('text-anchor', 'middle')
+		.text('Deceased')
+
 }
 
 
@@ -115,83 +136,100 @@ function updateDOM(data) {
 
 	g.attr('transform', translate(margin.right, margin.top))
 
-/*	const plot = g.select('.lifespanPlot')*/
-
 	const bar = g.selectAll('.bar')
-		.data(data, d => d.age)
+		.data(data, d => `${d.age}-${d.status}`)
 
 	// enter
+
 	const barEnter = bar.enter().append('rect')
 		.attr('class', 'bar')
+		.attr('transform', d => `translate(0, ${scaleY(0) + ((d.count > 0 ? -1 : 1) * FONT_SIZE)})`)
 		.attr('x', d => scaleX(d.age))
-		.attr('y', d => { if (d.count > 0){ return scaleY(d.count) - 5}
-			else { return scaleY(0) +5}})
+		.attr('y', 0)
 		.attr('width', scaleX.bandwidth())
-		.attr('height', d => (Math.abs(scaleY(d.count) - scaleY(0))))
+		.attr('height', 0)
+		.style('fill', d => scaleColor(d.age))
 
 
 	// exit
 	bar.exit()
 		.transition()
-		.style('opacity', 0)
-		.duration(400)
+		.duration(750)
+		.delay(d => 100 + d.age * 10)
+		.ease(d3.easeCubicInOut)
+		.attr('y', 0)
+		.attr('height', 0)
+		// .style('opacity', 0)
 		.remove()
 
 	// update
 
 	const barMerge = barEnter.merge(bar)
-	
+
 	barMerge.transition()
-		.duration(400)
+		.duration(750)
+		.ease(d3.easeCubicInOut)
+		.delay(d => 100 + d.age * 10)
 		.attr('x', d => scaleX(d.age))
-		.attr('y', d => { if (d.count > 0){ return scaleY(d.count) - 5}
-			else { return scaleY(0) +5}})
+		.attr('y', d => d.count > 0 ? scaleY(d.count) - scaleY(0) : 0)
 		.attr('width', scaleX.bandwidth())
 		.attr('height', d => (Math.abs(scaleY(d.count) - scaleY(0))))
+		// .style('opacity', 1)
+
+	const line = g.select('.axis--x line')
+
+	line
+		.attr('x1', 0)
+		.attr('x2', scaleX.range()[1] + scaleX.bandwidth())
+		.attr('y1', scaleY(0))
+		.attr('y2', scaleY(0))
+
+	const age = g.selectAll('.age')
+	
+	age.attr('transform', d => `translate(${scaleX(d) + scaleX.bandwidth() / 2}, ${scaleY(0)})`)
+
+	const rectW = scaleX.bandwidth() * 2
+	const rectH = FONT_SIZE * 1.5
+
+	age.select('rect')
+		.attr('x', -rectW / 2)
+		.attr('y', -rectH / 2)
+		.attr('width', rectW)
+		.attr('height', rectH)
+
+	const offText = scaleY(0) / 1.5
+	g.select('.axis--z .living')
+		.attr('y', scaleY(0) - offText)
+		.attr('x', scaleX(41))
+
+	g.select('.axis--z .deceased')
+		.attr('y', scaleY(0) + offText + FONT_SIZE)
+		.attr('x', scaleX(41))
 }
 
 function resizeGraphic() {
 	const ratio = 1.5
 	graphicW = width
-	graphicH = graphicW / ratio
-
-	graphicSel
-		.style('height', `${graphicH}px`)
+	graphicH = height * 0.8
 }
 
-function setupEvents(){
-	const allAnimals = d3.select('.toggle.all')
-		.on('click', d => {
-			filterData('All')
-			updateDOM(filteredData)
-		})
+function handleToggle(datum, index) {
+	const animal = d3.select(this).text()
+	filterData(animal)
+	updateDOM(filteredData)
+	toggleSel.classed('is-selected', (d, i) => i === index)
+}
 
-	const bottlenose = d3.select('.toggle.bottlenose')
-		.on('click', d => {
-			filterData('Bottlenose')
-			updateDOM(filteredData)
-		})
-
-	const orca = d3.select('.toggle.orca')
-		.on('click', d => {
-			filterData('Orca')
-			updateDOM(filteredData)
-		})
-
-	const beluga = d3.select('.toggle.beluga')
-		.on('click', d => {
-			filterData('Beluga')
-			updateDOM(filteredData)
-		})
-
+function setupEvents() {
+	// toggle click
+	toggleSel.on('click', handleToggle)
 }
 
 
 function setup() {
-	filterData("All")
+	filterData('All')
 	setupDOM()
 	resize()
-	toggleSetup()
 	updateDOM(filteredData)
 	setupEvents()
 }

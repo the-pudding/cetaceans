@@ -1,0 +1,40 @@
+.section--lifespan
+	padding 0 1rem
+
+.lifespan__graphic
+	max-width 60rem
+	margin 2rem auto
+	
+	.graphic__toggle
+		display none
+		display flex
+		justify-content center
+		margin-bottom 2rem
+		li 
+			display inline-block
+			margin-right 0.5em
+		button
+			width 7rem
+	
+	.axis--x line
+		stroke $c1-inverted
+	
+	.age
+		text
+			font-size 12px
+			fill $c1-inverted
+			font-weight bold
+		rect 
+			fill $c1
+	
+	.axis--z text
+		font-size 1rem
+		fill $c1-inverted
+		fill-opacity 0.5
+		font-weight bold
+		text-transform uppercase
+		letter-spacing 0.05em
+		
+	#life-arrow
+		fill $c1-inverted
+	
