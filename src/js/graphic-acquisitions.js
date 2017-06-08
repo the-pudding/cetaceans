@@ -69,7 +69,7 @@ function setupStep() {
 			const down = event.scrollDirection === 'FORWARD'
 			currentStep = step
 			currentDirection = down
-			// updateChart({ step: step, down: down })
+			if (step === 'video--0' && !down) updateChart({ step: 'data--99', down: false })
 		})
 		.addTo(controller)
 

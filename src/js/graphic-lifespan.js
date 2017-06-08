@@ -1,15 +1,17 @@
 import * as d3 from 'd3'
 import loadData from './load-data-lifespan'
+import chroma from 'chroma-js'
 
-const bodySel = d3.select('body') 
+const bodySel = d3.select('body')
 const containerSel = bodySel.select('.section--lifespan')
 const graphicSel = containerSel.select('.lifespan__graphic')
 const graphicContainerSel = graphicSel.select('.graphic__container')
+const toggleSel = graphicSel.selectAll('.btn--toggle')
 
 let lifespanData = []
 let filteredData = []
 
-let margin = {top: 50, bottom: 50, left: 100, right: 50}
+let margin = { top: 30, bottom: 30, left: 60, right: 30 }
 let width = 0
 let height = 0
 let graphicW = 0
@@ -18,8 +20,12 @@ let desktop = false
 
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
+const scaleColor = chroma.scale(['#426b59', '#76a267', '#dad154'])
+		.domain([0, 62])
+		.mode('lab')
+		.correctLightness()
 
-function translate(x, y) {	
+function translate(x, y) {
 
 	return `translate(${x}, ${y})`
 }
@@ -30,9 +36,8 @@ function updateDimensions() {
 }
 
 
-
-function filterData(animals){
-	filteredData = lifespanData.filter(d => d.animals == animals && d.age > 0)
+function filterData(animals) {
+	filteredData = lifespanData.filter(d => d.animals === animals && d.age > 0)
 }
 
 function updateScales(data) {
@@ -77,30 +82,8 @@ function setupDOM(){
 
 }
 
-function toggleSetup(){
-	const allAnimals = d3.select('#toggle.toggle')
-
-	allAnimals.append('button')
-		.text('All')
-		.attr('class', 'toggle all')
-
-	const bottlenose = d3.select('#toggle.toggle')
-
-	allAnimals.append('button')
-		.text('Bottlenose')
-		.attr('class', 'toggle bottlenose')
-
-	const orca = d3.select('#toggle.toggle')
-
-	allAnimals.append('button')
-		.text('Orca')
-		.attr('class', 'toggle orca')
-
-	const beluga = d3.select('#toggle.toggle')
-
-	allAnimals.append('button')
-		.text('Beluga')
-		.attr('class', 'toggle beluga')
+function setupToggle(){
+	
 }
 
 
@@ -128,6 +111,7 @@ function updateDOM(data) {
 			else { return scaleY(0) +5}})
 		.attr('width', scaleX.bandwidth())
 		.attr('height', d => (Math.abs(scaleY(d.count) - scaleY(0))))
+		.style('fill', d => scaleColor(d.age))
 
 
 	// exit
@@ -153,45 +137,26 @@ function updateDOM(data) {
 function resizeGraphic() {
 	const ratio = 1.5
 	graphicW = width
-	graphicH = graphicW / ratio
-
-	graphicSel
-		.style('height', `${graphicH}px`)
+	graphicH = height * 0.8
 }
 
-function setupEvents(){
-	const allAnimals = d3.select('.toggle.all')
-		.on('click', d => {
-			filterData('All')
-			updateDOM(filteredData)
-		})
+function handleToggle(datum, index) {
+	const animal = d3.select(this).text()
+	filterData(animal)
+	updateDOM(filteredData)
+	toggleSel.classed('is-selected', (d, i) => i === index)
+}
 
-	const bottlenose = d3.select('.toggle.bottlenose')
-		.on('click', d => {
-			filterData('Bottlenose')
-			updateDOM(filteredData)
-		})
-
-	const orca = d3.select('.toggle.orca')
-		.on('click', d => {
-			filterData('Orca')
-			updateDOM(filteredData)
-		})
-
-	const beluga = d3.select('.toggle.beluga')
-		.on('click', d => {
-			filterData('Beluga')
-			updateDOM(filteredData)
-		})
-
+function setupEvents() {
+	// toggle click
+	toggleSel.on('click', handleToggle)
 }
 
 
 function setup() {
-	filterData("All")
+	filterData('All')
 	setupDOM()
 	resize()
-	toggleSetup()
 	updateDOM(filteredData)
 	setupEvents()
 }

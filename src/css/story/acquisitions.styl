@@ -7,14 +7,14 @@ $chart-margin = 40px
 	.layer
 		&--capture
 			.bar
-				fill $primary
+				fill $c7
 		&--born
 			.bar
-				fill $secondary
+				fill $c5
 				
 		&--rescue
 			.bar
-				fill $tertiary
+				fill $c3
 
 .scroll
 	&.is-untouchable
@@ -50,11 +50,11 @@ $chart-margin = 40px
 
 	.axis
 		path
-			stroke $off-white
+			stroke $c1-inverted
 		text
-			fill $off-white
+			fill $c1-inverted
 		line 
-			stroke $off-white
+			stroke $c1-inverted
 
 .scroll__prose
 	max-width 30rem
@@ -71,9 +71,9 @@ $chart-margin = 40px
 	p 
 		margin 0
 		padding 1rem
-		background-color $dark
+		background-color $c1
 		border-radius 3px
-		box-shadow 0 0 12px 3px $blue-dark
+		box-shadow 0 0 12px 3px lighten($c1, 5)
 		
 .scroll__video 
 	position absolute
@@ -87,7 +87,7 @@ $chart-margin = 40px
 	video
 		transition 300ms all ease-in-out
 		border-radius 3px
-		box-shadow 0 0 12px 6px $blue-dark
+		box-shadow 0 0 12px 6px lighten($c1, 5)
 		cursor pointer
 		position relative
 		&:hover
@@ -111,8 +111,8 @@ $chart-margin = 40px
 		
 .btn__audio
 	background-color transparent
-	background-color $primary
-	color darken($primary, 40)
+	background-color $c3
+	color darken($c3, 40)
 	padding 0.25em
 	border-radius 2px
 	font-size 0.75em
@@ -122,7 +122,7 @@ $chart-margin = 40px
 	display inline-block
 	margin-left 0.5em
 	svg
-		fill darken($primary, 40)
+		fill darken($c3, 40)
 		width 1em
 		height 1em
 		vertical-align middle

@@ -1,16 +1,43 @@
 /* CUSTOM STORY STYLE */
 
 body
-	background-color $dark
+	background-color $c1
 	color $off-white
 	font-size 18px
 a
-	color $off-white
+	color $c7
 	&:visited, &:hover
-		color $off-white
+		color $c7
 
 p
 	font-size 18px
 
 svg text
 	font-family $sans
+
+.prose
+	max-width 40rem
+	margin 0 auto
+	padding 0 1rem
+	
+.graphic__hed
+	margin 1rem auto
+	max-width 60rem
+	text-align center
+
+.btn
+	background-color $c1
+	border 1px solid white
+	border-radius 3px
+	color white
+	padding 0.25em 0.5em
+	text-transform uppercase
+	font-weight bold
+	letter-spacing 0.05em
+	set-type-size('x-small')
+	transition background-color 250ms
+	&:hover
+		background-color lighten($c1, 10)
+	&.is-selected
+		background-color $c7
+		color $c1
