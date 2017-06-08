@@ -369,10 +369,122 @@ function updateDOM(data) {
 		.attr('width', bboxX.width + (padding*2))
 		.attr('height', bboxX.height + (padding*2))
 
-
-
-
 	xAnnTextMerge.raise()
+
+
+		// Adding text
+	const yearAnn1 = xAnnGroupMerge.selectAll('.yearAnn1').data(lineData)
+
+	const yearAnn1Enter = yearAnn1.enter()
+		.append('text')
+		.attr('class', 'yearAnn1')
+		.attr('x', scaleX(2034))
+		.attr('y', scaleY(0))
+		.attr('transform', `translate(0, ${graphicW * 0.005})`)
+		.text('2033')
+
+	yearAnn1.exit().remove()
+
+	const yearAnn1Merge = yearAnn1Enter.merge(yearAnn1)
+
+	yearAnn1Merge.transition()
+		.duration(200)
+		.attr('x', scaleX(2034))
+		.attr('y', scaleY(0))
+		.attr('transform', `translate(0, ${graphicW * 0.005})`)
+
+
+	// Adding rect behind text
+	// Adding rectangle behind text
+	let xYear1 = d3.select('.yearAnn1')
+	let bboxXY = xYear1.node().getBBox()
+	
+
+	const yearRect1 = xAnnGroupMerge.selectAll('.yearRect1').data(lineData)
+
+	const yearRect1Enter = yearRect1.enter()
+		.append('rect')
+		.attr('x', bboxXY.x - padding)
+		.attr('y', bboxXY.y + padding/2)
+		.attr('width', bboxXY.width + (padding*2))
+		.attr('height', bboxXY.height)
+		.attr('class', 'yearRect yearRect1')
+		.attr('rx', 10)
+		.attr('ry', 10)
+
+
+	yearRect1.exit().remove()
+
+	const yearRect1Merge = yearRect1Enter.merge(yearRect1)
+
+	yearRect1Merge.transition()
+		.duration(200)
+		.attr('x', bboxXY.x - padding)
+		.attr('y', bboxXY.y + padding/2)
+		.attr('width', bboxXY.width + (padding*2))
+		.attr('height', bboxXY.height)
+		.attr('rx', 10)
+		.attr('ry', 10)
+
+	yearAnn1Merge.raise()
+
+
+
+			// Adding text
+	const yearAnn2 = xAnnGroupMerge.selectAll('.yearAnn2').data(lineData)
+
+	const yearAnn2Enter = yearAnn2.enter()
+		.append('text')
+		.attr('class', 'yearAnn2')
+		.attr('x', scaleX(2066))
+		.attr('y', scaleY(0))
+		.attr('transform', `translate(0, ${graphicW * 0.005})`)
+		.text('2072')
+
+	yearAnn2.exit().remove()
+
+	const yearAnn2Merge = yearAnn2Enter.merge(yearAnn2)
+
+	yearAnn2Merge.transition()
+		.duration(200)
+		.attr('x', scaleX(2066))
+		.attr('y', scaleY(0))
+		.attr('transform', `translate(0, ${graphicW * 0.005})`)
+
+
+	// Adding rect behind text
+	// Adding rectangle behind text
+	let xYear2 = d3.select('.yearAnn2')
+	let bboxXY2 = xYear2.node().getBBox()
+	
+
+	const yearRect2 = xAnnGroupMerge.selectAll('.yearRect2').data(lineData)
+
+	const yearRect2Enter = yearRect2.enter()
+		.append('rect')
+		.attr('x', bboxXY2.x - padding)
+		.attr('y', bboxXY2.y + padding/2)
+		.attr('width', bboxXY2.width + (padding*2))
+		.attr('height', bboxXY2.height)
+		.attr('class', 'yearRect yearRect2')
+		.attr('rx', 10)
+		.attr('ry', 10)
+
+
+	yearRect2.exit().remove()
+
+	const yearRect2Merge = yearRect2Enter.merge(yearRect2)
+
+	yearRect2Merge.transition()
+		.duration(200)
+		.attr('x', bboxXY2.x - padding)
+		.attr('y', bboxXY2.y + padding/2)
+		.attr('width', bboxXY2.width + (padding*2))
+		.attr('height', bboxXY2.height)
+		.attr('rx', 10)
+		.attr('ry', 10)
+
+	yearAnn2Merge.raise()
 
 
 
