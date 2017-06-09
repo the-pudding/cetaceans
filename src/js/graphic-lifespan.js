@@ -105,7 +105,7 @@ function setupDOM(){
 
 	ageItem.append('rect')
 	ageItem.append('text')
-		.text(d => d)
+		.text((d, i) => i === 0 ? `${d} years` : d)
 		.attr('text-anchor', 'middle')
 		.attr('alignment-baseline', 'middle')
 
@@ -188,13 +188,13 @@ function updateDOM(data) {
 	
 	age.attr('transform', d => `translate(${scaleX(d) + scaleX.bandwidth() / 2}, ${scaleY(0)})`)
 
-	const rectW = scaleX.bandwidth() * 2
+	const rectW = scaleX.bandwidth() * 2.5
 	const rectH = FONT_SIZE * 1.5
 
 	age.select('rect')
-		.attr('x', -rectW / 2)
+		.attr('x', (d, i) => -rectW / 2 * (i === 0 ? 2 : 1))
 		.attr('y', -rectH / 2)
-		.attr('width', rectW)
+		.attr('width', (d, i) => rectW  * (i === 0 ? 2 : 1))
 		.attr('height', rectH)
 
 	const offText = scaleY(0) / 1.5
