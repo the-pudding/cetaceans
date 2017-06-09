@@ -48,10 +48,6 @@ function resizeGraphic() {
 	const ratio = 1.7
 	graphicW = width
 	graphicH = graphicW / ratio
-
-	graphicSel
-		.style('height', `${graphicH}px`)
-
 }
 
 function updateScales(data) {

@@ -22,7 +22,7 @@ const FONT_SIZE = 12
 
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
-const scaleColor = chroma.scale(['#426b59', '#76a267', '#dad154'])
+const scaleColor = chroma.scale(['#376056','#f4f465'])
 		.domain([0, 62])
 		.mode('lab')
 		.correctLightness()
@@ -122,6 +122,11 @@ function setupDOM(){
 		.attr('text-anchor', 'middle')
 		.text('Deceased')
 
+	y.append('text')
+		.attr('transform', 'rotate(-90)')
+		.attr('class', 'count')
+		.attr('text-anchor', 'middle')
+		.text('Count')
 }
 
 
@@ -179,7 +184,7 @@ function updateDOM(data) {
 	const line = g.select('.axis--x line')
 
 	line
-		.attr('x1', 0)
+		.attr('x1', scaleX.bandwidth())
 		.attr('x2', scaleX.range()[1] + scaleX.bandwidth())
 		.attr('y1', scaleY(0))
 		.attr('y2', scaleY(0))
@@ -205,6 +210,10 @@ function updateDOM(data) {
 	g.select('.axis--z .deceased')
 		.attr('y', scaleY(0) + offText + FONT_SIZE)
 		.attr('x', scaleX(41))
+
+	g.select('.axis--y text')
+		.attr('y', 0)
+		.attr('x', -scaleY(0))
 }
 
 function resizeGraphic() {

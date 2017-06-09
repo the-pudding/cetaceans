@@ -3,101 +3,106 @@
 	
 .orcaDeath__graphic
 	width 100%
-	background rgba(255,0,0,0.1)
-	/*position absolute*/
-	top 0
-	right 0
-	transform translate3d(0, 0, 0)
-	display flex
-	align-items center
-	
 	.graphic__container
 		width 100%
 		max-width 60rem
 		margin 0 auto
 		
-
+	#arrowHead
+		fill $c1-inverted
 	.axis
 		display none
-
-/*		path
-			stroke $off-white
-			marker-end url(#arrowHead)
-		text
-			fill $off-white
-		line 
-			stroke $off-white*/
-			
-/*.area
-	fill $off-white
-	opacity .2*/
-	
-#areaClip
-	fill $purple-dark
 	
 .level
 	
 	&--High
+		path
+			fill lighten($c1, 4)
 		
 		.line
-			stroke $primary
+			stroke $c5
 			stroke-width 2px
 			stroke-dasharray 8,4
 			fill none
 			
 	&--Low
-		
+		path 
+			fill $c1
 		.line
-			stroke $tertiary
+			stroke $c3
 			fill none
+			stroke-width 2px
+			stroke-dasharray 8,4
 			
 		
 
 			
 .circle
-	
 	&--beginning
-		fill white
+		fill $c1
+		stroke $c1-inverted
+		stroke-width 2px
+		fill-opacity 1
 		
 	&--endHigh
-		fill $primary
+		stroke $c5
+		fill $c1
+		stroke-width 2px
+		fill-opacity 1
 		
 	&--endLow
-		fill $tertiary
+		stroke $c3
+		fill $c1
+		stroke-width 2px
+		fill-opacity 1
 
 
 .popG
 			
 	.popLine
-		stroke $off-white
+		stroke $c1-inverted
 		
 	.popText
-		fill $off-white
+		fill $c1-inverted
 		text-transform uppercase
+		font-size 12px
+		font-weight bold
+		letter-spacing 0.05em
 		
 	.popRect
-		fill $purple-dark
+		fill $c1
 		
 .xAnnGroup
 	
 	.xAnnLine
-		stroke $off-white
-		opacity .3
+		stroke $c1-inverted
+		// opacity 0.3
 		
 	.xAnnTextLabel
-		fill $off-white
+		fill $c1-inverted
 		text-transform uppercase
+		font-weight bold
+		letter-spacing 0.05em
+		font-size 12px
 		
 	.xRect
-		fill $purple-dark
+		fill $c1
 		
 	.yearRect
-		fill $purple-dark
+		fill $c1
 
 		
 	.yearAnn1
-		fill $tertiary
+		fill $c3
+		text-transform uppercase
+		font-weight bold
+		letter-spacing 0.05em
+		font-size 1rem
 		
 	.yearAnn2
-		fill $primary
+		fill $c5
+		text-transform uppercase
+		font-weight bold
+		letter-spacing 0.05em
+		font-size 1rem
 	

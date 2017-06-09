@@ -1,101 +1,30 @@
 .section--death
 	padding 0 1rem
-	position relative
-	min-height 1000px
-	width 100%
-	
-	.prose
-		margin 0 auto
-		max-width 40rem
-		position relative
-
-	//+mq('bp-desktop')
-		//margin 0
-		
-		.prose--title
-			max-width 40rem
-			margin 0 auto
-			position relative
-			text-align center
-	
-.prose__paragraphs
-	padding 1rem
-	position relative
-	
-	p 
-		
-		padding 1rem
-		background rgba(255,255,255, 0.9)
 	
 .death__graphic
 	width 100%
-	background rgba(255,0,0,0.1)
-	/*position absolute*/
-	top 0
-	right 0
-	transform translate3d(0, 0, 0)
-	display flex
-	align-items center
 	
 	.graphic__container
 		width 100%
 		max-width 60rem
 		margin 0 auto
 		
-
 	.axis
 		path
-			stroke $off-white
+			stroke $c1-inverted
 		text
-			fill $off-white
+			fill $c1-inverted
+			font-size 12px
 		line 
-			stroke $off-white
+			stroke $c1-inverted
 			
 .slider
 	
 	.ticks
 		text
-			fill $off-white
-			
-	
-
-
-/*	+mq('bp-desktop')
-		margin 0*/
-		
-
-.track,
-.track-inset,
-.track-overlay {
-  stroke-linecap: round;
-}
-
-.track {
-  stroke: #000;
-  stroke-opacity: 0.3;
-  stroke-width: 10px;
-}
-
-.track-inset {
-  stroke: #ddd;
-  stroke-width: 8px;
-}
-
-.track-overlay {
-  pointer-events: stroke;
-  stroke-width: 50px;
-  stroke: transparent;
-  cursor: crosshair;
-}
-
-.handle {
-  fill $tertiary;
-  stroke $tertiary;
-  stroke-opacity: 0.5;
-  stroke-width: 1.25px;
-}
-
+			fill $c1-inverted
+				
 .deathLine 
 	fill none
-	stroke $secondary
+	stroke $c5
 	stroke-width 2px

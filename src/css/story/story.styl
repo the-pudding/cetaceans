@@ -5,9 +5,9 @@ body
 	color $off-white
 	font-size 18px
 a
-	color $c7
+	color $primary
 	&:visited, &:hover
-		color $c7
+		color $primary
 
 p
 	font-size 18px
@@ -20,9 +20,14 @@ svg text
 	margin 0 auto
 	padding 0 1rem
 	
+	&__hed
+		color $c5
+		font-weight bold
+	
 .graphic__hed
 	margin 1rem auto
-	max-width 60rem
+	margin-top 4rem
+	max-width 40rem
 	text-align center
 
 .btn
@@ -39,5 +44,5 @@ svg text
 	&:hover
 		background-color lighten($c1, 10)
 	&.is-selected
-		background-color $c7
+		background-color $primary
 		color $c1

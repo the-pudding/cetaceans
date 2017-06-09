@@ -25,11 +25,8 @@ const scaleY = d3.scaleLinear()
 const populationLine = d3.line()
 const areaFill = d3.area()
 
-let lineWidth = 0
-let circleR = 0
-let dashArray = 0
-let lineWidthPop = 0
-let padding = 0
+let circleR = 5
+let padding = 5
 
 function calculateData(){
 
@@ -125,18 +122,8 @@ function resizeGraphic() {
 	graphicW = width
 	graphicH = graphicW / ratio
 
-	graphicSel
-		.style('height', `${graphicH}px`)
-
-	lineWidth = Math.max(2, .004 * graphicW)
-
-	lineWidthPop = Math.max(2, 0.001 * graphicW)
-
-	dashArray = Math.max(2, 0.01 * graphicW)
-
-	circleR = Math.max(5, 0.01 * graphicW)
-
-	padding = Math.max(2, 0.01 * graphicW)
+	// circleR = Math.max(5, 0.007 * graphicW)
+	// padding = Math.max(2, 0.01 * graphicW)
 }
 
 function updateScales(data) {
@@ -189,33 +176,6 @@ function setupDOM(){
 
 }
 
-function defineGradient(){
-	const svg = graphicSel.select('svg')
-
-	const gradDefs = svg.append('defs')
-
-	const linearGradient = gradDefs.append('linearGradient')
-		.attr('id', 'linearGradient')
-
-	linearGradient
-		.attr('x1', '0%')
-		.attr('y1', '0%')
-		.attr('x2', '100%')
-		.attr('y2', '100%')
-
-	linearGradient
-		.append('stop')
-		.attr('offset', '0%')
-		.attr('stop-color', '#FFFFFF')
-		.attr('stop-opacity', .4)
-
-	linearGradient
-		.append('stop')
-		.attr('offset', '90%')
-		.attr('stop-color', '#32313D')
-		.attr('stop-opacity', 0)
-}
-
 function updateDOM(data) {
 
 	const svg = graphicSel.select('svg')
@@ -238,10 +198,6 @@ function updateDOM(data) {
 		.attr('class', d => `level level--${d.key}`)
 
 	level.exit()
-		.transition()
-		.duration(500)
-		.ease(d3.easeCubicInOut)
-		.style('opacity', 0)
 		.remove()
 
 	const levelMerge = levelEnter.merge(level)
@@ -266,9 +222,7 @@ function updateDOM(data) {
 
 	const clipMerge = clipEnter.merge(clip)
 
-	clipMerge.transition()
-		.duration(200)
-		.attr('d', areaFill)
+	clipMerge.attr('d', areaFill)
 
 
 
@@ -292,9 +246,6 @@ function updateDOM(data) {
 	// drawing line along x axis
 	const xAnn = xAnnGroupMerge.selectAll('.xAnnLine').data(lineData)
 
-
-	console.log(xAnn)
-
 	const xAnnEnter = xAnn.enter()
 		.append('line')
 		.attr('class', 'xAnnLine')
@@ -303,20 +254,17 @@ function updateDOM(data) {
 		.attr('y1', scaleY(0))
 		.attr('y2', scaleY(0))
 		.attr('class', 'xAnnLine')
-		.style('stroke-width', `${lineWidthPop}px`)
 		
 
 	xAnn.exit().remove()
 
 	const xAnnMerge = xAnnEnter.merge(xAnn)
 
-	xAnnMerge.transition()
-		.duration(200)
+	xAnnMerge
 		.attr('x1', scaleX(2017))
 		.attr('x2', scaleX(2070))
 		.attr('y1', scaleY(0))
 		.attr('y2', scaleY(0))
-		.style('stroke-width', `${lineWidthPop}px`)
 
 
 	// Adding text
@@ -334,8 +282,7 @@ function updateDOM(data) {
 
 	const xAnnTextMerge = xAnnTextEnter.merge(xAnnTextLabel)
 
-	xAnnTextMerge.transition()
-		.duration(200)
+	xAnnTextMerge
 		.attr('x', scaleX(2017))
 		.attr('y', scaleY(0))
 		.attr('transform', `translate(0, ${graphicW * 0.005})`)
@@ -362,8 +309,7 @@ function updateDOM(data) {
 
 	const xRectMerge = xRectEnter.merge(xRect)
 
-	xRectMerge.transition()
-		.duration(200)
+	xRectMerge
 		.attr('x', bboxX.x - padding)
 		.attr('y', bboxX.y - padding)
 		.attr('width', bboxX.width + (padding*2))
@@ -378,55 +324,22 @@ function updateDOM(data) {
 	const yearAnn1Enter = yearAnn1.enter()
 		.append('text')
 		.attr('class', 'yearAnn1')
-		.attr('x', scaleX(2034))
-		.attr('y', scaleY(0))
-		.attr('transform', `translate(0, ${graphicW * 0.005})`)
+		.attr('x', scaleX(2033))
+		.attr('y', scaleY(0) + circleR * 1.5)
+		.attr('alignment-baseline', 'hanging')
+		.attr('text-anchor', 'middle')
 		.text('2033')
+
 
 	yearAnn1.exit().remove()
 
 	const yearAnn1Merge = yearAnn1Enter.merge(yearAnn1)
 
-	yearAnn1Merge.transition()
-		.duration(200)
-		.attr('x', scaleX(2034))
-		.attr('y', scaleY(0))
-		.attr('transform', `translate(0, ${graphicW * 0.005})`)
+	yearAnn1Merge
+		.attr('x', scaleX(2033))
+		.attr('y', scaleY(0) + circleR * 1.5)
+		// .attr('transform', `translate(0, ${graphicW * 0.005})`)
 
-
-	// Adding rect behind text
-	// Adding rectangle behind text
-	let xYear1 = d3.select('.yearAnn1')
-	let bboxXY = xYear1.node().getBBox()
-	
-
-	const yearRect1 = xAnnGroupMerge.selectAll('.yearRect1').data(lineData)
-
-	const yearRect1Enter = yearRect1.enter()
-		.append('rect')
-		.attr('x', bboxXY.x - padding)
-		.attr('y', bboxXY.y + padding/2)
-		.attr('width', bboxXY.width + (padding*2))
-		.attr('height', bboxXY.height)
-		.attr('class', 'yearRect yearRect1')
-		.attr('rx', 10)
-		.attr('ry', 10)
-
-
-	yearRect1.exit().remove()
-
-	const yearRect1Merge = yearRect1Enter.merge(yearRect1)
-
-	yearRect1Merge.transition()
-		.duration(200)
-		.attr('x', bboxXY.x - padding)
-		.attr('y', bboxXY.y + padding/2)
-		.attr('width', bboxXY.width + (padding*2))
-		.attr('height', bboxXY.height)
-		.attr('rx', 10)
-		.attr('ry', 10)
-
-	yearAnn1Merge.raise()
 
 
 
@@ -436,57 +349,19 @@ function updateDOM(data) {
 	const yearAnn2Enter = yearAnn2.enter()
 		.append('text')
 		.attr('class', 'yearAnn2')
-		.attr('x', scaleX(2066))
-		.attr('y', scaleY(0))
-		.attr('transform', `translate(0, ${graphicW * 0.005})`)
-		.text('2072')
+		.attr('x', scaleX(2070))
+		.attr('y', scaleY(0) + circleR * 1.5)
+		.attr('alignment-baseline', 'hanging')
+		.attr('text-anchor', 'middle')
+		.text('2070')
 
 	yearAnn2.exit().remove()
 
 	const yearAnn2Merge = yearAnn2Enter.merge(yearAnn2)
 
-	yearAnn2Merge.transition()
-		.duration(200)
-		.attr('x', scaleX(2066))
-		.attr('y', scaleY(0))
-		.attr('transform', `translate(0, ${graphicW * 0.005})`)
-
-
-	// Adding rect behind text
-	// Adding rectangle behind text
-	let xYear2 = d3.select('.yearAnn2')
-	let bboxXY2 = xYear2.node().getBBox()
-	
-
-	const yearRect2 = xAnnGroupMerge.selectAll('.yearRect2').data(lineData)
-
-	const yearRect2Enter = yearRect2.enter()
-		.append('rect')
-		.attr('x', bboxXY2.x - padding)
-		.attr('y', bboxXY2.y + padding/2)
-		.attr('width', bboxXY2.width + (padding*2))
-		.attr('height', bboxXY2.height)
-		.attr('class', 'yearRect yearRect2')
-		.attr('rx', 10)
-		.attr('ry', 10)
-
-
-	yearRect2.exit().remove()
-
-	const yearRect2Merge = yearRect2Enter.merge(yearRect2)
-
-	yearRect2Merge.transition()
-		.duration(200)
-		.attr('x', bboxXY2.x - padding)
-		.attr('y', bboxXY2.y + padding/2)
-		.attr('width', bboxXY2.width + (padding*2))
-		.attr('height', bboxXY2.height)
-		.attr('rx', 10)
-		.attr('ry', 10)
-
-	yearAnn2Merge.raise()
-
-
+	yearAnn2Merge
+		.attr('x', scaleX(2070))
+		.attr('y', scaleY(0) + circleR * 1.5)
 
 
 
@@ -500,16 +375,13 @@ function updateDOM(data) {
 		.append('path')
 		.attr('class', 'area')
 		.attr('d', areaFill)
-		.attr('fill', 'url(#linearGradient)')
 		
 
 	area.exit().remove()
 
 	const areaMerge = areaEnter.merge(area)
 
-	areaMerge.transition()
-		.duration(200)
-		.attr('d', areaFill)
+	areaMerge.attr('d', areaFill)
 
 
 	// Drawing lines
@@ -520,10 +392,7 @@ function updateDOM(data) {
 		.append('path')
 		.attr('class', (d, i) => `line line--${d.Level}`)
 		.attr('d', populationLine)
-		.style('stroke-width', `${lineWidth}px`)
-		.style('stroke-dasharray', `${dashArray}, ${dashArray/2}`)
 
-		console.log(lineWidth)
 
 		// exit
 	line.exit().remove()
@@ -532,18 +401,8 @@ function updateDOM(data) {
 
 	const lineMerge = lineEnter.merge(line)
 	
-	lineMerge.transition()
-		.duration(200)
-		.attr('d', populationLine)
-		.style('stroke-width', `${lineWidth}px`)
-		.style('stroke-dasharray', `${dashArray}, ${dashArray/2}`)
-
-
-
-
+	lineMerge.attr('d', populationLine)
 		
-
-
 	// Adding circles
 
 	const circleData = [{
@@ -573,11 +432,10 @@ function updateDOM(data) {
 
 	const circleMerge = circleEnter.merge(circle)
 
-	circleMerge.transition()
-		.duration(200)
-			.attr('cx', d => scaleX(d.x))
-			.attr('cy', d => scaleY(d.y))
-			.attr('r', `${circleR}`)
+	circleMerge
+		.attr('cx', d => scaleX(d.x))
+		.attr('cy', d => scaleY(d.y))
+		.attr('r', `${circleR}`)
 
 
 
@@ -610,7 +468,6 @@ function updateDOM(data) {
 	    .attr("orient", "auto-start-reverse")
 	    .append("path")
 	    .attr('d', 'M 1 1 7 4 1 7 Z')
-	    .style("fill", "white")
 
 
 
@@ -627,21 +484,18 @@ function updateDOM(data) {
 		.attr('y2', scaleY(0))
 		.attr('transform', `translate(${-graphicW/27}, 0)`)
 		.attr('class', 'popLine')
-		.style('stroke-width', `${lineWidthPop}px`)
 		.attr("marker-start", "url(#arrowHead)");
 
 	populationLabel.exit().remove()
 
 	const popMerge = popEnter.merge(populationLabel)
 
-	popMerge.transition()
-		.duration(200)
+	popMerge
 		.attr('x1', scaleX(2017))
 		.attr('x2', scaleX(2017))
 		.attr('y1', scaleY(0))
 		.attr('y2', scaleY(24))
 		.attr('transform', `translate(${-graphicW/27}, 0)`)
-		.style('stroke-width', `${lineWidthPop}px`)
 
 
 
@@ -660,9 +514,7 @@ function updateDOM(data) {
 
 	const popTextMerge = popTextEnter.merge(populationText)
 
-	popTextMerge.transition()
-		.duration(200)
-		.attr('transform', `translate(${-graphicW/33}, ${graphicH/2}) rotate(-90)`)
+	popTextMerge.attr('transform', `translate(${-graphicW/33}, ${graphicH/2}) rotate(-90)`)
 
 
 	// Adding rectangle behind text
@@ -685,8 +537,7 @@ function updateDOM(data) {
 
 	const popRectMerge = popRectEnter.merge(popRect)
 
-	popRectMerge.transition()
-		.duration(200)
+	popRectMerge
 		.attr('x', bbox.x - padding)
 		.attr('y', bbox.y - padding)
 		.attr('width', bbox.width + (padding*2))
@@ -696,15 +547,7 @@ function updateDOM(data) {
 	// Raise text on top of background rectangle
 	popTextMerge.raise()
 
-	console.log('updateDom ran!')
-
-
 }
-
-
-
-
-
 
 function updateAxis(data) {
 	const axis = graphicSel.select('.g-axis')
@@ -721,8 +564,6 @@ function updateAxis(data) {
 
 	x
 		.attr('transform', `translate(0, ${trim})`)
-		.transition()
-		.duration(200)
 		.call(axisBottom
 			.tickFormat(d3.format('d')))
 
@@ -737,7 +578,6 @@ function updateAxis(data) {
 
 function setup() {
 	setupDOM()
-	defineGradient()
 	calculateData()
 	resize()
 
