@@ -37,7 +37,8 @@ const graphicContainerSel = graphicSel.select('.graphic__container')
 const proseSel = containerSel.select('.scroll__prose')
 const stepSel = containerSel.selectAll('.prose__step')
 const scrollSel = containerSel.select('.scroll')
-let scrollVideoSel = null
+const scrollVideoSel = containerSel.selectAll('.scroll__video')
+const audioSel = containerSel.selectAll('.video__ui')
 
 let currentStep = '0'
 let currentDirection = true
@@ -69,7 +70,7 @@ function setupStep() {
 			const down = event.scrollDirection === 'FORWARD'
 			currentStep = step
 			currentDirection = down
-			if (step === 'video--0' && !down) updateChart({ step: 'data--99', down: false })
+			// if (step === 'video--0' && !down) updateChart({ step: 'data--99', down: false })
 		})
 		.addTo(controller)
 
@@ -127,8 +128,6 @@ function getData(endYear, acquisition) {
 
 	const stackFilter = stacked(filtered)
 
-	// console.log(stackFilter[0])
-
 	if (acquisition == 'capture') return [stackFilter[0]]
 	else if (acquisition == 'bornCapture') return [stackFilter[0], stackFilter[1]]
 	else if (acquisition == 'all') return stackFilter
@@ -144,8 +143,6 @@ function updateDimensions() {
 	width = graphicContainerSel.node().offsetWidth
 	height = window.innerHeight
 	desktop = window.matchMedia('(min-width: 600px)').matches
-
-	// console.log(window.innerHeight)
 }
 
 function resizeScrollElements() {
@@ -196,8 +193,7 @@ function resizeVideo() {
 }
 
 function setupDOM() {
-	const svg = graphicContainerSel
-		.append('svg')
+	const svg = graphicContainerSel.select('svg')
 
 	const gEnter = svg
 		.append('g')
@@ -227,16 +223,11 @@ function updateScales(data) {
 	scaleX
 		.rangeRound([0, trimW])
 		.padding(0.1)
-		//.domain(stackedData[0].map(d => d.data.year))
 		.domain(timelineData.map(d => d.year))
 
 	scaleY
 		.range([trimH, 0])
-		//.domain([0, d3.max(stackedData, d => d[0] + d[1])])
-		//.domain([0, d3.max(stackedData[stackedData.length - 1], d => d[0] + d[1])])
-		//.domain([0, d3.max(stackedData[stackedData.length - 1], function(d) { return d[0] + d[1]; }) ])
 		.domain([0, 178])
-		//console.log(stackedData[stackedData.length-2])
 }
 
 function updateDom(data) {
@@ -297,6 +288,7 @@ function updateAxis(data) {
 	const axis = graphicSel.select('.g-axis')
 
 	const axisLeft = d3.axisLeft(scaleY)
+		.tickSize(-graphicW + margin * 2)
 	const axisBottom = d3.axisBottom(scaleX).tickValues(["1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010"])
 
 	const x = axis.select('.axis--x')
@@ -363,6 +355,7 @@ function setupEvents() {
 	scrollVideoSel.select('video').on('click', () => {
 		// if muted restart and unmute
 		muted = !muted
+		audioSel.classed('is-muted', muted)
 		if (currentVideoPlayer) {
 			currentVideoPlayer.node().muted = muted
 			currentVideoPlayer.classed('unmuted', !muted)
@@ -372,27 +365,10 @@ function setupEvents() {
 }
 
 function setupVideo() {
-	const videoContainer = graphicContainerSel.append('div')
-		.attr('class', 'container__video')
+	scrollVideoSel.data(videoData)
 
-	const enterSel = videoContainer.selectAll('.scroll__video')
-		.data(videoData)
-	.enter().append('div')
-		.attr('class', 'scroll__video')
-		.attr('data-step', d => `video--${d.step}`)
-
-
-	enterSel.append('div')
+	scrollVideoSel.append('div')
 		.attr('class', d => `video__line ${d.align}`)
-
-	enterSel.append('video')
-		.attr('src', d => `assets/${d.id}.mp4`)
-		.attr('playsinline', true)
-		.attr('preload', true)
-		.attr('muted', true)
-		.attr('loop', true)
-
-	scrollVideoSel = containerSel.selectAll('.scroll__video')
 }
 
 function setup(data) {

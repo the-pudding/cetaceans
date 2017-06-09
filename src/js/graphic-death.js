@@ -15,12 +15,14 @@ let tkData = []
 let sliderData = []
 let predictionData = []
 /*let margin = 100*/
-let margin = {top: 20, bottom: 20, left: 30, right: 30}
+let margin = { top: 20, bottom: 20, left: 50, right: 50 }
 let width = 0
 let height = 0
 let graphicW = 0
 let graphicH = 0
 let desktop = false
+
+const FONT_SIZE = 12
 
 const scaleX = d3.scaleLinear()
 const scaleY = d3.scaleLinear()
@@ -92,6 +94,12 @@ function setupDOM(){
 		.append('g')
 		.attr('class', 'axis axis--y')
 
+	y.append('text')
+		.attr('class', 'label')
+		.text('Count')
+		.attr('text-anchor', 'middle')
+		.attr('transform', 'rotate(-90)')
+
 }
 
 function setupSliders (){
@@ -155,7 +163,7 @@ function updateDOM(data) {
 function updateAxis(data) {
 	const axis = graphicSel.select('.g-axis')
 
-	const axisLeft = d3.axisLeft(scaleY)
+	const axisLeft = d3.axisLeft(scaleY).tickSize(-graphicW + margin.left + margin.right)
 	const axisBottom = d3.axisBottom(scaleX)
 
 	const x = axis.select('.axis--x')
@@ -170,6 +178,10 @@ function updateAxis(data) {
 
 	y
 		.call(axisLeft)
+
+	y.select('text')
+		.attr('x', -graphicH / 2)
+		.attr('y', -margin.left + FONT_SIZE)
 }
 
 

@@ -56,13 +56,18 @@ $chart-margin = 40px
 			fill $c1-inverted
 		line 
 			stroke $c1-inverted
-	
-	// .axis--x
-	// 	.tick
-	// 		display none
-	.axis--y 
-		path, line
+	.axis--x 
+		.tick line
 			display none
+	.axis--y
+		path
+			display none
+		line
+			stroke-dasharray 4px 4px
+			opacity 0.25
+		.tick:nth-child(2)
+			display none
+			
 		
 
 .scroll__prose
@@ -90,6 +95,9 @@ $chart-margin = 40px
 	top $chart-margin
 	pointer-events none
 	transition 500ms all ease-in-out
+	&:hover
+		.audio svg
+			fill-opacity 1
 	&.is-visible
 		opacity 1
 		pointer-events auto
@@ -109,7 +117,7 @@ $chart-margin = 40px
 		position absolute
 		top 100%
 		width 1px
-		border-left 1px dashed rgba(white, 0.5)
+		border-left 1px dashed $c1-inverted
 		margin-left -1px
 		&.left
 			left 0
@@ -117,22 +125,26 @@ $chart-margin = 40px
 			right 0
 		&.center
 			left 50%
-		
-.btn__audio
-	background-color transparent
-	background-color $c3
-	color darken($c3, 40)
-	padding 0.25em
-	border-radius 2px
-	font-size 0.75em
-	text-transform uppercase
-	letter-spacing 0.025em
-	font-weight bold
-	display inline-block
-	margin-left 0.5em
-	svg
-		fill darken($c3, 40)
-		width 1em
-		height 1em
-		vertical-align middle
-		margin-top -4px
+
+	.video__ui
+		position absolute
+		bottom 0
+		right 0
+		padding 0.4rem
+		pointer-events none
+		svg 
+			fill $c1-inverted
+			fill-opacity 0.65
+			transition 300ms all ease-in-out
+			width 1.5rem
+			height 1.2rem
+		.audio--on
+			display block
+		.audio--off
+			display none
+		&.is-muted
+			.audio--on
+				display none
+		&.is-muted
+			.audio--off
+				display block

@@ -11,13 +11,15 @@ let birthData = []
 let predictionDataLow = []
 let predictionDataHigh = []
 let allPredictionData = []
-let margin = {top: 20, bottom: 40, left: 40, right: 40}
+let margin = {top: 20, bottom: 30, left: 36, right: 36}
 let width = 0
 let height = 0
 let graphicW = 0
 let graphicH = 0
 let desktop = false
 let population = 24
+
+const FONT_SIZE = 12
 
 const scaleX = d3.scaleLinear()
 const scaleY = d3.scaleLinear()
@@ -274,9 +276,9 @@ function updateDOM(data) {
 		.append('text')
 		.attr('class', 'xAnnTextLabel')
 		.attr('x', scaleX(2017))
-		.attr('y', scaleY(0))
+		.attr('y', scaleY(0) - 1)
 		.attr('transform', `translate(0, ${graphicW * 0.005})`)
-		.text('0 orcas by')
+		.text('Zero orcas by')
 
 	xAnnTextLabel.exit().remove()
 
@@ -454,6 +456,7 @@ function updateDOM(data) {
 
 	const popGroupMerge = popGroupEnter.merge(populationGroup)
 
+	popGroupMerge.attr('transform', `translate(${-FONT_SIZE * 2}, 0)`)
 	// Adding arrowhead to population line
 	const arrow = popGroupMerge.selectAll('.popArrow').data(lineData)
 
@@ -482,7 +485,7 @@ function updateDOM(data) {
 		.attr('x2', scaleX(2017))
 		.attr('y1', scaleY(24))
 		.attr('y2', scaleY(0))
-		.attr('transform', `translate(${-graphicW/27}, 0)`)
+		// .attr('transform', `translate(${-graphicW/27}, 0)`)
 		.attr('class', 'popLine')
 		.attr("marker-start", "url(#arrowHead)");
 
@@ -495,7 +498,7 @@ function updateDOM(data) {
 		.attr('x2', scaleX(2017))
 		.attr('y1', scaleY(0))
 		.attr('y2', scaleY(24))
-		.attr('transform', `translate(${-graphicW/27}, 0)`)
+		// .attr('transform', `translate(${-graphicW/27}, 0)`)
 
 
 
@@ -507,14 +510,15 @@ function updateDOM(data) {
 	const popTextEnter = populationText.enter()
 		.append('text')
 		.attr('class', 'popText')
-		.attr('transform', `translate(${-graphicW/33}, ${graphicH/2}) rotate(-90)`)
+		.attr('transform', `translate(${0}, ${graphicH/2}) rotate(-90)`)
+		.attr('y', FONT_SIZE / 2 - 1)
 		.text('population')
 
 	populationText.exit().remove()
 
 	const popTextMerge = popTextEnter.merge(populationText)
 
-	popTextMerge.attr('transform', `translate(${-graphicW/33}, ${graphicH/2}) rotate(-90)`)
+	popTextMerge.attr('transform', `translate(${0}, ${graphicH/2}) rotate(-90)`)
 
 
 	// Adding rectangle behind text
@@ -531,7 +535,7 @@ function updateDOM(data) {
 		.attr('width', bbox.width + (padding*2))
 		.attr('height', bbox.height + (padding*2))
 		.attr('class', 'popRect')
-		.attr('transform', `translate(${-graphicW/33}, ${graphicH/2}) rotate(-90)`)
+		.attr('transform', `translate(${0}, ${graphicH/2}) rotate(-90)`)
 
 	popRect.exit().remove()
 
@@ -542,7 +546,7 @@ function updateDOM(data) {
 		.attr('y', bbox.y - padding)
 		.attr('width', bbox.width + (padding*2))
 		.attr('height', bbox.height + (padding*2))
-		.attr('transform', `translate(${-graphicW/33}, ${graphicH/2}) rotate(-90)`)
+		.attr('transform', `translate(0, ${graphicH/2}) rotate(-90)`)
 
 	// Raise text on top of background rectangle
 	popTextMerge.raise()
@@ -568,7 +572,7 @@ function updateAxis(data) {
 			.tickFormat(d3.format('d')))
 
 	y
-		.attr('transform', `translate(-50, 0)`)
+		.attr('transform', `translate(0, 0)`)
 		.call(axisLeft
 			.ticks(0))
 }

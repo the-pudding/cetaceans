@@ -2,11 +2,11 @@ import debounce from 'lodash.debounce'
 import { select, addClass } from './utils/dom'
 import isMobile from './utils/is-mobile'
 import graphicAcquisitions from './graphic-acquisitions'
-import graphicExplore from './graphic-explore'
+// import graphicExplore from './graphic-explore'
 import graphicOrcaDeath from './graphic-orca-death'
 import graphicDeath from './graphic-death'
 import graphicLifespan from './graphic-lifespan'
-import graphicCOD from './graphic-cod'
+// import graphicCOD from './graphic-cod'
 
 const bodyEl = select('body')
 let previousWidth = 0
@@ -35,7 +35,7 @@ function init() {
 	graphicLifespan.init()
 	graphicOrcaDeath.init()
 	graphicDeath.init()
-	graphicCOD.init()
+	// graphicCOD.init()
 }
 
 init()

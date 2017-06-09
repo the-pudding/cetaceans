@@ -19,9 +19,25 @@
 		line 
 			stroke $c1-inverted
 	
+	.axis--x 
+		.tick
+			line 
+				display none
+		
 	.axis--y 
-		path, line
+		path
 			display none
+		line
+			stroke-dasharray 4px 4px
+			opacity 0.25
+		.tick:nth-child(2)
+			display none
+		
+		.label 
+			font-weight bold
+			font-size 12px
+			text-transform uppercase
+			letter-spacing 0.05em
 
 .slider__group			
 	display flex

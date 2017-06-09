@@ -8,15 +8,6 @@ const graphicContainerSel = graphicSel.select('.graphic__container')
 
 let CODdata = []
 
-let margin = {top: 50, bottom: 50, left: 100, right: 50}
-let width = 0
-let height = 0
-let graphicW = 0
-let graphicH = 0
-let desktop = false
-
-
-
 function tabulate(data, columns) {
 	const table = graphicContainerSel.append('table')
 	const thead = table.append('thead')
