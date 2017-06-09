@@ -11,7 +11,7 @@ let birthData = []
 let predictionDataLow = []
 let predictionDataHigh = []
 let allPredictionData = []
-let margin = {top: 50, bottom: 50, left: 100, right: 100}
+let margin = {top: 20, bottom: 40, left: 40, right: 40}
 let width = 0
 let height = 0
 let graphicW = 0
@@ -118,7 +118,7 @@ function updateDimensions() {
 }
 
 function resizeGraphic() {
-	const ratio = 1.5
+	const ratio = 1.7
 	graphicW = width
 	graphicH = graphicW / ratio
 

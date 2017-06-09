@@ -8,6 +8,7 @@
 		width 100%
 		max-width 60rem
 		margin 0 auto
+		margin-bottom 4rem
 		
 	.axis
 		path
@@ -17,12 +18,32 @@
 			font-size 12px
 		line 
 			stroke $c1-inverted
-			
-.slider
 	
-	.ticks
-		text
-			fill $c1-inverted
+	.axis--y 
+		path, line
+			display none
+
+.slider__group			
+	display flex
+	flex-direction column
+	justify-content center
+	max-width 30rem
+	margin 2rem auto
+	.slider 
+		display flex
+		justify-content center
+		margin-bottom 0.5rem
+	p 
+		margin 0
+		width 50%
+		&.output
+			width 100%
+	span 
+		font-weight bold
+		color $c5
+	input 
+		display inline-block
+		width 50%
 				
 .deathLine 
 	fill none

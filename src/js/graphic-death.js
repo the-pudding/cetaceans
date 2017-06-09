@@ -1,16 +1,21 @@
 import * as d3 from 'd3'
 import loadData from './load-data-death'
 
-const bodySel = d3.select('body') 
+const bodySel = d3.select('body')
 const containerSel = bodySel.select('.section--death')
 const graphicSel = containerSel.select('.death__graphic')
 const graphicContainerSel = graphicSel.select('.graphic__container')
+const inputLifespanSel = graphicSel.select('.slider__lifespan input')
+const inputBreedingbanSel = graphicSel.select('.slider__breedingban input')
+const spanLifespanSel = graphicSel.select('.slider__lifespan span')
+const spanBreedingbanSel = graphicSel.select('.slider__breedingban span')
+const spanExistSel = graphicSel.select('.output span')
 
 let tkData = []
 let sliderData = []
 let predictionData = []
 /*let margin = 100*/
-let margin = {top: 100, bottom: 25, left: 100, right: 50}
+let margin = {top: 20, bottom: 20, left: 30, right: 30}
 let width = 0
 let height = 0
 let graphicW = 0
@@ -45,7 +50,7 @@ function updateDimensions() {
 }
 
 function resizeGraphic() {
-	const ratio = 1.7
+	const ratio = 2
 	graphicW = width
 	graphicH = graphicW / ratio
 }
@@ -91,27 +96,24 @@ function setupDOM(){
 
 function setupSliders (){
 
-	d3.select('.slider#lifespan')
-		.on('input', function(){
+	inputLifespanSel
+		.on('input', function() {
 			ageSliderValue = +this.value
-			/*updateSlideValue(+this.value)*/
+			spanLifespanSel.text(ageSliderValue)
 			calculateData(+this.value, breedingSliderValue)
 			updateDOM(predictionData)
 		})
 
-	d3.select('.slider#breedingban')
-		.on('input', function(){
+	inputBreedingbanSel
+		.on('input', function() {
 			breedingSliderValue = +this.value
-			/*updateSlideValue(+this.value)*/
+			spanBreedingbanSel.text(breedingSliderValue)
 			calculateData(ageSliderValue, +this.value)
 			updateDOM(predictionData)
 		})
 
 }
 
-function updateSlideValue(value){
-	console.log(value)
-}
 
 function updateDOM(data) {
 
@@ -186,6 +188,8 @@ function calculateData(ageSliderValue, breedingSliderValue){
 		.entries(sliderData)
 
 	maxYear = Math.max.apply(Math, sliderData.map( d => d.deathYear))
+
+	spanExistSel.text(maxYear)
 
 	const cleanNest = d3.range(2017, maxYear).map(i => {
 		const key = i.toString()
