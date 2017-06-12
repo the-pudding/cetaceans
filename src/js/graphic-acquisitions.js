@@ -166,7 +166,8 @@ function resizeScrollElements() {
 function resizeGraphic() {
 	const ratio = desktop ? 1.5 : 1
 	graphicW = width
-	graphicH = graphicW / ratio
+	// graphicH = graphicW / ratio
+	graphicH = height * 0.65
 
 	graphicSel
 		.style('height', `${height}px`)

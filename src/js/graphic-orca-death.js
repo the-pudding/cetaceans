@@ -121,9 +121,10 @@ function updateDimensions() {
 }
 
 function resizeGraphic() {
-	const ratio = 1.7
+	const ratio = desktop ? 1.75 : 1
 	graphicW = width
-	graphicH = graphicW / ratio
+	// graphicH = graphicW / ratio
+	graphicH = height * 0.65
 
 	// circleR = Math.max(5, 0.007 * graphicW)
 	// padding = Math.max(2, 0.01 * graphicW)

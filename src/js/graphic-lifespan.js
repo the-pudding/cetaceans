@@ -218,7 +218,7 @@ function updateDOM(data) {
 function resizeGraphic() {
 	const ratio = 1.5
 	graphicW = width
-	graphicH = height * (desktop ? 0.8 : 0.65)
+	graphicH = height * 0.65
 }
 
 function handleToggle(datum, index) {

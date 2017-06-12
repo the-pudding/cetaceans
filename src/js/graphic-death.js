@@ -54,7 +54,8 @@ function updateDimensions() {
 function resizeGraphic() {
 	const ratio = desktop ? 2 : 1.25
 	graphicW = width
-	graphicH = graphicW / ratio
+	// graphicH = graphicW / ratio
+	graphicH = height * 0.65
 }
 
 function updateScales(data) {
