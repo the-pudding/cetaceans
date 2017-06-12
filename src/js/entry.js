@@ -12,8 +12,8 @@ let previousWidth = 0
 
 function handleResize() {
 	const width = bodyEl.offsetWidth
-	d3.select('.intro').style('height', `${window.innerHeight * 0.85}px`)
 	if (previousWidth !== width) {
+		d3.select('.intro').style('height', `${window.innerHeight * 0.85}px`)
 		previousWidth = width
 		graphicAcquisitions.resize()
 		graphicLifespan.resize()
