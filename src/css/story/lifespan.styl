@@ -9,6 +9,7 @@
 		display none
 		display flex
 		justify-content center
+		flex-wrap wrap
 		margin-bottom 2rem
 		li 
 			display inline-block
@@ -24,6 +25,10 @@
 			font-size 12px
 			fill $c1-inverted
 			font-weight bold
+			&:first-child
+				fill none
+				stroke $c1
+				stroke-width 3px
 		rect 
 			fill $c1
 	

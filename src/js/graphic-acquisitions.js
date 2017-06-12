@@ -22,7 +22,7 @@ let desktop = false
 let enterExitScene = null
 let timelineData = null
 
-const margin = 40
+const margin = { top: 0, left: 40, bottom: 20, right: 20 }
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
 
@@ -164,7 +164,7 @@ function resizeScrollElements() {
 }
 
 function resizeGraphic() {
-	const ratio = 1.5
+	const ratio = desktop ? 1.5 : 1
 	graphicW = width
 	graphicH = graphicW / ratio
 
@@ -177,14 +177,14 @@ function resizeVideo() {
 	const bandwidth = scaleX.bandwidth()
 	scrollVideoSel
 		.style('left', d => {
-			const x = scaleX(d.year) - videoW / 2 + margin + bandwidth / 2
+			const x = scaleX(d.year) - videoW / 2 + margin.left + bandwidth / 2
 			if (d.align === 'left') return `${x + videoW / 2}px`
 			else if (d.align === 'right') return `${x - videoW / 2}px`
 			return `${x}px`
 		})
 		.style('bottom', d => {
 			const h = videoW / (d.w / d.h)
-			const y = graphicH - margin - scaleY(d.y) + 6
+			const y = graphicH - scaleY(d.y) + 6
 			return `${y}px`
 		})
 
@@ -195,7 +195,7 @@ function resizeVideo() {
 	scrollVideoSel.select('.video__line')
 		.style('height', d => {
 			const videoH = videoW / (d.w / d.h)
-			const y = graphicH - scaleY(d.y) - margin * 2
+			const y = graphicH - scaleY(d.y) - margin.bottom
 			return `${y}px`
 		})
 		// .style('margin-left', `${bandwidth / 2}px`)
@@ -232,8 +232,8 @@ function setupDOM() {
 }
 
 function updateScales(data) {
-	const trimW = graphicW - (margin * 2)
-	const trimH = graphicH - (margin * 2)
+	const trimW = graphicW - (margin.left + margin.right)
+	const trimH = graphicH - (margin.top + margin.bottom)
 
 	scaleX
 		.rangeRound([0, trimW])
@@ -254,7 +254,7 @@ function updateDom(data) {
 
 	const g = svg.select('g')
 
-	g.attr('transform', translate(margin, margin))
+	g.attr('transform', translate(margin.left, margin.top))
 
 	const plot = g.select('.timelinePlot')
 
@@ -303,13 +303,15 @@ function updateAxis(data) {
 	const axis = graphicSel.select('.g-axis')
 
 	const axisLeft = d3.axisLeft(scaleY)
-		.tickSize(-graphicW + margin * 2)
-	const axisBottom = d3.axisBottom(scaleX).tickValues(["1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010"])
+		.tickSize(-graphicW + margin.left + margin.right)
+
+	const values = desktop ? ["1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010"] : ["1940", "1960", "1980", "2000"]
+	const axisBottom = d3.axisBottom(scaleX).tickValues(values)
 
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')
 
-	const trim = graphicH - (margin * 2)
+	const trim = graphicH - margin.bottom - margin.top
 
 	x
 		.attr('transform', `translate(0, ${trim})`)
@@ -319,7 +321,7 @@ function updateAxis(data) {
 		.call(axisLeft)
 
 	y.select('text')
-		.attr('y', -margin + FONT_SIZE)
+		.attr('y', -margin.left + FONT_SIZE)
 		.attr('x', -graphicH / 2)
 }
 

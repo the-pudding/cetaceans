@@ -15,7 +15,7 @@ let tkData = []
 let sliderData = []
 let predictionData = []
 /*let margin = 100*/
-let margin = { top: 20, bottom: 20, left: 50, right: 50 }
+let margin = { top: 20, bottom: 20, left: 45, right: 20 }
 let width = 0
 let height = 0
 let graphicW = 0
@@ -48,11 +48,11 @@ function updateDimensions() {
 	width = graphicContainerSel.node().offsetWidth
 /*	width = 800*/
 	height = window.innerHeight
-	//desktop = window.matchMedia('(min-width: 20000px)').matches
+	desktop = window.matchMedia('(min-width: 600px)').matches
 }
 
 function resizeGraphic() {
-	const ratio = 2
+	const ratio = desktop ? 2 : 1.25
 	graphicW = width
 	graphicH = graphicW / ratio
 }
@@ -136,7 +136,7 @@ function updateDOM(data) {
 
 	const g = svg.select('g')
 
-	g.attr('transform', translate(margin.right, margin.top))
+	g.attr('transform', translate(margin.left, margin.top))
 
 	const plot = g.select('.deathPlot')
 
@@ -164,7 +164,9 @@ function updateAxis(data) {
 	const axis = graphicSel.select('.g-axis')
 
 	const axisLeft = d3.axisLeft(scaleY).tickSize(-graphicW + margin.left + margin.right)
+		.ticks(desktop ? 10 : 5)
 	const axisBottom = d3.axisBottom(scaleX)
+		.ticks(desktop ? 10 : 5)
 
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')

@@ -28,7 +28,7 @@ const populationLine = d3.line()
 const areaFill = d3.area()
 
 let circleR = 5
-let padding = 5
+let padding = 2
 
 function calculateData(){
 
@@ -116,6 +116,7 @@ function translate(x, y) {
 function updateDimensions() {
 	width = graphicContainerSel.node().offsetWidth
 	height = window.innerHeight
+	desktop = window.matchMedia('(min-width: 600px)').matches
 
 }
 
@@ -278,7 +279,7 @@ function updateDOM(data) {
 		.attr('x', scaleX(2017))
 		.attr('y', scaleY(0) - 1)
 		.attr('transform', `translate(0, ${graphicW * 0.005})`)
-		.text('Zero orcas by')
+		.text(`${desktop ? 'zero' : '0'} orcas by`)
 
 	xAnnTextLabel.exit().remove()
 
@@ -300,10 +301,6 @@ function updateDOM(data) {
 
 	const xRectEnter = xRect.enter()
 		.append('rect')
-		.attr('x', bboxX.x - padding)
-		.attr('y', bboxX.y - padding)
-		.attr('width', bboxX.width + (padding*2))
-		.attr('height', bboxX.height + (padding*2))
 		.attr('class', 'xRect')
 
 
@@ -315,7 +312,7 @@ function updateDOM(data) {
 		.attr('x', bboxX.x - padding)
 		.attr('y', bboxX.y - padding)
 		.attr('width', bboxX.width + (padding*2))
-		.attr('height', bboxX.height + (padding*2))
+		.attr('height', bboxX.height + (padding * 2))
 
 	xAnnTextMerge.raise()
 

@@ -11,14 +11,16 @@ const toggleSel = graphicSel.selectAll('.btn--toggle')
 let lifespanData = []
 let filteredData = []
 
-let margin = { top: 30, bottom: 30, left: 60, right: 30 }
+const FONT_SIZE = 12
+
+let margin = { top: 30, bottom: 10, left: FONT_SIZE, right: FONT_SIZE }
 let width = 0
 let height = 0
 let graphicW = 0
 let graphicH = 0
 let desktop = false
 
-const FONT_SIZE = 12
+
 
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
@@ -35,6 +37,7 @@ function translate(x, y) {
 function updateDimensions() {
 	width = graphicContainerSel.node().offsetWidth
 	height = window.innerHeight
+	desktop = window.matchMedia('(min-width: 600px)').matches
 }
 
 
@@ -103,7 +106,11 @@ function setupDOM(){
 		.enter().append('g')
 			.attr('class', 'age')
 
-	ageItem.append('rect')
+	ageItem.append('text')
+		.text((d, i) => i === 0 ? `${d} years` : d)
+		.attr('text-anchor', 'middle')
+		.attr('alignment-baseline', 'middle')
+		
 	ageItem.append('text')
 		.text((d, i) => i === 0 ? `${d} years` : d)
 		.attr('text-anchor', 'middle')
@@ -193,14 +200,6 @@ function updateDOM(data) {
 	
 	age.attr('transform', d => `translate(${scaleX(d) + scaleX.bandwidth() / 2}, ${scaleY(0)})`)
 
-	const rectW = scaleX.bandwidth() * 2.5
-	const rectH = FONT_SIZE * 1.5
-
-	age.select('rect')
-		.attr('x', (d, i) => -rectW / 2 * (i === 0 ? 2 : 1))
-		.attr('y', -rectH / 2)
-		.attr('width', (d, i) => rectW  * (i === 0 ? 2 : 1))
-		.attr('height', rectH)
 
 	const offText = scaleY(0) / 1.5
 	g.select('.axis--z .living')
@@ -219,7 +218,7 @@ function updateDOM(data) {
 function resizeGraphic() {
 	const ratio = 1.5
 	graphicW = width
-	graphicH = height * 0.8
+	graphicH = height * (desktop ? 0.8 : 0.65)
 }
 
 function handleToggle(datum, index) {

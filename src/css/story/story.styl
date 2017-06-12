@@ -6,7 +6,9 @@ body
 	font-size 18px
 	
 p
-	font-size 18px
+	font-size 17px
+	+mq('bp-desktop')
+		font-size 18px
 
 svg text
 	font-family $sans
@@ -19,12 +21,18 @@ svg text
 	&__hed
 		color $c5
 		font-weight bold
+		set-type-size('x-large')
+		+mq('bp-desktop')
+			set-type-size('xx-large')
 	
 .graphic__hed
 	margin 1rem auto
 	margin-top 4rem
 	max-width 40rem
 	text-align center
+	set-type-size('large')
+	+mq('bp-desktop')
+		set-type-size('x-large')
 
 .btn
 	background-color $c1

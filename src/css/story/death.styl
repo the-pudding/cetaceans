@@ -30,7 +30,7 @@
 		line
 			stroke-dasharray 4px 4px
 			opacity 0.25
-		.tick:nth-child(2)
+		.tick:nth-child(3)
 			display none
 		
 		.label 
@@ -48,18 +48,27 @@
 	.slider 
 		display flex
 		justify-content center
+		flex-wrap wrap
 		margin-bottom 0.5rem
 	p 
 		margin 0
-		width 50%
+		width 100%
+		text-align center
+		set-type-size('small')
+		+mq('bp-desktop')
+			width 50%
+			text-align left
 		&.output
 			width 100%
 	span 
 		font-weight bold
 		color $c5
-	input 
-		display inline-block
-		width 50%
+	input
+		display block
+		width 100%
+		+mq('bp-desktop')
+			display inline-block
+			width 50%
 				
 .deathLine 
 	fill none
