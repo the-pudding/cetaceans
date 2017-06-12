@@ -43,11 +43,12 @@
 	display flex
 	flex-direction column
 	justify-content center
-	max-width 30rem
+	max-width 35rem
 	margin 2rem auto
 	.slider 
 		display flex
 		justify-content center
+		align-items center
 		flex-wrap wrap
 		+mq('bp-desktop')
 			flex-wrap nowrap
@@ -58,19 +59,23 @@
 		text-align center
 		set-type-size('small')
 		+mq('bp-desktop')
+			set-type-size('medium')
 			width 50%
 			text-align left
 		&.output
 			width 100%
 			text-align center
-			+mq('bp-desktop')
-				text-align left
+			font-weight bold
+			set-type-size('medium')
 	span 
 		font-weight bold
 		color $c5
-	input
+	.input
+		vertical-align middle
 		display block
 		width 100%
+		max-width 20rem
+		margin 1rem auto
 		+mq('bp-desktop')
 			display inline-block
 			width 50%

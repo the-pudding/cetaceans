@@ -1,5 +1,7 @@
 import * as d3 from 'd3'
+import * as noUiSlider from 'nouislider'
 import loadData from './load-data-death'
+
 
 const bodySel = d3.select('body')
 const containerSel = bodySel.select('.section--death')
@@ -31,7 +33,7 @@ const populationLine = d3.line()
 	// .curve(d3.curveStep)
 
 
-let breedingSliderValue = null
+let breedingSliderValue = 2030
 let ageSliderValue = 20
 let maxYear = 2030
 
@@ -55,7 +57,7 @@ function resizeGraphic() {
 	const ratio = desktop ? 2 : 1.25
 	graphicW = width
 	// graphicH = graphicW / ratio
-	graphicH = height * 0.65
+	graphicH = height * 0.6
 }
 
 function updateScales(data) {
@@ -103,25 +105,58 @@ function setupDOM(){
 
 }
 
-function setupSliders (){
+function setupSliders() {
+	const slider1 = graphicSel.select('.lifespan__input')
+	const slider2 = graphicSel.select('.breedingban__input')
+	
+	noUiSlider.create(slider1.node(), {
+		start: 20,
+		connect: [true, false],
+		step: 1,
+		range: { min: 15, max: 62 },
+	})
 
-	inputLifespanSel
-		.on('input', function() {
-			ageSliderValue = +this.value
-			spanLifespanSel.text(ageSliderValue)
-			calculateData(+this.value, breedingSliderValue)
-			updateDOM(predictionData)
-		})
+	noUiSlider.create(slider2.node(), {
+		start: 2030,
+		connect: [true, false],
+		step: 1,
+		range: { min: 2017, max: 2050 },
+	})
 
-	inputBreedingbanSel
-		.on('input', function() {
-			breedingSliderValue = +this.value
-			spanBreedingbanSel.text(breedingSliderValue)
-			calculateData(ageSliderValue, +this.value)
-			updateDOM(predictionData)
-		})
+	slider1.node().noUiSlider.on('update', function slide() {
+		ageSliderValue = +this.get()
+		spanLifespanSel.text(ageSliderValue)
+		calculateData(ageSliderValue, breedingSliderValue)
+		updateDOM(predictionData)
+	})
 
+	slider2.node().noUiSlider.on('update', function slide() {
+		breedingSliderValue = +this.get()
+		spanBreedingbanSel.text(breedingSliderValue)
+		calculateData(ageSliderValue, breedingSliderValue)
+		updateDOM(predictionData)
+	})
 }
+
+// function setupSliders (){
+
+// 	inputLifespanSel
+// 		.on('input', function() {
+// 			ageSliderValue = +this.value
+// 			spanLifespanSel.text(ageSliderValue)
+// 			calculateData(+this.value, breedingSliderValue)
+// 			updateDOM(predictionData)
+// 		})
+
+// 	inputBreedingbanSel
+// 		.on('input', function() {
+// 			breedingSliderValue = +this.value
+// 			spanBreedingbanSel.text(breedingSliderValue)
+// 			calculateData(ageSliderValue, +this.value)
+// 			updateDOM(predictionData)
+// 		})
+
+// }
 
 
 function updateDOM(data) {

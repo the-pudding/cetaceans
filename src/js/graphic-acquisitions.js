@@ -347,7 +347,6 @@ function updateVideo(step) {
 }
 
 function updateChart({ step, down }) {
-	console.log(step)
 	const stepNumber = step.split('--')[1]
 	let data = []
 	if (stepNumber === '0') data = getData(1938, "capture")
