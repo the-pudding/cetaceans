@@ -49,6 +49,8 @@
 		display flex
 		justify-content center
 		flex-wrap wrap
+		+mq('bp-desktop')
+			flex-wrap nowrap
 		margin-bottom 0.5rem
 	p 
 		margin 0
@@ -60,6 +62,9 @@
 			text-align left
 		&.output
 			width 100%
+			text-align center
+			+mq('bp-desktop')
+				text-align left
 	span 
 		font-weight bold
 		color $c5
