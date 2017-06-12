@@ -5,12 +5,14 @@ import graphicAcquisitions from './graphic-acquisitions'
 import graphicOrcaDeath from './graphic-orca-death'
 import graphicDeath from './graphic-death'
 import graphicLifespan from './graphic-lifespan'
+import * as d3 from 'd3'
 
 const bodyEl = select('body')
 let previousWidth = 0
 
 function handleResize() {
 	const width = bodyEl.offsetWidth
+	d3.select('.intro').style('height', `${window.innerHeight * 0.85}px`)
 	if (previousWidth !== width) {
 		previousWidth = width
 		graphicAcquisitions.resize()
@@ -21,6 +23,7 @@ function handleResize() {
 }
 
 function init() {
+	d3.select('.intro').style('height', `${window.innerHeight * 0.85}px`)
 	// add mobile class to body tag
 	if (isMobile.any()) addClass(bodyEl, 'is-mobile')
 	// setup resize event
