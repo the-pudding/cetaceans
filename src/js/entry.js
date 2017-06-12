@@ -20,7 +20,7 @@ function handleResize() {
 		graphicLifespan.resize()
 		graphicOrcaDeath.resize()
 		graphicDeath.resize()
-		graphicCOD.resize()
+		// graphicCOD.resize()
 	}
 }
 

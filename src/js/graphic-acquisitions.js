@@ -3,13 +3,15 @@ import ScrollMagic from 'scrollmagic'
 import loadData from './load-data-acquisitions'
 
 const videoData = [
-	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330, align: 'left' },
-	{ id: 'flipper', step: 2, year: '1963', w: 480, h: 270, align: 'center' },
-	{ id: 'hitchhikers', step: 4, year: '1978', w: 440, h: 300, align: 'center' },
-	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260, align: 'right' },
+	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330, align: 'left', y: 30 },
+	{ id: 'flipper', step: 2, year: '1963', w: 480, h: 270, align: 'center', y: 70 },
+	{ id: 'hitchhikers', step: 4, year: '1978', w: 440, h: 300, align: 'left', y: 90 },
+	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260, align: 'right', y: 90 },
 ]
 
 const controller = new ScrollMagic.Controller({ refreshInterval: 0 })
+
+const FONT_SIZE = 12
 
 let width = 0
 let height = 0
@@ -40,7 +42,7 @@ const scrollSel = containerSel.select('.scroll')
 const scrollVideoSel = containerSel.selectAll('.scroll__video')
 const audioSel = containerSel.selectAll('.video__ui')
 
-let currentStep = '0'
+let currentStep = 'video--0'
 let currentDirection = true
 
 let currentVideoPlayer = null
@@ -111,10 +113,11 @@ function setupScroll() {
 	setupEnterExit()
 }
 
-
-// VIDEO STUFF
 function pauseVideo() {
-	if (currentVideoPlayer) currentVideoPlayer.node().pause()
+	if (currentVideoPlayer) {
+		const vid = currentVideoPlayer.node()
+		if (vid.currentTime) vid.pause()
+	}
 }
 
 function getData(endYear, acquisition) {
@@ -179,6 +182,11 @@ function resizeVideo() {
 			else if (d.align === 'right') return `${x - videoW / 2}px`
 			return `${x}px`
 		})
+		.style('bottom', d => {
+			const h = videoW / (d.w / d.h)
+			const y = graphicH - margin - scaleY(d.y) + 6
+			return `${y}px`
+		})
 
 	scrollVideoSel.select('video')
 		.style('width', `${videoW}px`)
@@ -187,7 +195,8 @@ function resizeVideo() {
 	scrollVideoSel.select('.video__line')
 		.style('height', d => {
 			const videoH = videoW / (d.w / d.h)
-			return `${graphicH - videoH - margin * 2}px`
+			const y = graphicH - scaleY(d.y) - margin * 2
+			return `${y}px`
 		})
 		// .style('margin-left', `${bandwidth / 2}px`)
 }
@@ -214,6 +223,12 @@ function setupDOM() {
 	const y = axis
 		.append('g')
 		.attr('class', 'axis axis--y')
+
+	y.append('text')
+		.attr('class', 'label')
+		.attr('transform', 'rotate(-90)')
+		.attr('text-anchor', 'middle')
+		.text('Count')
 }
 
 function updateScales(data) {
@@ -302,6 +317,10 @@ function updateAxis(data) {
 
 	y
 		.call(axisLeft)
+
+	y.select('text')
+		.attr('y', -margin + FONT_SIZE)
+		.attr('x', -graphicH / 2)
 }
 
 function updateVideo(step) {
@@ -325,6 +344,7 @@ function updateVideo(step) {
 }
 
 function updateChart({ step, down }) {
+	console.log(step)
 	const stepNumber = step.split('--')[1]
 	let data = []
 	if (stepNumber === '0') data = getData(1938, "capture")

@@ -67,6 +67,12 @@ $chart-margin = 40px
 			opacity 0.25
 		.tick:nth-child(2)
 			display none
+		.label
+			font-size 12px
+			fill $c1-inverted
+			font-weight bold
+			text-transform uppercase
+			letter-spacing 0.05em
 			
 		
 
@@ -92,7 +98,6 @@ $chart-margin = 40px
 .scroll__video 
 	position absolute
 	opacity 0
-	top $chart-margin
 	pointer-events none
 	transition 500ms all ease-in-out
 	&:hover
