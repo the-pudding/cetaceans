@@ -24,7 +24,7 @@ let desktop = false
 
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
-const scaleColor = chroma.scale(['#376056','#f4f465'])
+const scaleColor = chroma.scale(['#267360','#f4f465'])
 		.domain([0, 62])
 		.mode('lab')
 		.correctLightness()
