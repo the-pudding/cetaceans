@@ -22,7 +22,7 @@ let desktop = false
 let enterExitScene = null
 let timelineData = null
 
-const margin = { top: 0, left: 40, bottom: 20, right: 20 }
+const margin = { top: 0, left: 50, bottom: 20, right: 20 }
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
 
@@ -229,7 +229,7 @@ function setupDOM() {
 		.attr('class', 'label')
 		.attr('transform', 'rotate(-90)')
 		.attr('text-anchor', 'middle')
-		.text('Count')
+		.text('Number of acquired cetaceans')
 }
 
 function updateScales(data) {

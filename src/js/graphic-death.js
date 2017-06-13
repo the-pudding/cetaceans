@@ -99,7 +99,7 @@ function setupDOM(){
 
 	y.append('text')
 		.attr('class', 'label')
-		.text('Count')
+		.text('Number of captive cetaceans')
 		.attr('text-anchor', 'middle')
 		.attr('transform', 'rotate(-90)')
 
