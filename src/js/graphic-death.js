@@ -203,6 +203,8 @@ function updateAxis(data) {
 		.ticks(desktop ? 10 : 5)
 	const axisBottom = d3.axisBottom(scaleX)
 		.ticks(desktop ? 10 : 5)
+		.tickSize(0)
+		.tickPadding(FONT_SIZE / 1.5)
 
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')

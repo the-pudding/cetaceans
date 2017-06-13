@@ -307,7 +307,7 @@ function updateAxis(data) {
 		.tickSize(-graphicW + margin.left + margin.right)
 
 	const values = desktop ? ["1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010"] : ["1940", "1960", "1980", "2000"]
-	const axisBottom = d3.axisBottom(scaleX).tickValues(values)
+	const axisBottom = d3.axisBottom(scaleX).tickValues(values).tickSize(0).tickPadding(FONT_SIZE / 1.5)
 
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')
