@@ -133,7 +133,7 @@ function setupDOM(){
 		.attr('transform', 'rotate(-90)')
 		.attr('class', 'count')
 		.attr('text-anchor', 'middle')
-		.text('Number of animals')
+		.text('Number of cetaceans')
 }
 
 

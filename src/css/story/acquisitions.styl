@@ -156,3 +156,33 @@ $chart-margin = 40px
 	&.is-muted
 		.audio--off
 			display block
+
+.graphic__legend
+	position absolute
+	top 0
+	right 20px
+	line-height 1
+	transform translateY(-200%)
+	
+	li 
+		display inline-block
+		set-type-size('x-small')
+		text-transform uppercase
+		letter-spacing 0.05em
+		line-height 1
+		color $c1-inverted
+		margin-left 0.75em
+		&:before
+			content ''
+			display inline-block
+			width 0.75em
+			height 0.75em
+			vertical-align middle
+			margin-top -0.25em
+			margin-right 0.25em
+		&.captured:before
+			background-color $c5
+		&.born:before
+			background-color $c4
+		&.rescued:before
+			background-color $c3
