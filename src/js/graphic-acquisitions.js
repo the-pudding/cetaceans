@@ -82,7 +82,6 @@ function setupStep() {
 function setupEnterExit() {
 	// create a scene to toggle fixed position
 	const proseEl = proseSel.node()
-
 	enterExitScene = new ScrollMagic.Scene({
 		triggerElement: proseEl,
 		triggerHook: 0,
@@ -174,12 +173,14 @@ function resizeGraphic() {
 }
 
 function resizeVideo() {
-	const videoW = Math.max(160, Math.floor(graphicW * 0.3))
+	const videoW = desktop ? Math.max(280, Math.floor(graphicW * 0.3)) : 280
 	const bandwidth = scaleX.bandwidth()
 	scrollVideoSel
 		.style('left', d => {
-			const x = scaleX(d.year) - videoW / 2 + margin.left + bandwidth / 2
-			if (d.align === 'left') return `${x + videoW / 2}px`
+			const xS = desktop ? scaleX(1973) : scaleX(d.year)
+			const x = xS - videoW / 2 + margin.left + bandwidth / 2
+			if (desktop) return `${x}px`
+			else if (d.align === 'left') return `${x + videoW / 2}px`
 			else if (d.align === 'right') return `${x - videoW / 2}px`
 			return `${x}px`
 		})
@@ -199,7 +200,6 @@ function resizeVideo() {
 			const y = graphicH - scaleY(d.y) - margin.bottom
 			return `${y}px`
 		})
-		// .style('margin-left', `${bandwidth / 2}px`)
 }
 
 function setupDOM() {

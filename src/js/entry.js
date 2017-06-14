@@ -9,11 +9,18 @@ import * as d3 from 'd3'
 
 const bodyEl = select('body')
 let previousWidth = 0
+let desktop = false
+
+function intro() {
+	desktop = window.matchMedia('(min-width: 600px)').matches
+	const h = desktop ? `${window.innerHeight * 0.85}px` : 'auto'
+	d3.select('.intro').style('height', h)
+}
 
 function handleResize() {
 	const width = bodyEl.offsetWidth
 	if (previousWidth !== width) {
-		d3.select('.intro').style('height', `${window.innerHeight * 0.85}px`)
+		intro()
 		previousWidth = width
 		graphicAcquisitions.resize()
 		graphicLifespan.resize()
@@ -23,7 +30,7 @@ function handleResize() {
 }
 
 function init() {
-	d3.select('.intro').style('height', `${window.innerHeight * 0.85}px`)
+	intro()
 	// add mobile class to body tag
 	if (isMobile.any()) addClass(bodyEl, 'is-mobile')
 	// setup resize event

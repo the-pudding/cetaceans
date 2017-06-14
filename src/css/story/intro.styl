@@ -12,17 +12,14 @@
 	&__content
 		position relative
 		padding 0 1rem
-		margin-top 0
+		margin-top 8rem
 		+mq('bp-desktop')
-			margin-top 6rem
+			margin-top 0
 		
 	&__hed
 		max-width 55rem
-		margin 0 auto 1rem auto
-		// +mq('bp-2')
-		// 	padding 8rem 0 4rem 0
+		margin 0 auto
 		text-align center
-		// font-weight bold
 		font-size 2.5rem
 		line-height 1.1
 		+mq('bp-2')
@@ -40,7 +37,7 @@
 		max-width 35rem
 		margin 0 auto
 		padding 0
-		margin-top 5rem
+		margin-top 4rem
 		color $primary
 		set-type-size('medium', true)
 		+mq('bp-2')
@@ -60,10 +57,16 @@
 		video
 			border-radius 3px
 	
-	&__bg video
+	&__bg 
+		position absolute
+		top 0
+		left 0
+		width 100%
+		height 100%
 		display none
 		+mq('bp-desktop')
 			display block
+	&__bg video
 		position absolute
 		top 50%
 		left 50%

@@ -94,27 +94,12 @@ $chart-margin = 40px
 		background-color $c1
 		border-radius 3px
 		box-shadow 0 0 12px 3px lighten($c1, 5)
-
-.step__video
-	width 90%
-	max-width 30rem
-	margin 0 auto
-	margin-bottom 10rem
-	position relative
-	+mq('bp-desktop')
-		display none
-	video
-		display block
-		box-shadow 0 0 12px 3px lighten($c1, 5)
 		
 .scroll__video 
 	position absolute
 	opacity 0
 	pointer-events none
 	transition 500ms all ease-in-out
-	display none
-	+mq('bp-desktop')
-		display block
 	&:hover
 		.audio svg
 			fill-opacity 1
@@ -139,6 +124,9 @@ $chart-margin = 40px
 		width 1px
 		border-left 1px dashed $c1-inverted
 		margin-left -1px
+		display none
+		+mq('bp-desktop')
+			display block
 		&.left
 			left 0
 		&.right
