@@ -112,10 +112,21 @@ $chart-margin = 40px
 		box-shadow 0 0 12px 6px lighten($c1, 5)
 		cursor pointer
 		position relative
+		position absolute
+		top 0
+		left 0
+		// display none
 		&:hover
 			box-shadow 0 0 12px 6px rgba(white, 0.5)
 		&.unmuted
 			box-shadow 0 0 12px 6px rgba(white, 0.5)
+	img 
+		display block
+		width 100%
+		height 100%
+		top 0
+		left 0
+		border-radius 3px
 	
 	.video__line
 		z-index 0

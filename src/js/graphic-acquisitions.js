@@ -190,7 +190,7 @@ function resizeVideo() {
 			return `${y}px`
 		})
 
-	scrollVideoSel.select('video')
+	scrollVideoSel.select('video, img')
 		.style('width', `${videoW}px`)
 		.style('height', d => `${videoW / (d.w / d.h)}px`)
 
