@@ -45,3 +45,67 @@
 	#life-arrow
 		fill $c1-inverted
 	
+
+
+
+.annotation path {
+  stroke: $c1-inverted
+  fill: none;
+}
+
+.annotation text,
+.annotation .annotation-connector .connector-dot,
+.annotation path.connector-arrow,
+.annotation.callout.rect path.subject{
+  fill: var($gray-light);
+}
+
+/*.annotation-connector
+	stroke-width: 2px*/
+
+
+.annotation-note-content text
+		font-size 0.6rem
+		fill $c1-inverted
+		font-weight bold
+		text-transform uppercase
+		letter-spacing 0.05em
+		
+.annotation-note-bg
+	fill none
+
+		
+
+.annotation.callout.rect path.subject{
+  fill-opacity: .1;
+}
+
+.annotation.badge path.subject-pointer, .annotation.badge path.subject {
+  fill: var($gray-light);
+  stroke-width: 3px;
+  stroke-linecap: round;
+} 
+
+.annotation.badge path.subject-ring {
+  fill: white;
+  stroke-width: 3px;
+}
+
+.annotation.badge .badge-text {
+  fill: white;
+  font-size: .7em;
+}
+
+/* Handling edit mode styles */
+.editable .annotation-subject, .editable .annotation-note {
+  cursor: move;
+}
+
+circle.handle {
+  stroke-dasharray: 5;
+  stroke: var($gray-light);
+  fill: rgba(255, 255, 255, .2);
+  cursor: move;
+
+  stroke-opacity: .4;
+}

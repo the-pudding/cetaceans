@@ -1,6 +1,8 @@
 import * as d3 from 'd3'
 import loadData from './load-data-lifespan'
 import chroma from 'chroma-js'
+import annotations from 'd3-svg-annotation'
+/*import annotationData from './create-array-annotations'*/
 
 const bodySel = d3.select('body')
 const containerSel = bodySel.select('.section--lifespan')
@@ -10,8 +12,10 @@ const toggleSel = graphicSel.selectAll('.btn--toggle')
 
 let lifespanData = []
 let filteredData = []
+let annotationData = []
+let filteredAnn = []
 
-let margin = { top: 30, bottom: 30, left: 60, right: 30 }
+let margin = { top: 100, bottom: 100, left: 60, right: 30 }
 let width = 0
 let height = 0
 let graphicW = 0
@@ -39,6 +43,7 @@ function updateDimensions() {
 
 
 function filterData(animals) {
+
 	filteredData = lifespanData.filter(d => d.animals === animals && d.age > 0)
 }
 
@@ -49,7 +54,6 @@ function updateScales(data) {
 	scaleX
 		.rangeRound([0, trimW])
 		.padding(0.1)
-/*		.domain(data.map(d => d.age))*/
 		.domain(d3.range(0, 62))
 
 	scaleY
@@ -66,6 +70,18 @@ function setupDOM(){
 		.append('g')
 		.attr('class', 'lifespanPlot')
 
+	const gAnnotations = gEnter
+		.append('g')
+		.attr('class', 'g-annotations')
+
+	const livingAnn = gAnnotations
+		.append('g')
+		.attr('class', 'annotations annotation-living')
+
+	const deadAnn = gAnnotations
+		.append('g')
+		.attr('class', 'annotations annotation-dead')
+
 	const axis = gEnter
 		.append('g')
 		.attr('class', 'g-axis')
@@ -81,6 +97,7 @@ function setupDOM(){
 	const z = axis
 		.append('g')
 		.attr('class', 'axis axis--z')
+
 
 	// Adding arrowhead
 	const xLine = x.append('line')
@@ -216,6 +233,105 @@ function updateDOM(data) {
 		.attr('x', -scaleY(0))
 }
 
+function setupAnnotations(data){
+	const type = annotations.annotationCustomType(
+		annotations.annotationCallout,
+			{'className': 'custom',
+			'note': {'lineType': 'horizontal',
+			'align': 'middle'}})
+
+    const makeAnnotations = annotations.annotation()
+    	.textWrap(125)
+    	.notePadding(5)
+    	.type(type)
+    	.accessors({
+    		x: d => scaleX(d.age),
+    		y: d => scaleY(d.count)
+    	})
+    	.accessorsInverse({
+    		Age: d => x.invert(d.x),
+    		count: d => y.invert(d.y)
+    	})
+    	.annotations(data)
+
+
+
+    const annotationGroup = graphicContainerSel.select('.g-annotations')
+    	.call(makeAnnotations)
+
+}
+
+function generateAnnotationData(){
+ annotationData = [{
+	  animals: 'All',
+	  note: {
+	    label: 'average age at death',
+	    title: ''
+	  },
+	  //can use x, y directly instead of data
+	  data: { age: 11, count: -39 },
+	  dy: 100,
+	  dx: 0
+	}, {
+	  animals: 'All',
+	  note: {
+	    label: 'maximum age at death in captivity',
+	    title: ''
+	  },
+	  //can use x, y directly instead of data
+	  data: { age: 61, count: -1 },
+	  dy: 50,
+	  dx: 0
+	}, {
+	  animals: 'All',
+	  note: {
+	    label: 'average age of living animals',
+	    title: ''
+	  },
+	  data: { age: 18, count: 14 },
+	  dy: -150,
+	  dx: 0
+	},
+	{
+	  animals: 'Bottlenose',
+	  note: {
+	    label: 'average age at death',
+	    title: ''
+	  },
+	  //can use x, y directly instead of data
+	  data: { age: 9, count: -23 },
+	  dy: 130,
+	  dx: 0
+	}, {
+	  animals: 'Bottlenose',
+	  note: {
+	    label: 'maximum age at death in captivity',
+	    title: ''
+	  },
+	  //can use x, y directly instead of data
+	  data: { age: 61, count: -1 },
+	  dy: 50,
+	  dx: 0
+	}, {
+	  animals: 'Bottlenose',
+	  note: {
+	    label: 'average age of living animals',
+	    title: ''
+	  },
+	  data: { age: 15, count: 16 },
+	  dy: -200,
+	  dx: 0
+	}]
+
+}
+
+function filterAnnotation(animal){
+	filteredAnn = annotationData.filter(d => d.animals === animal)
+
+}
+
+
+
 function resizeGraphic() {
 	const ratio = 1.5
 	graphicW = width
@@ -226,6 +342,8 @@ function handleToggle(datum, index) {
 	const animal = d3.select(this).text()
 	filterData(animal)
 	updateDOM(filteredData)
+	filterAnnotation(animal)
+	setupAnnotations(filteredAnn)
 	toggleSel.classed('is-selected', (d, i) => i === index)
 }
 
@@ -237,10 +355,12 @@ function setupEvents() {
 
 function setup() {
 	filterData('All')
+	generateAnnotationData()
 	setupDOM()
 	resize()
 	updateDOM(filteredData)
 	setupEvents()
+
 }
 
 function resize() {
@@ -248,6 +368,7 @@ function resize() {
 	resizeGraphic()
 	updateScales(filteredData)
 	updateDOM(filteredData)
+	setupAnnotations(filteredAnn)
 }
 
 
