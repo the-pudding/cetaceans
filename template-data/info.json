@@ -1,16 +1,16 @@
 {
-  "title": "title tk",
-  "description": "description tk",
-  "url": "tk",
-  "keywords": "tk",
-  "img": "tk",
+  "title": "Free Willy and Flipper by the Numbers",
+  "description": "The past, present, and future of captive whales and dolphins according to data and pop culture.",
+  "url": "https://pudding.cool/2017/06/cetaceans",
+  "keywords": "free willy, flipper, captive, cetaceans, dolphins, whales, orcas, data, visualization",
+  "img": "https://pudding.cool/2017/06/cetaceans/assets/og-img.jpg",
   "author": {
     "name": "Amber Thomas",
     "url": "https://twitter.com/proquesasker",
     "twitterHandle": "@proquesasker"
   },
   "author2": {
-    "name": "Russelll Goldenberg",
+    "name": "Russell Goldenberg",
     "url": "https://twitter.com/codenberg",
     "twitterHandle": "@codenberg"
   }

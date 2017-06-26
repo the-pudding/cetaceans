@@ -36,7 +36,7 @@ $chart-margin = 40px
 		position fixed
 			
 	.graphic__container
-		width 100%
+		width 95%
 		max-width 60rem
 		margin 0 auto
 		position relative
@@ -65,8 +65,14 @@ $chart-margin = 40px
 		line
 			stroke-dasharray 4px 4px
 			opacity 0.25
-		.tick:nth-child(2)
+		.tick:nth-child(3)
 			display none
+		.label
+			font-size 12px
+			fill $c1-inverted
+			font-weight bold
+			text-transform uppercase
+			letter-spacing 0.05em
 			
 		
 
@@ -92,7 +98,6 @@ $chart-margin = 40px
 .scroll__video 
 	position absolute
 	opacity 0
-	top $chart-margin
 	pointer-events none
 	transition 500ms all ease-in-out
 	&:hover
@@ -107,10 +112,21 @@ $chart-margin = 40px
 		box-shadow 0 0 12px 6px lighten($c1, 5)
 		cursor pointer
 		position relative
+		position absolute
+		top 0
+		left 0
+		// display none
 		&:hover
 			box-shadow 0 0 12px 6px rgba(white, 0.5)
 		&.unmuted
 			box-shadow 0 0 12px 6px rgba(white, 0.5)
+	img 
+		display block
+		width 100%
+		height 100%
+		top 0
+		left 0
+		border-radius 3px
 	
 	.video__line
 		z-index 0
@@ -119,6 +135,9 @@ $chart-margin = 40px
 		width 1px
 		border-left 1px dashed $c1-inverted
 		margin-left -1px
+		display none
+		+mq('bp-desktop')
+			display block
 		&.left
 			left 0
 		&.right
@@ -126,25 +145,55 @@ $chart-margin = 40px
 		&.center
 			left 50%
 
-	.video__ui
-		position absolute
-		bottom 0
-		right 0
-		padding 0.4rem
-		pointer-events none
-		svg 
-			fill $c1-inverted
-			fill-opacity 0.65
-			transition 300ms all ease-in-out
-			width 1.5rem
-			height 1.2rem
+.video__ui
+	position absolute
+	bottom 0
+	right 0
+	padding 0.4rem
+	pointer-events none
+	svg 
+		fill white
+		fill-opacity 0.65
+		transition 300ms all ease-in-out
+		width 1.5rem
+		height 1.2rem
+	.audio--on
+		display block
+	.audio--off
+		display none
+	&.is-muted
 		.audio--on
-			display block
-		.audio--off
 			display none
-		&.is-muted
-			.audio--on
-				display none
-		&.is-muted
-			.audio--off
-				display block
+	&.is-muted
+		.audio--off
+			display block
+
+.graphic__legend
+	position absolute
+	top 0
+	right 20px
+	line-height 1
+	transform translateY(-200%)
+	
+	li 
+		display inline-block
+		set-type-size('x-small')
+		text-transform uppercase
+		letter-spacing 0.05em
+		line-height 1
+		color $c1-inverted
+		margin-left 0.75em
+		&:before
+			content ''
+			display inline-block
+			width 0.75em
+			height 0.75em
+			vertical-align middle
+			margin-top -0.25em
+			margin-right 0.25em
+		&.captured:before
+			background-color $c5
+		&.born:before
+			background-color $c4
+		&.rescued:before
+			background-color $c3

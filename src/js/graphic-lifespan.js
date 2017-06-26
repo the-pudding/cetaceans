@@ -15,18 +15,24 @@ let filteredData = []
 let annotationData = []
 let filteredAnn = []
 
+<<<<<<< HEAD
 let margin = { top: 100, bottom: 100, left: 60, right: 30 }
+=======
+const FONT_SIZE = 12
+
+let margin = { top: 30, bottom: 10, left: FONT_SIZE, right: FONT_SIZE }
+>>>>>>> 0cab99f49f85af0f5a79ab6338fbe7c5aaaa2f2b
 let width = 0
 let height = 0
 let graphicW = 0
 let graphicH = 0
 let desktop = false
 
-const FONT_SIZE = 12
+
 
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
-const scaleColor = chroma.scale(['#376056','#f4f465'])
+const scaleColor = chroma.scale(['#267360','#f4f465'])
 		.domain([0, 62])
 		.mode('lab')
 		.correctLightness()
@@ -39,6 +45,7 @@ function translate(x, y) {
 function updateDimensions() {
 	width = graphicContainerSel.node().offsetWidth
 	height = window.innerHeight
+	desktop = window.matchMedia('(min-width: 600px)').matches
 }
 
 
@@ -120,7 +127,11 @@ function setupDOM(){
 		.enter().append('g')
 			.attr('class', 'age')
 
-	ageItem.append('rect')
+	ageItem.append('text')
+		.text((d, i) => i === 0 ? `${d} years` : d)
+		.attr('text-anchor', 'middle')
+		.attr('alignment-baseline', 'middle')
+		
 	ageItem.append('text')
 		.text((d, i) => i === 0 ? `${d} years` : d)
 		.attr('text-anchor', 'middle')
@@ -143,7 +154,7 @@ function setupDOM(){
 		.attr('transform', 'rotate(-90)')
 		.attr('class', 'count')
 		.attr('text-anchor', 'middle')
-		.text('Count')
+		.text('Number of cetaceans')
 }
 
 
@@ -210,14 +221,6 @@ function updateDOM(data) {
 	
 	age.attr('transform', d => `translate(${scaleX(d) + scaleX.bandwidth() / 2}, ${scaleY(0)})`)
 
-	const rectW = scaleX.bandwidth() * 2.5
-	const rectH = FONT_SIZE * 1.5
-
-	age.select('rect')
-		.attr('x', (d, i) => -rectW / 2 * (i === 0 ? 2 : 1))
-		.attr('y', -rectH / 2)
-		.attr('width', (d, i) => rectW  * (i === 0 ? 2 : 1))
-		.attr('height', rectH)
 
 	const offText = scaleY(0) / 1.5
 	g.select('.axis--z .living')
@@ -335,7 +338,7 @@ function filterAnnotation(animal){
 function resizeGraphic() {
 	const ratio = 1.5
 	graphicW = width
-	graphicH = height * 0.8
+	graphicH = height * 0.65
 }
 
 function handleToggle(datum, index) {

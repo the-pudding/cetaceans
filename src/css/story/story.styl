@@ -3,11 +3,7 @@
 body
 	background-color $c1
 	color $off-white
-	font-size 18px
 	
-p
-	font-size 18px
-
 svg text
 	font-family $sans
 
@@ -18,13 +14,19 @@ svg text
 	
 	&__hed
 		color $c5
-		font-weight bold
+		font-weight 500
+		set-type-size('large')
+		// +mq('bp-desktop')
+		// 	set-type-size('x-large')
 	
 .graphic__hed
 	margin 1rem auto
 	margin-top 4rem
-	max-width 40rem
+	max-width 60rem
 	text-align center
+	// set-type-size('large')
+	// +mq('bp-desktop')
+	set-type-size('x-large')
 
 .btn
 	background-color $c1
@@ -47,3 +49,12 @@ mark
 	background-color transparent
 	color $c5
 	
+.outro
+	max-width 40rem
+	margin 0 auto
+	padding 1rem
+	p 
+		set-type-size('small')
+		&:first-child
+			padding-top 1rem
+			border-top 1px solid $c1-inverted

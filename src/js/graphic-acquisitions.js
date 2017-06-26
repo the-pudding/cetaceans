@@ -3,13 +3,15 @@ import ScrollMagic from 'scrollmagic'
 import loadData from './load-data-acquisitions'
 
 const videoData = [
-	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330, align: 'left' },
-	{ id: 'flipper', step: 2, year: '1963', w: 480, h: 270, align: 'center' },
-	{ id: 'hitchhikers', step: 4, year: '1978', w: 440, h: 300, align: 'center' },
-	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260, align: 'right' },
+	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330, align: 'left', y: 30 },
+	{ id: 'flipper', step: 2, year: '1963', w: 480, h: 270, align: 'center', y: 70 },
+	{ id: 'hitchhikers', step: 4, year: '1978', w: 440, h: 300, align: 'left', y: 90 },
+	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260, align: 'right', y: 90 },
 ]
 
 const controller = new ScrollMagic.Controller({ refreshInterval: 0 })
+
+const FONT_SIZE = 12
 
 let width = 0
 let height = 0
@@ -20,7 +22,7 @@ let desktop = false
 let enterExitScene = null
 let timelineData = null
 
-const margin = 40
+const margin = { top: 0, left: 50, bottom: 20, right: 20 }
 const scaleX = d3.scaleBand()
 const scaleY = d3.scaleLinear()
 
@@ -40,7 +42,7 @@ const scrollSel = containerSel.select('.scroll')
 const scrollVideoSel = containerSel.selectAll('.scroll__video')
 const audioSel = containerSel.selectAll('.video__ui')
 
-let currentStep = '0'
+let currentStep = 'video--0'
 let currentDirection = true
 
 let currentVideoPlayer = null
@@ -80,7 +82,6 @@ function setupStep() {
 function setupEnterExit() {
 	// create a scene to toggle fixed position
 	const proseEl = proseSel.node()
-
 	enterExitScene = new ScrollMagic.Scene({
 		triggerElement: proseEl,
 		triggerHook: 0,
@@ -111,10 +112,11 @@ function setupScroll() {
 	setupEnterExit()
 }
 
-
-// VIDEO STUFF
 function pauseVideo() {
-	if (currentVideoPlayer) currentVideoPlayer.node().pause()
+	if (currentVideoPlayer) {
+		const vid = currentVideoPlayer.node()
+		if (vid.currentTime) vid.pause()
+	}
 }
 
 function getData(endYear, acquisition) {
@@ -161,35 +163,43 @@ function resizeScrollElements() {
 }
 
 function resizeGraphic() {
-	const ratio = 1.5
+	const ratio = desktop ? 1.5 : 1
 	graphicW = width
-	graphicH = graphicW / ratio
+	// graphicH = graphicW / ratio
+	graphicH = height * 0.65
 
 	graphicSel
 		.style('height', `${height}px`)
 }
 
 function resizeVideo() {
-	const videoW = Math.max(160, Math.floor(graphicW * 0.3))
+	const videoW = desktop ? Math.max(280, Math.floor(graphicW * 0.3)) : 280
 	const bandwidth = scaleX.bandwidth()
 	scrollVideoSel
 		.style('left', d => {
-			const x = scaleX(d.year) - videoW / 2 + margin + bandwidth / 2
-			if (d.align === 'left') return `${x + videoW / 2}px`
+			const xS = desktop ? scaleX(1973) : scaleX(d.year)
+			const x = xS - videoW / 2 + margin.left + bandwidth / 2
+			if (desktop) return `${x}px`
+			else if (d.align === 'left') return `${x + videoW / 2}px`
 			else if (d.align === 'right') return `${x - videoW / 2}px`
 			return `${x}px`
 		})
+		.style('bottom', d => {
+			const h = videoW / (d.w / d.h)
+			const y = graphicH - scaleY(d.y) + 6
+			return `${y}px`
+		})
 
-	scrollVideoSel.select('video')
+	scrollVideoSel.select('video, img')
 		.style('width', `${videoW}px`)
 		.style('height', d => `${videoW / (d.w / d.h)}px`)
 
 	scrollVideoSel.select('.video__line')
 		.style('height', d => {
 			const videoH = videoW / (d.w / d.h)
-			return `${graphicH - videoH - margin * 2}px`
+			const y = graphicH - scaleY(d.y) - margin.bottom
+			return `${y}px`
 		})
-		// .style('margin-left', `${bandwidth / 2}px`)
 }
 
 function setupDOM() {
@@ -214,11 +224,17 @@ function setupDOM() {
 	const y = axis
 		.append('g')
 		.attr('class', 'axis axis--y')
+
+	y.append('text')
+		.attr('class', 'label')
+		.attr('transform', 'rotate(-90)')
+		.attr('text-anchor', 'middle')
+		.text('Number of acquired cetaceans')
 }
 
 function updateScales(data) {
-	const trimW = graphicW - (margin * 2)
-	const trimH = graphicH - (margin * 2)
+	const trimW = graphicW - (margin.left + margin.right)
+	const trimH = graphicH - (margin.top + margin.bottom)
 
 	scaleX
 		.rangeRound([0, trimW])
@@ -239,7 +255,7 @@ function updateDom(data) {
 
 	const g = svg.select('g')
 
-	g.attr('transform', translate(margin, margin))
+	g.attr('transform', translate(margin.left, margin.top))
 
 	const plot = g.select('.timelinePlot')
 
@@ -288,13 +304,15 @@ function updateAxis(data) {
 	const axis = graphicSel.select('.g-axis')
 
 	const axisLeft = d3.axisLeft(scaleY)
-		.tickSize(-graphicW + margin * 2)
-	const axisBottom = d3.axisBottom(scaleX).tickValues(["1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010"])
+		.tickSize(-graphicW + margin.left + margin.right)
+
+	const values = desktop ? ["1940", "1950", "1960", "1970", "1980", "1990", "2000", "2010"] : ["1940", "1960", "1980", "2000"]
+	const axisBottom = d3.axisBottom(scaleX).tickValues(values).tickSize(0).tickPadding(FONT_SIZE / 1.5)
 
 	const x = axis.select('.axis--x')
 	const y = axis.select('.axis--y')
 
-	const trim = graphicH - (margin * 2)
+	const trim = graphicH - margin.bottom - margin.top
 
 	x
 		.attr('transform', `translate(0, ${trim})`)
@@ -302,6 +320,10 @@ function updateAxis(data) {
 
 	y
 		.call(axisLeft)
+
+	y.select('text')
+		.attr('y', -margin.left + FONT_SIZE)
+		.attr('x', -graphicH / 2)
 }
 
 function updateVideo(step) {
