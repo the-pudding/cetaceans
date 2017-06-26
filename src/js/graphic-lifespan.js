@@ -15,13 +15,10 @@ let filteredData = []
 let annotationData = []
 let filteredAnn = []
 
-<<<<<<< HEAD
-let margin = { top: 100, bottom: 100, left: 60, right: 30 }
-=======
 const FONT_SIZE = 12
 
 let margin = { top: 30, bottom: 10, left: FONT_SIZE, right: FONT_SIZE }
->>>>>>> 0cab99f49f85af0f5a79ab6338fbe7c5aaaa2f2b
+
 let width = 0
 let height = 0
 let graphicW = 0
