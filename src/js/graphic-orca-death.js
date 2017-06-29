@@ -68,7 +68,7 @@ function calculateData(){
 
 	const lowData = birthData
 
-	lowData.forEach(d => d.deathYear = Math.max((19 + d.birthYear), 2017))
+	lowData.forEach(d => d.deathYear = Math.max((22 + d.birthYear), 2017))
 
 	let nestLow = d3.nest()
 		.key(d => +d.deathYear)
@@ -82,9 +82,12 @@ function calculateData(){
 		const match = nestLow.find(d => d.key === key)
 		if (match) return match
 			else return { key, value: 0}
+
+
 	})
 
 
+	console.log(maxYearLow)
 	predictionDataLow = d3.range(2017, maxYearLow).map(i => ({year: i, population: 500}))
 
 	let population = 24
@@ -324,11 +327,11 @@ function updateDOM(data) {
 	const yearAnn1Enter = yearAnn1.enter()
 		.append('text')
 		.attr('class', 'yearAnn1')
-		.attr('x', scaleX(2033))
+		.attr('x', scaleX(2039))
 		.attr('y', scaleY(0) + circleR * 1.5)
 		.attr('alignment-baseline', 'hanging')
 		.attr('text-anchor', 'middle')
-		.text('2033')
+		.text('2039')
 
 
 	yearAnn1.exit().remove()
@@ -336,7 +339,7 @@ function updateDOM(data) {
 	const yearAnn1Merge = yearAnn1Enter.merge(yearAnn1)
 
 	yearAnn1Merge
-		.attr('x', scaleX(2033))
+		.attr('x', scaleX(2039))
 		.attr('y', scaleY(0) + circleR * 1.5)
 		// .attr('transform', `translate(0, ${graphicW * 0.005})`)
 
@@ -411,7 +414,7 @@ function updateDOM(data) {
 		y: 0
 	},{
 		id: 'endLow',
-		x: 2033,
+		x: 2039,
 		y: 0
 	},{
 		id: 'beginning',
