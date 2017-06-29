@@ -1,6 +1,7 @@
 import * as d3 from 'd3'
 import loadData from './load-data-orca-death'
 import './polyfills/find'
+import annotations from 'd3-svg-annotation'
 
 const bodySel = d3.select('body') 
 const containerSel = bodySel.select('.section--orcaDeath')
@@ -554,6 +555,76 @@ function updateDOM(data) {
 
 }
 
+function addAnnotations(){
+
+	const lineAnnData = [{'id': 'data', 'x': 2017, 'y': 'other' }]
+
+
+	const plot = graphicSel.select('.orcaDeathPlot')
+
+
+	const lineAnnGroup = plot.selectAll('.lineAnnGroup')
+
+	console.log(lineAnnGroup)
+
+	const type = annotations.annotationLabel
+
+	const annotations = [{
+	  note: {
+	    label: "If all animals live to minimum life expectancy (22 years)",
+	    title: "Testing"
+	  },
+	  //can use x, y directly instead of data
+/*	  data: { date: "18-Sep-09", close: 185.02 },
+	  dy: 137,
+	  dx: 162*/
+	  x: 100,
+	  y: 200
+	}/*,
+	{
+		label: "If all animals live to maximum observed age (52 years)",
+	    title: ""
+	  },
+	  //can use x, y directly instead of data
+	  data: { date: "18-Sep-09", close: 185.02 },
+	  dy: 137,
+	  dx: 162
+	  x: 300,
+	  y: 500
+	}*/]
+
+	//Skipping setting domains for sake of example
+/*	const x = d3.scaleTime().range([0, 800])
+	const y = d3.scaleLinear().range([300, 0])*/
+
+	const makeAnnotations = annotations.annotation()
+	  .editMode(true)
+	  //also can set and override in the note.padding property
+	  //of the annotation object
+	  .notePadding(15)
+	  .type(type)
+	  //accessors & accessorsInverse not needed
+	  //if using x, y in annotations JSON
+	  .accessors({
+	    x: d => x(parseTime(d.date)),
+	    y: d => y(d.close)
+	  })
+	  .accessorsInverse({
+	     date: d => timeFormat(x.invert(d.x)),
+	     close: d => y.invert(d.y)
+	  })
+	  .annotations(annotations)
+
+	lineAnnGroup
+	  .append("g")
+	  .attr("class", "annotation-group")
+	  .call(makeAnnotations)
+
+
+
+	console.log(lineAnnGroup)
+}
+
 function updateAxis(data) {
 	const axis = graphicSel.select('.g-axis')
 
@@ -595,6 +666,7 @@ function resize() {
 	updateScales(allPredictionData)
 	updateDOM(allPredictionData)
 	updateAxis(allPredictionData)
+	addAnnotations()
 }
 
 

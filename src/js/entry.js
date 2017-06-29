@@ -23,7 +23,7 @@ function handleResize() {
 		intro()
 		previousWidth = width
 		graphicAcquisitions.resize()
-		graphicLifespan.resize()
+/*		graphicLifespan.resize()*/
 		graphicOrcaDeath.resize()
 		graphicDeath.resize()
 	}
@@ -37,7 +37,7 @@ function init() {
 	window.addEventListener('resize', debounce(handleResize, 150))
 	// kick off graphic code
 	graphicAcquisitions.init()
-	graphicLifespan.init()
+/*	graphicLifespan.init()*/
 	graphicOrcaDeath.init()
 	graphicDeath.init()
 }
