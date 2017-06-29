@@ -68,7 +68,7 @@ function calculateData(){
 
 	const lowData = birthData
 
-	lowData.forEach(d => d.deathYear = Math.max((16 + d.birthYear), 2017))
+	lowData.forEach(d => d.deathYear = Math.max((19 + d.birthYear), 2017))
 
 	let nestLow = d3.nest()
 		.key(d => +d.deathYear)
