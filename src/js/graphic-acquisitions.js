@@ -243,7 +243,7 @@ function updateScales(data) {
 
 	scaleY
 		.range([trimH, 0])
-		.domain([0, 178])
+		.domain([0, 210])
 }
 
 function updateDom(data) {

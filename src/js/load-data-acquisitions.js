@@ -14,7 +14,7 @@ function cleanAcquisitions(d) {
 
 
 function loadAcquisitions(cb) {
-	d3.csv('assets/acquisitionsOnly.csv', cleanAcquisitions, (err, data) => {
+	d3.csv('assets/acquisitionsOnly2.csv', cleanAcquisitions, (err, data) => {
 		cb (err, data)
 	})
 }
