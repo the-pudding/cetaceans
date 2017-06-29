@@ -594,8 +594,6 @@ function addAnnotations(){
 	  .attr("class", "annotation-group")
 	  .call(makeAnnotations)
 
-
-	makeAnnotations.exit().remove()
 }
 
 function updateAxis(data) {

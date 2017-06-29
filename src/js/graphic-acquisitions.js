@@ -1,12 +1,24 @@
 import * as d3 from 'd3'
 import ScrollMagic from 'scrollmagic'
 import loadData from './load-data-acquisitions'
+import * as svgAnnotation from 'd3-svg-annotation'
 
 const videoData = [
-	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330, align: 'left', y: 30 },
+	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330, align: 'right', y: 30 },
 	{ id: 'flipper', step: 2, year: '1963', w: 480, h: 270, align: 'center', y: 70 },
-	{ id: 'hitchhikers', step: 4, year: '1978', w: 440, h: 300, align: 'left', y: 90 },
-	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260, align: 'right', y: 90 },
+	{ id: 'hitchhikers', step: 4, year: '1978', w: 440, h: 300, align: 'center', y: 90 },
+	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260, align: 'center', y: 90 },
+]
+
+const annotationData = [
+{
+	event: 'MarinePark',
+	description: 'First marine park opened',
+	year: 1938,
+	height: 0,
+	dx: 0,
+	dy: 100,
+}
 ]
 
 const controller = new ScrollMagic.Controller({ refreshInterval: 0 })
@@ -177,7 +189,7 @@ function resizeVideo() {
 	const bandwidth = scaleX.bandwidth()
 	scrollVideoSel
 		.style('left', d => {
-			const xS = desktop ? scaleX(1973) : scaleX(d.year)
+			const xS = desktop ? scaleX(d.year) : scaleX(1973)
 			const x = xS - videoW / 2 + margin.left + bandwidth / 2
 			if (desktop) return `${x}px`
 			else if (d.align === 'left') return `${x + videoW / 2}px`
@@ -189,6 +201,8 @@ function resizeVideo() {
 			const y = graphicH - scaleY(d.y) + 6
 			return `${y}px`
 		})
+
+		console.log(desktop)
 
 	scrollVideoSel.select('video, img')
 		.style('width', `${videoW}px`)
@@ -393,12 +407,65 @@ function setupVideo() {
 		.attr('class', d => `video__line ${d.align}`)
 }
 
+function scrollAnnotations(){
+
+	const type = svgAnnotation.annotationCustomType(
+	  svgAnnotation.annotationCallout, 
+	  {"className":"custom",
+	    "note":{"lineType":"vertical",
+	    "align":"left"}})
+
+	const bandwidth = scaleX.bandwidth() / 2
+
+	const annotations = [{
+	  note: { label: 'First US Marine Mammal Park Opened'},
+	  data: { AcqYear: 1938, Capture: 0 },
+	  dy: - graphicH / 3,
+	  dx: 0
+	}]
+
+	console.log()
+	
+
+	//Skipping setting domains for sake of example
+
+	const makeAnnotations = svgAnnotation.annotation()
+	  .type(type)
+	  .notePadding(10)
+	  //accessors & accessorsInverse not needed
+	  //if using x, y in annotations JSON
+	  .accessors({
+	    x: d => scaleX(d.AcqYear) + (scaleX.bandwidth() / 2),
+	    y: d => scaleY(d.Capture)
+	  })
+	  .accessorsInverse({
+	     date: d => scaleX.invert(d.x),
+	     close: d => scaleY.invert(d.y)
+	  })
+	  .annotations(annotations)
+
+	  const svg = graphicContainerSel.select('svg')
+
+	  console.log(svg)
+
+	svg.select('.plotG')
+	  .append("g")
+	  .attr("class", "annotation-group")
+	  .call(makeAnnotations)
+
+	  console.log(scaleX(1939))
+
+
+}
+
 function setup(data) {
 	setupDOM()
 	setupVideo()
 	setupEvents()
 	resize()
 	setupScroll()
+	scrollAnnotations()
+
 }
 
 function init() {
