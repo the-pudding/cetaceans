@@ -368,7 +368,8 @@ function updateChart({ step, down }) {
 	if (stepNumber === '2') data = getData(1971, "capture")
 	if (stepNumber === '3') data = getData(1972, "capture")
 	if (stepNumber === '4') data = getData(2017, "capture")
-	if (stepNumber === '5') data = getData(2017, "capture")
+	if (stepNumber === '5') {scrollAnnotations()
+		return data = getData(2017, "capture")}
 	if (stepNumber === '6') data = getData(2017, "bornCapture")
 	if (stepNumber === '7') data = getData(2017, "all")
 
@@ -412,15 +413,31 @@ function scrollAnnotations(){
 	const type = svgAnnotation.annotationCustomType(
 	  svgAnnotation.annotationCallout, 
 	  {"className":"custom",
-	    "note":{"lineType":"vertical",
-	    "align":"left"}})
+	    "note":{"lineType":"horizontal",
+	    "align":"middle"}})
 
 	const bandwidth = scaleX.bandwidth() / 2
 
-	const annotations = [{
-	  note: { label: 'First US Marine Mammal Park Opened'},
-	  data: { AcqYear: 1938, Capture: 0 },
+	const annotations = [
+	{
+	  note: { label: 'Last Pacific White-Sided Dolphin Capture'},
+	  data: { AcqYear: 1993, Capture: 0 },
 	  dy: - graphicH / 3,
+	  dx: 0
+	},	{
+	  note: { label: 'Last Beluga Capture'},
+	  data: { AcqYear: 1992, Capture: 0 },
+	  dy: - graphicH / 2,
+	  dx: 0
+	}, {
+	  note: { label: 'Last Orca Capture'},
+	  data: { AcqYear: 1978, Capture: 0 },
+	  dy: - graphicH * 3 / 5,
+	  dx: 0
+	}, {
+	  note: { label: 'Last Bottlenose Dolphin Capture'},
+	  data: { AcqYear: 1986, Capture: 0 },
+	  dy: - graphicH *4 / 5,
 	  dx: 0
 	}]
 
@@ -432,6 +449,7 @@ function scrollAnnotations(){
 	const makeAnnotations = svgAnnotation.annotation()
 	  .type(type)
 	  .notePadding(10)
+	  .textWrap(100)
 	  //accessors & accessorsInverse not needed
 	  //if using x, y in annotations JSON
 	  .accessors({
@@ -464,7 +482,7 @@ function setup(data) {
 	setupEvents()
 	resize()
 	setupScroll()
-	scrollAnnotations()
+
 
 }
 
