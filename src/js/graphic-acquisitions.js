@@ -368,8 +368,7 @@ function updateChart({ step, down }) {
 	if (stepNumber === '2') data = getData(1971, "capture")
 	if (stepNumber === '3') data = getData(1972, "capture")
 	if (stepNumber === '4') data = getData(2017, "capture")
-	if (stepNumber === '5') {scrollAnnotations()
-		return data = getData(2017, "capture")}
+	if (stepNumber === '5') data = getData(2017, "capture")
 	if (stepNumber === '6') data = getData(2017, "bornCapture")
 	if (stepNumber === '7') data = getData(2017, "all")
 
