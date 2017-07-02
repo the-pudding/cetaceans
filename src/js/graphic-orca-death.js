@@ -556,6 +556,7 @@ function updateDOM(data) {
 }
 
 function addAnnotations(){
+	d3.selectAll(".annotation-group").remove();
 
 	const lineAnnData = [{'id': 'data', 'x': 2017, 'y': 'other' }]
 
