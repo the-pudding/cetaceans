@@ -4,10 +4,10 @@ import loadData from './load-data-acquisitions'
 import * as svgAnnotation from 'd3-svg-annotation'
 
 const videoData = [
-	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330, align: 'right', y: 30 },
+	{ id: 'marineland', step: 0, year: '1940', w: 440, h: 330, align: 'left', y: 30 },
 	{ id: 'flipper', step: 2, year: '1963', w: 480, h: 270, align: 'center', y: 70 },
 	{ id: 'hitchhikers', step: 4, year: '1978', w: 440, h: 300, align: 'center', y: 90 },
-	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260, align: 'center', y: 90 },
+	{ id: 'dolphintale', step: 6, year: '2011', w: 480, h: 260, align: 'right', y: 90 },
 ]
 
 const annotationData = [
@@ -190,8 +190,9 @@ function resizeVideo() {
 	scrollVideoSel
 		.style('left', d => {
 			const xS = desktop ? scaleX(d.year) : scaleX(1973)
-			const x = xS - videoW / 2 + margin.left + bandwidth / 2
-			if (desktop) return `${x}px`
+			const x = margin.left + (xS - videoW / 2) + bandwidth / 2
+			console.log(x)
+			if (!desktop) return `${x}px`
 			else if (d.align === 'left') return `${x + videoW / 2}px`
 			else if (d.align === 'right') return `${x - videoW / 2}px`
 			return `${x}px`
@@ -201,8 +202,6 @@ function resizeVideo() {
 			const y = graphicH - scaleY(d.y) + 6
 			return `${y}px`
 		})
-
-		console.log(desktop)
 
 	scrollVideoSel.select('video, img')
 		.style('width', `${videoW}px`)
@@ -440,9 +439,6 @@ function scrollAnnotations(){
 	  dx: 0
 	}]
 
-	console.log()
-	
-
 	//Skipping setting domains for sake of example
 
 	const makeAnnotations = svgAnnotation.annotation()
@@ -463,15 +459,10 @@ function scrollAnnotations(){
 
 	  const svg = graphicContainerSel.select('svg')
 
-	  console.log(svg)
-
 	svg.select('.plotG')
 	  .append("g")
 	  .attr("class", "annotation-group")
 	  .call(makeAnnotations)
-
-	  console.log(scaleX(1939))
-
 
 }
 
