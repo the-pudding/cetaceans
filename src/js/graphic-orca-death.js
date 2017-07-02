@@ -566,28 +566,47 @@ function addAnnotations(){
 
 	const lineAnnGroup = plot.selectAll('.lineAnnGroup')
 
-	const type = svgAnnotation.annotationLabel
+	//const type = svgAnnotation.annotationLabel
+
+	const type = svgAnnotation.annotationCustomType(
+  		svgAnnotation.annotationLabel, 
+		  {"className":"custom",
+		    "note":{"align":"middle",
+		    "lineType":"vertical"}})
 
 
-	const annotations = [{
-		note: {label: 'If all animals live to minimum life expectancy (22 years)'},
-			className: 'low',
-				x: graphicW / 3.5, y: graphicH * 3 / 5
+	const annotations = [
+	{
+	  note: { label: 'If all animals live to minimum life expectancy (22 years)'},
+	  className: 'low',
+	  data: { year: 2030, population: 8 },
+	  dy: 0,
+	  dx: 0
+	},	{
+	  note: { label: 'If all animals lived to max observed age (52 years)'},
+	  className: 'high',
+	  data: { year: 2045, population: 15 },
+	  dy: 0,
+	  dx: 0
 	}, {
-		note: {label: 'If all animals lived to max observed age (52 years)'},
-			className: 'high',
-				x: graphicW / 1.7, y: graphicH * 1.5 / 4
-	}, {
-		note: {label: '24 orcas in 2017'},
-			className: 'now',
-				x: graphicW * 0.07, y: graphicH * .014 
-			}]
-
-
+	  note: { label: '24 orcas in 2017'},
+	  className: 'now', 
+	  data: { year: 2017, population: 24},
+	  dx: circleR,
+	  dy: 0
+	}, ]
 
 	const makeAnnotations = svgAnnotation.annotation()
 	  .notePadding(15)
 	  .type(type)
+	  .accessors({
+	    x: d => scaleX(d.year),
+	    y: d => scaleY(d.population)
+	  })
+	  .accessorsInverse({
+	     date: d => scaleX.invert(d.x),
+	     close: d => scaleY.invert(d.y)
+	  })
 	  .annotations(annotations)
 
 	d3.select(".orcaDeathPlot")
