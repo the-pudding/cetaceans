@@ -1,6 +1,17 @@
 .section--lifespan
 	margin-top 4rem
 	padding 0 1rem
+	
+.image__desktop
+	display none
+	+mq('bp-2')
+		display block
+		
+.image__mobile
+	display none
+	+mq('bp-5')
+		display block
+	
 
 .lifespan__graphic
 	max-width 60rem
