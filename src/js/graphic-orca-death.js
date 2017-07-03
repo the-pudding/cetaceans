@@ -88,7 +88,6 @@ function calculateData(){
 	})
 
 
-	console.log(maxYearLow)
 	predictionDataLow = d3.range(2017, maxYearLow).map(i => ({year: i, population: 500}))
 
 	let population = 24
@@ -127,11 +126,8 @@ function updateDimensions() {
 function resizeGraphic() {
 	const ratio = desktop ? 1.75 : 1
 	graphicW = width
-	// graphicH = graphicW / ratio
 	graphicH = height * 0.65
 
-	// circleR = Math.max(5, 0.007 * graphicW)
-	// padding = Math.max(2, 0.01 * graphicW)
 }
 
 function updateScales(data) {
@@ -296,7 +292,6 @@ function updateDOM(data) {
 		.attr('transform', `translate(0, ${graphicW * 0.005})`)
 
 
-	// Adding rect behind text
 	// Adding rectangle behind text
 	let xTextMeas = d3.select('.xAnnTextLabel')
 	let bboxX = xTextMeas.node().getBBox()
@@ -342,7 +337,6 @@ function updateDOM(data) {
 	yearAnn1Merge
 		.attr('x', scaleX(2039))
 		.attr('y', scaleY(0) + circleR * 1.5)
-		// .attr('transform', `translate(0, ${graphicW * 0.005})`)
 
 
 
@@ -459,6 +453,7 @@ function updateDOM(data) {
 	const popGroupMerge = popGroupEnter.merge(populationGroup)
 
 	popGroupMerge.attr('transform', `translate(${-FONT_SIZE * 2}, 0)`)
+
 	// Adding arrowhead to population line
 	const arrow = popGroupMerge.selectAll('.popArrow').data(lineData)
 
@@ -487,7 +482,6 @@ function updateDOM(data) {
 		.attr('x2', scaleX(2017))
 		.attr('y1', scaleY(24))
 		.attr('y2', scaleY(0))
-		// .attr('transform', `translate(${-graphicW/27}, 0)`)
 		.attr('class', 'popLine')
 		.attr("marker-start", "url(#arrowHead)");
 
@@ -500,9 +494,6 @@ function updateDOM(data) {
 		.attr('x2', scaleX(2017))
 		.attr('y1', scaleY(0))
 		.attr('y2', scaleY(24))
-		// .attr('transform', `translate(${-graphicW/27}, 0)`)
-
-
 
 
 	// Adding Text
@@ -557,16 +548,6 @@ function updateDOM(data) {
 
 function addAnnotations(){
 	d3.selectAll(".annotation-group").remove();
-
-	const lineAnnData = [{'id': 'data', 'x': 2017, 'y': 'other' }]
-
-
-	const plot = graphicSel.select('.orcaDeathPlot')
-
-
-	const lineAnnGroup = plot.selectAll('.lineAnnGroup')
-
-	//const type = svgAnnotation.annotationLabel
 
 	const type = svgAnnotation.annotationCustomType(
   		svgAnnotation.annotationLabel, 

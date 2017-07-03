@@ -191,7 +191,7 @@ function resizeVideo() {
 		.style('left', d => {
 			const xS = desktop ? scaleX(d.year) : scaleX(1973)
 			const x = margin.left + (xS - videoW / 2) + bandwidth / 2
-			console.log(x)
+
 			if (!desktop) return `${x}px`
 			else if (d.align === 'left') return `${x + videoW / 2}px`
 			else if (d.align === 'right') return `${x - videoW / 2}px`
@@ -355,7 +355,6 @@ function updateVideo(step) {
 	}
 
 	// make clickable
-	// graphicSel.classed('is-untouchable', hasVideo)
 	scrollSel.classed('is-untouchable', hasVideo)
 }
 

@@ -2,7 +2,6 @@ import * as d3 from 'd3'
 import loadData from './load-data-lifespan'
 import chroma from 'chroma-js'
 import annotations from 'd3-svg-annotation'
-/*import annotationData from './create-array-annotations'*/
 
 const bodySel = d3.select('body')
 const containerSel = bodySel.select('.section--lifespan')
@@ -136,13 +135,11 @@ function setupDOM(){
 
 
 	z.append('text')
-		// .attr('transform', 'rotate(-90)')
 		.attr('class', 'living')
 		.attr('text-anchor', 'middle')
 		.text('Living')
 
 	z.append('text')
-		// .attr('transform', 'rotate(-90)')
 		.attr('class', 'deceased')
 		.attr('text-anchor', 'middle')
 		.text('Deceased')
@@ -268,7 +265,6 @@ function generateAnnotationData(){
 	    label: 'average age at death',
 	    title: ''
 	  },
-	  //can use x, y directly instead of data
 	  data: { age: 11, count: -39 },
 	  dy: 100,
 	  dx: 0
@@ -278,7 +274,6 @@ function generateAnnotationData(){
 	    label: 'maximum age at death in captivity',
 	    title: ''
 	  },
-	  //can use x, y directly instead of data
 	  data: { age: 61, count: -1 },
 	  dy: 50,
 	  dx: 0
@@ -298,7 +293,6 @@ function generateAnnotationData(){
 	    label: 'average age at death',
 	    title: ''
 	  },
-	  //can use x, y directly instead of data
 	  data: { age: 9, count: -23 },
 	  dy: 130,
 	  dx: 0
@@ -308,7 +302,6 @@ function generateAnnotationData(){
 	    label: 'maximum age at death in captivity',
 	    title: ''
 	  },
-	  //can use x, y directly instead of data
 	  data: { age: 61, count: -1 },
 	  dy: 50,
 	  dx: 0

@@ -25,12 +25,6 @@ function init() {
 			if (err) reject('error loading data')
 			else resolve(data)
 		})
-		// d3.queue()
-		// 	.defer(loadAcquisitions)
-		// 	.awaitAll((err, result) => {
-		// 		if (err) reject(err)
-		// 		else resolve(result)
-		// 	})
 	})
 }
 

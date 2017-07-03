@@ -16,7 +16,6 @@ const spanExistSel = graphicSel.select('.output span')
 let tkData = []
 let sliderData = []
 let predictionData = []
-/*let margin = 100*/
 let margin = { top: 20, bottom: 20, left: 45, right: 20 }
 let width = 0
 let height = 0
@@ -30,7 +29,6 @@ const scaleX = d3.scaleLinear()
 const scaleY = d3.scaleLinear()
 
 const populationLine = d3.line()
-	// .curve(d3.curveStep)
 
 
 let breedingSliderValue = 2030
@@ -48,7 +46,6 @@ function translate(x, y) {
 
 function updateDimensions() {
 	width = graphicContainerSel.node().offsetWidth
-/*	width = 800*/
 	height = window.innerHeight
 	desktop = window.matchMedia('(min-width: 600px)').matches
 }
@@ -56,7 +53,6 @@ function updateDimensions() {
 function resizeGraphic() {
 	const ratio = desktop ? 2 : 1.25
 	graphicW = width
-	// graphicH = graphicW / ratio
 	graphicH = height * 0.6
 }
 
@@ -138,25 +134,6 @@ function setupSliders() {
 	})
 }
 
-// function setupSliders (){
-
-// 	inputLifespanSel
-// 		.on('input', function() {
-// 			ageSliderValue = +this.value
-// 			spanLifespanSel.text(ageSliderValue)
-// 			calculateData(+this.value, breedingSliderValue)
-// 			updateDOM(predictionData)
-// 		})
-
-// 	inputBreedingbanSel
-// 		.on('input', function() {
-// 			breedingSliderValue = +this.value
-// 			spanBreedingbanSel.text(breedingSliderValue)
-// 			calculateData(ageSliderValue, +this.value)
-// 			updateDOM(predictionData)
-// 		})
-
-// }
 
 
 function updateDOM(data) {
