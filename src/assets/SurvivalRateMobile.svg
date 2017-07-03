@@ -35,10 +35,10 @@
 	
 		<line opacity="0.25" fill="none" stroke="#A8C4D9" stroke-miterlimit="10" stroke-dasharray="4" x1="-1129.508" y1="364.496" x2="-339.211" y2="364.496"/>
 	
-		<line fill="none" stroke="#EEEB6A" stroke-width="1.1978" stroke-linecap="round" stroke-miterlimit="10" x1="36.351" y1="49.813" x2="155.093" y2="49.813"/>
-	<circle fill="#EEEB6A" cx="93.547" cy="49.814" r="2.5"/>
-	<polyline fill="none" stroke="#A8C4D9" stroke-miterlimit="10" points="93.702,34.32 93.702,15.32 130.351,15.32 	"/>
-	<line fill="none" stroke="#A8C4D9" stroke-miterlimit="10" x1="163.664" y1="48.926" x2="172.11" y2="48.926"/>
+		<line fill="none" stroke="#EEEB6A" stroke-width="1.1978" stroke-linecap="round" stroke-miterlimit="10" x1="36.351" y1="35.813" x2="155.093" y2="35.813"/>
+	<circle fill="#EEEB6A" cx="93.547" cy="35.814" r="2.5"/>
+	<polyline fill="none" stroke="#A8C4D9" stroke-miterlimit="10" points="93.702,27.32 93.702,15.32 130.351,15.32 	"/>
+	<line fill="none" stroke="#A8C4D9" stroke-miterlimit="10" x1="163.664" y1="34.926" x2="172.11" y2="34.926"/>
 	
 		<text transform="matrix(0.7054 0 0 1 -961.1196 -79.9502)" opacity="0.75" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="16">88</text>
 	
@@ -60,7 +60,7 @@
 		<text transform="matrix(0.7054 0 0 1 134.6987 19.5928)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="12">ANNUAL SURVIVAL RATE</text>
 	</g>
 	<g>
-		<text transform="matrix(0.7054 0 0 1 179.6855 53.1494)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="12">95% CONFIDENCE INTERVAL</text>
+		<text transform="matrix(0.7054 0 0 1 179.6855 39.1494)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="12">95% CONFIDENCE INTERVAL</text>
 	</g>
 	<g>
 		<text transform="matrix(0.7054 0 0 1 -484.2896 9.2349)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="16">1965 - 1991</text>
@@ -191,9 +191,8 @@
 	<g>
 		<text transform="matrix(0.7054 0 0 1 753.4004 188.3926)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="16">1992 - 2016</text>
 	</g>
-	<g opacity="0.75">
-		<text transform="matrix(0.7054 0 0 1 10.9824 153.7354)" fill="#A8C4D9" font-family="'AtlasGrotesk-Medium'" font-size="12">CAPTIVE</text>
-	</g>
+	
+		<text transform="matrix(0.7054 0 0 1 10.9824 153.7354)" opacity="0.6" fill="#EEEB6A" font-family="'AtlasGrotesk-Regular'" font-size="12">CAPTIVE</text>
 	<text transform="matrix(0.7054 0 0 1 2 129.6865)" fill="#FFFFFF" font-family="'AtlasGrotesk-Bold'" font-size="14">BELUGA</text>
 	<g>
 		<circle fill="#EEEB6A" cx="180.667" cy="141.807" r="2.5"/>
@@ -209,9 +208,8 @@
 			<text transform="matrix(0.7054 0 0 1 275.4004 160.8071)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="12">‘92 - ’16</text>
 		</g>
 	</g>
-	<g opacity="0.75">
-		<text transform="matrix(0.7054 0 0 1 10.9824 235.71)" fill="#A8C4D9" font-family="'AtlasGrotesk-Medium'" font-size="12">CAPTIVE</text>
-	</g>
+	
+		<text transform="matrix(0.7054 0 0 1 10.9824 235.71)" opacity="0.6" fill="#EEEB6A" font-family="'AtlasGrotesk-Regular'" font-size="12">CAPTIVE</text>
 	<text transform="matrix(0.7054 0 0 1 2 204.6611)" fill="#FFFFFF" font-family="'AtlasGrotesk-Bold'" font-size="14">BOTTLENOSE</text>
 	<g>
 		<circle fill="#EEEB6A" cx="153.667" cy="216.781" r="2.5"/>
@@ -233,9 +231,8 @@
 			<text transform="matrix(0.7054 0 0 1 253 249.7812)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="12">‘92 - ’16</text>
 		</g>
 	</g>
-	<g opacity="0.75">
-		<text transform="matrix(0.7054 0 0 1 10.9824 270.71)" fill="#A8C4D9" font-family="'AtlasGrotesk-Medium'" font-size="12">WILD</text>
-	</g>
+	
+		<text transform="matrix(0.7054 0 0 1 10.9824 270.71)" opacity="0.6" fill="#669166" font-family="'AtlasGrotesk-Regular'" font-size="12">WILD</text>
 	<g>
 		
 			<line fill="none" stroke="#669166" stroke-linecap="round" stroke-miterlimit="10" x1="204.334" y1="259.307" x2="233" y2="259.307"/>
@@ -248,9 +245,8 @@
 			<text transform="matrix(0.7054 0 0 1 149.4009 277.7812)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="12">Indian River</text>
 		</g>
 	</g>
-	<g opacity="0.75">
-		<text transform="matrix(0.7054 0 0 1 10.9824 336.8877)" fill="#A8C4D9" font-family="'AtlasGrotesk-Medium'" font-size="12">CAPTIVE</text>
-	</g>
+	
+		<text transform="matrix(0.7054 0 0 1 10.9824 336.8877)" opacity="0.6" fill="#EEEB6A" font-family="'AtlasGrotesk-Regular'" font-size="12">CAPTIVE</text>
 	<text transform="matrix(0.7054 0 0 1 2 312.8398)" fill="#FFFFFF" font-family="'AtlasGrotesk-Bold'" font-size="14">P. WHITE SIDED</text>
 	<g>
 		<circle fill="#EEEB6A" cx="140.667" cy="324.96" r="2.5"/>
@@ -272,12 +268,10 @@
 	<g>
 		<text transform="matrix(0.7054 0 0 1 244 357.96)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="12">B. Columbia</text>
 	</g>
-	<g opacity="0.75">
-		<text transform="matrix(0.7054 0 0 1 10.9824 358.4844)" fill="#A8C4D9" font-family="'AtlasGrotesk-Medium'" font-size="12">WILD</text>
-	</g>
-	<g opacity="0.75">
-		<text transform="matrix(0.7054 0 0 1 10.9824 417.7344)" fill="#A8C4D9" font-family="'AtlasGrotesk-Medium'" font-size="12">CAPTIVE</text>
-	</g>
+	
+		<text transform="matrix(0.7054 0 0 1 10.9824 358.4844)" opacity="0.6" fill="#669166" font-family="'AtlasGrotesk-Regular'" font-size="12">WILD</text>
+	
+		<text transform="matrix(0.7054 0 0 1 10.9824 417.7344)" opacity="0.6" fill="#EEEB6A" font-family="'AtlasGrotesk-Regular'" font-size="12">CAPTIVE</text>
 	<text transform="matrix(0.7054 0 0 1 2 393.6865)" fill="#FFFFFF" font-family="'AtlasGrotesk-Bold'" font-size="14">ORCA</text>
 	<g>
 		<circle fill="#EEEB6A" cx="175.667" cy="405.807" r="2.5"/>
@@ -293,9 +287,8 @@
 			<text transform="matrix(0.7054 0 0 1 280.4004 424.8066)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="12">‘92 - ’16</text>
 		</g>
 	</g>
-	<g opacity="0.75">
-		<text transform="matrix(0.7054 0 0 1 10.9824 452.7354)" fill="#A8C4D9" font-family="'AtlasGrotesk-Medium'" font-size="12">WILD</text>
-	</g>
+	
+		<text transform="matrix(0.7054 0 0 1 10.9824 452.7354)" opacity="0.6" fill="#669166" font-family="'AtlasGrotesk-Regular'" font-size="12">WILD</text>
 	<g>
 		<g>
 			<text transform="matrix(0.7054 0 0 1 254 438.8066)" fill="#A8C4D9" font-family="'AtlasGrotesk-Regular'" font-size="12">B. Columbia</text>
