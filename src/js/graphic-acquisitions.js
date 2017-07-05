@@ -464,14 +464,14 @@ function scrollAnnotations(){
 
 }
 
-function setup(data) {
+function setup() {
 	setupDOM()
 	setupVideo()
 	setupEvents()
 	resize()
 	setupScroll()
-
-
+	// hack for safari
+	setTimeout(resizeScrollElements, 1000)
 }
 
 function init() {
