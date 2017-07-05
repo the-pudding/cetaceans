@@ -1,4 +1,3 @@
-import * as d3 from 'd3'
 import loadData from './load-data-orca-death'
 import './polyfills/find'
 import * as svgAnnotation from 'd3-svg-annotation'

@@ -1,4 +1,3 @@
-import * as d3 from 'd3'
 import * as noUiSlider from 'nouislider'
 import loadData from './load-data-death'
 

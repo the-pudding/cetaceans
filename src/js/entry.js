@@ -5,7 +5,6 @@ import graphicAcquisitions from './graphic-acquisitions'
 import graphicOrcaDeath from './graphic-orca-death'
 import graphicDeath from './graphic-death'
 import graphicLifespan from './graphic-lifespan'
-import * as d3 from 'd3'
 
 const bodyEl = select('body')
 let previousWidth = 0

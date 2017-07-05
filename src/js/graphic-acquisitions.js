@@ -1,4 +1,3 @@
-import * as d3 from 'd3'
 import ScrollMagic from 'scrollmagic'
 import loadData from './load-data-acquisitions'
 import * as svgAnnotation from 'd3-svg-annotation'
