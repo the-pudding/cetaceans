@@ -10,11 +10,13 @@ $chart-margin = 40px
 				fill $c5
 		&--born
 			.bar
+				fill lighten($c1, 25)
 				fill $c3
-				
 		&--rescue
 			.bar
-				fill $c4
+				fill $c3
+				fill lighten($c1, 25)
+				
 
 .scroll
 	&.is-untouchable
@@ -196,4 +198,4 @@ $chart-margin = 40px
 		&.born:before
 			background-color $c3
 		&.rescued:before
-			background-color $c4
+			background-color lighten($c1, 25)
